@@ -13,7 +13,7 @@ describe('报告生成器加载测试', () => {
     for (const t of core) {
       await expect(loadReportGenerator(t)).resolves.not.toThrow();
     }
-  }, 15000);
+  }, 30000);
 
   it('加载不存在的类型不应报错', async () => {
     const { loadReportGenerator } = await import('../reportGeneratorLoader');

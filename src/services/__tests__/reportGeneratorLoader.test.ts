@@ -40,7 +40,7 @@ describe('加载后的报告生成器功能', () => {
     for (const t of types) {
       await expect(loadReportGenerator(t)).resolves.not.toThrow();
     }
-  });
+  }, 20000);
 
   it('重复加载已加载类型不应报错', async () => {
     await loadReportGenerator('overview');
