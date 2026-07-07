@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint:fix": "eslint src --fix",
+    "ci": "npm run lint && tsc -b -noEmit && npm run test"
   },
   "dependencies": {
     "@types/file-saver": "^2.0.7",
