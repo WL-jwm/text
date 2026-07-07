@@ -1,0 +1,86 @@
+[
+  {
+    "id": "hb-frac-1",
+    "category": "fracture",
+    "name": "构造裂隙(片麻岩) 裂隙参数",
+    "value": "K=0.01~2",
+    "unit": "m/d",
+    "lithology": "太古界变质岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "type": "构造裂隙(片麻岩)",
+      "lithology": "太古界变质岩",
+      "K": "0.01~2",
+      "springFlow": "0.1~5",
+      "modulus": "1~5"
+    }
+  },
+  {
+    "id": "hb-frac-2",
+    "category": "fracture",
+    "name": "风化裂隙(花岗岩) 裂隙参数",
+    "value": "K=0.01~1",
+    "unit": "m/d",
+    "lithology": "燕山期岩浆岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "type": "风化裂隙(花岗岩)",
+      "lithology": "燕山期岩浆岩",
+      "K": "0.01~1",
+      "springFlow": "0.01~1",
+      "modulus": "0.5~3"
+    }
+  },
+  {
+    "id": "hb-frac-3",
+    "category": "fracture",
+    "name": "构造裂隙(砂岩) 裂隙参数",
+    "value": "K=0.1~5",
+    "unit": "m/d",
+    "lithology": "元古界-古生界",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "type": "构造裂隙(砂岩)",
+      "lithology": "元古界-古生界",
+      "K": "0.1~5",
+      "springFlow": "0.1~10",
+      "modulus": "2~8"
+    }
+  },
+  {
+    "id": "hb-frac-4",
+    "category": "fracture",
+    "name": "层间裂隙(页岩) 裂隙参数",
+    "value": "K=0.001~0.1",
+    "unit": "m/d",
+    "lithology": "石炭-二叠系",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "type": "层间裂隙(页岩)",
+      "lithology": "石炭-二叠系",
+      "K": "0.001~0.1",
+      "springFlow": "<0.1",
+      "modulus": "<1"
+    }
+  }
+]

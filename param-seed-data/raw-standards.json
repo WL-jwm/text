@@ -1,0 +1,54 @@
+{
+  "groundwaterQualityStandards": {
+    "category": "地下水质量",
+    "code": "GB/T 14848",
+    "currentVersion": "v2017",
+    "versions": [
+      {
+        "id": "v2017",
+        "name": "GB/T 14848-2017",
+        "fullName": "地下水质量标准",
+        "publishDate": "2017-10-14",
+        "effectiveDate": "2018-05-01",
+        "issuingAuthority": "国家市场监督管理总局、国家标准化管理委员会",
+        "status": "现行",
+        "description": "替代GB/T 14848-1993，地下水质量分类与评价",
+        "changelog": "相较1993版调整了部分指标限值，新增了若干有机污染物指标",
+        "data": {
+          "classes": [
+            {
+              "class": "I",
+              "name": "优良",
+              "color": "#22c55e",
+              "description": "地下水化学组分含量最低，适用于各种用途"
+            },
+            {
+              "class": "II",
+              "name": "良好",
+              "color": "#84cc16",
+              "description": "地下水化学组分含量较低，适用于各种用途"
+            },
+            {
+              "class": "III",
+              "name": "较好",
+              "color": "#eab308",
+              "description": "以人体健康基准值为依据，主要适用于集中式生活饮用水水源及工农业用水"
+            },
+            {
+              "class": "IV",
+              "name": "较差",
+              "color": "#f97316",
+              "description": "以农业和工业用水质量要求以及一定水平的人体健康风险为依据"
+            },
+            {
+              "class": "V",
+              "name": "极差",
+              "color": "#ef4444",
+              "description": "不宜作为生活饮用水水源，其他用水可根据使用目的选用"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

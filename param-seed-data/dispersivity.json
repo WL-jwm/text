@@ -1,0 +1,92 @@
+[
+  {
+    "id": "hb-disp-1",
+    "category": "dispersivity",
+    "name": "粘土 弥散度",
+    "value": "αL=0.5~5, αT=0.05~0.5",
+    "unit": "m",
+    "lithology": "粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "文献参考值",
+    "reliability": "经验值",
+    "reference": "文献参考值",
+    "metadata": {
+      "aL": "0.5~5",
+      "aT": "0.05~0.5"
+    }
+  },
+  {
+    "id": "hb-disp-2",
+    "category": "dispersivity",
+    "name": "亚粘土 弥散度",
+    "value": "αL=1~10, αT=0.1~1",
+    "unit": "m",
+    "lithology": "亚粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "文献参考值",
+    "reliability": "经验值",
+    "reference": "文献参考值",
+    "metadata": {
+      "aL": "1~10",
+      "aT": "0.1~1"
+    }
+  },
+  {
+    "id": "hb-disp-3",
+    "category": "dispersivity",
+    "name": "砂性土 弥散度",
+    "value": "αL=5~50, αT=0.5~5",
+    "unit": "m",
+    "lithology": "砂性土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "文献参考值",
+    "reliability": "经验值",
+    "reference": "文献参考值",
+    "metadata": {
+      "aL": "5~50",
+      "aT": "0.5~5"
+    }
+  },
+  {
+    "id": "hb-disp-4",
+    "category": "dispersivity",
+    "name": "裂隙岩(近场) 弥散度",
+    "value": "αL=1~50, αT=0.1~5",
+    "unit": "m",
+    "lithology": "裂隙岩(近场)",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "文献参考值",
+    "reliability": "经验值",
+    "reference": "文献参考值",
+    "metadata": {
+      "aL": "1~50",
+      "aT": "0.1~5"
+    }
+  },
+  {
+    "id": "hb-disp-5",
+    "category": "dispersivity",
+    "name": "岩溶管道 弥散度",
+    "value": "αL=50~500, αT=5~50",
+    "unit": "m",
+    "lithology": "岩溶管道",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "文献参考值",
+    "reliability": "经验值",
+    "reference": "文献参考值",
+    "metadata": {
+      "aL": "50~500",
+      "aT": "5~50"
+    }
+  }
+]

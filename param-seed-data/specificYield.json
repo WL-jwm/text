@@ -1,0 +1,135 @@
+[
+  {
+    "id": "hb-mu-1",
+    "category": "mu",
+    "name": "粘土 给水度",
+    "value": "0.02~0.05",
+    "unit": "无量纲",
+    "lithology": "粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "粘性土",
+      "K": "0.001~0.05",
+      "ne": "0.02~0.05"
+    }
+  },
+  {
+    "id": "hb-mu-2",
+    "category": "mu",
+    "name": "亚粘土(粉质粘土) 给水度",
+    "value": "0.04~0.07",
+    "unit": "无量纲",
+    "lithology": "亚粘土(粉质粘土)",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "粘性土",
+      "K": "0.01~0.5",
+      "ne": "0.03~0.08"
+    }
+  },
+  {
+    "id": "hb-mu-3",
+    "category": "mu",
+    "name": "亚砂土(粉土) 给水度",
+    "value": "0.06~0.10",
+    "unit": "无量纲",
+    "lithology": "亚砂土(粉土)",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "粘性土",
+      "K": "0.05~2.0",
+      "ne": "0.05~0.12"
+    }
+  },
+  {
+    "id": "hb-mu-4",
+    "category": "mu",
+    "name": "粉砂 给水度",
+    "value": "0.07~0.11",
+    "unit": "无量纲",
+    "lithology": "粉砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "砂性土",
+      "K": "0.5~5.0",
+      "ne": "0.06~0.15"
+    }
+  },
+  {
+    "id": "hb-mu-5",
+    "category": "mu",
+    "name": "细砂 给水度",
+    "value": "0.10~0.16",
+    "unit": "无量纲",
+    "lithology": "细砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "砂性土",
+      "K": "2.0~15",
+      "ne": "0.10~0.20"
+    }
+  },
+  {
+    "id": "hb-mu-6",
+    "category": "mu",
+    "name": "中砂 给水度",
+    "value": "0.16~0.22",
+    "unit": "无量纲",
+    "lithology": "中砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "砂性土",
+      "K": "10~50",
+      "ne": "0.15~0.28"
+    }
+  },
+  {
+    "id": "hb-mu-7",
+    "category": "mu",
+    "name": "砾石 给水度",
+    "value": "0.20~0.30",
+    "unit": "无量纲",
+    "lithology": "砾石",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-21",
+    "reliability": "经验值",
+    "reference": "表6-21",
+    "metadata": {
+      "category": "碎屑岩类",
+      "K": "50~300",
+      "ne": "0.20~0.35"
+    }
+  }
+]

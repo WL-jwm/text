@@ -1,0 +1,209 @@
+[
+  {
+    "id": "hb-hot-1",
+    "category": "hot_spring",
+    "name": "后郝窑热水孔",
+    "value": "89℃",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "怀来县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "后郝窑热水孔",
+      "location": "怀来县",
+      "temp": 89,
+      "flow": 36,
+      "type": ""
+    }
+  },
+  {
+    "id": "hb-hot-2",
+    "category": "hot_spring",
+    "name": "阳原棵洗搪泉",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "阳原县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "阳原棵洗搪泉",
+      "location": "阳原县",
+      "temp": null,
+      "flow": 180,
+      "type": ""
+    }
+  },
+  {
+    "id": "hb-hot-3",
+    "category": "hot_spring",
+    "name": "赤城周立沟汤泉",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "赤城县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "赤城周立沟汤泉",
+      "location": "赤城县",
+      "temp": null,
+      "flow": 86.7,
+      "type": ""
+    }
+  },
+  {
+    "id": "hb-hot-4",
+    "category": "hot_spring",
+    "name": "隆化西大坝暖水泉",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "隆化县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "隆化西大坝暖水泉",
+      "location": "隆化县",
+      "temp": null,
+      "flow": 36,
+      "type": ""
+    }
+  },
+  {
+    "id": "hb-hot-5",
+    "category": "hot_spring",
+    "name": "丰宁县汤河公社泉",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "丰宁县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "丰宁县汤河公社泉",
+      "location": "丰宁县",
+      "temp": null,
+      "flow": null,
+      "type": "SO4-Na"
+    }
+  },
+  {
+    "id": "hb-hot-6",
+    "category": "hot_spring",
+    "name": "赤城县大庙公社西大汤泉",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "赤城县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "赤城县大庙公社西大汤泉",
+      "location": "赤城县",
+      "temp": null,
+      "flow": null,
+      "type": "SO4-Na"
+    }
+  },
+  {
+    "id": "hb-hot-7",
+    "category": "hot_spring",
+    "name": "遵化县汤泉村泉",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "遵化县",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "name": "遵化县汤泉村泉",
+      "location": "遵化县",
+      "temp": null,
+      "flow": null,
+      "type": "HCO3-SO4-Na"
+    }
+  },
+  {
+    "id": "hb-geo-1",
+    "category": "geothermal_anomaly",
+    "name": "牛驼镇凸起",
+    "value": "40~70°C(1000m)",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "雄县、安次、霸县一带",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "name": "牛驼镇凸起",
+      "location": "雄县、安次、霸县一带",
+      "temp": "40~70°C(1000m)",
+      "note": "埋藏浅、温度高、开采条件好"
+    }
+  },
+  {
+    "id": "hb-geo-2",
+    "category": "geothermal_anomaly",
+    "name": "沧宁凸起-黄骅-盐山",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "黄骅-盐山一带",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "name": "沧宁凸起-黄骅-盐山",
+      "location": "黄骅-盐山一带",
+      "temp": "",
+      "note": "1000m深度内可获热水"
+    }
+  },
+  {
+    "id": "hb-geo-3",
+    "category": "geothermal_anomaly",
+    "name": "山海关隆起",
+    "value": "",
+    "unit": "℃",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "昌黎-龙泉店一带",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "name": "山海关隆起",
+      "location": "昌黎-龙泉店一带",
+      "temp": "",
+      "note": "热水埋藏浅、温度高、开采条件较好"
+    }
+  }
+]

@@ -1,0 +1,1483 @@
+// 2024年河北省水资源总量
+export const waterResourceSummary2024 = {
+  rainfall: { value: 659.3, unit: 'mm', yoyChange: '+12.8%', multiAvg: 520.8, multiChange: '+26.6%' },
+  totalResource: { value: 247.92, unit: '亿m3', yoyChange: '+2.7%', multiAvg: 176.47, multiChange: '+40.5%' },
+  surfaceWater: { value: 140.76, unit: '亿m3', multiAvg: 90.27, multiChange: '+55.9%' },
+  groundwater: { value: 179.94, unit: '亿m3', multiAvg: 114.22, multiChange: '+57.5%' },
+  perCapita: { value: 336, unit: 'm3/person' },
+  runOffCoeff: { value: 0.20 },
+  runOffModule: { value: 13.21, unit: '万m3/km2' },
+};
+
+// 历史对比数据
+export const historicalComparison = {
+  period1980s: { totalResource: 185.52, unit: '亿m3', source: '第六次地下水资源评价(1980s-1990s)' },
+  year2024: { totalResource: 179.94, unit: '亿m3', source: '2024河北省水资源公报' },
+};
+
+// 2024年各市地下水资源量
+export const cityGroundwater2024 = [
+  { city: '石家庄', surface: 7.87, ground: 16.58, total: 18.83, coeff: 0.25 },
+  { city: '唐山', surface: 23.55, ground: 19.74, total: 37.13, coeff: 0.31 },
+  { city: '秦皇岛', surface: 26.08, ground: 15.15, total: 32.44, coeff: 0.40 },
+  { city: '邯郸', surface: 5.78, ground: 12.51, total: 12.14, coeff: 0.22 },
+  { city: '邢台', surface: 3.93, ground: 12.37, total: 13.07, coeff: 0.20 },
+  { city: '保定', surface: 15.43, ground: 28.86, total: 32.26, coeff: 0.25 },
+  { city: '张家口', surface: 12.61, ground: 15.13, total: 22.28, coeff: 0.10 },
+  { city: '承德', surface: 37.41, ground: 23.31, total: 41.01, coeff: 0.15 },
+  { city: '沧州', surface: 6.74, ground: 11.96, total: 16.42, coeff: 0.16 },
+  { city: '廊坊', surface: 1.15, ground: 10.09, total: 10.13, coeff: 0.21 },
+  { city: '衡水', surface: 0.17, ground: 8.41, total: 6.70, coeff: 0.13 },
+  { city: '雄安新区', surface: 0.04, ground: 3.06, total: 3.06, coeff: 0.24 },
+  { city: '定州', surface: 0, ground: 1.81, total: 1.72, coeff: 0.24 },
+  { city: '辛集', surface: 0, ground: 0.96, total: 0.73, coeff: 0.16 },
+];
+
+// 2024年14市地下水供水量
+export const cityWaterSupply2024 = [
+  { city: '石家庄', gwSupply: 10.0561, totalSupply: 29.816, gwRatio: 33.7 },
+  { city: '唐山', gwSupply: 10.412, totalSupply: 25.3106, gwRatio: 41.1 },
+  { city: '秦皇岛', gwSupply: 3.418, totalSupply: 6.9567, gwRatio: 49.1 },
+  { city: '邯郸', gwSupply: 7.7827, totalSupply: 19.5294, gwRatio: 39.9 },
+  { city: '邢台', gwSupply: 6.9269, totalSupply: 18.4207, gwRatio: 37.6 },
+  { city: '保定', gwSupply: 11.1105, totalSupply: 22.4497, gwRatio: 49.5 },
+  { city: '张家口', gwSupply: 4.7875, totalSupply: 6.9457, gwRatio: 68.9 },
+  { city: '承德', gwSupply: 4.1826, totalSupply: 7.3786, gwRatio: 56.7 },
+  { city: '沧州', gwSupply: 2.8512, totalSupply: 15.2873, gwRatio: 18.7 },
+  { city: '廊坊', gwSupply: 2.9044, totalSupply: 6.3699, gwRatio: 45.6 },
+  { city: '衡水', gwSupply: 3.1908, totalSupply: 7.8705, gwRatio: 40.5 },
+  { city: '雄安新区', gwSupply: 0.9867, totalSupply: 2.1969, gwRatio: 44.9 },
+  { city: '定州', gwSupply: 2.1081, totalSupply: 3.0676, gwRatio: 68.7 },
+  { city: '辛集', gwSupply: 2.7895, totalSupply: 3.2483, gwRatio: 85.9 },
+];
+
+// 地下水动态(2024)
+export const groundwaterDynamic2024 = {
+  shallowLevelRise: 0.70, //  全省平均回升m
+  plainShallowRise: 0.63, //  平原区
+  shallowRiseArea: 52.4, //  %
+  shallowStableArea: 40.6, //  %
+  shallowDeclineArea: 7.0, //  %
+  deepLevelRise: 1.91, //  全省深层
+  plainStorageChange: 33.33, //  亿m3, 正值表示储量增加
+  overExploitDeepRise: 2.00, //  超采区深层
+  overExploitShallowRise: 0.94, //  超采区浅层
+  overExploitAreaReduction: 99, //  严重超采区面积减少%
+  gwVolumeReduced: 1.79, //  压减开采量亿m3
+  deepWaterSupply: 6.90, //  深层地下水供水量亿m3
+  historicalExploitPeak: 154.9, //  1990年代
+  currentTotal: 73.18, //  2024年
+  declinePercent: 52.7, // %
+};
+
+// 水资源总量时序数据(近年)
+export const resourceTimeSeries = [
+  { year: '2018', total: 167.7, surface: 61.4, ground: 125.4 },
+  { year: '2019', total: 214.8, surface: 96.3, ground: 139.3 },
+  { year: '2020', total: 206.2, surface: 87.5, ground: 139.4 },
+  { year: '2021', total: 226.9, surface: 106.1, ground: 142.5 },
+  { year: '2022', total: 168.6, surface: 55.8, ground: 124.0 },
+  { year: '2023', total: 241.35, surface: 121.85, ground: 182.75 },
+  { year: '2024', total: 247.92, surface: 140.76, ground: 179.94 },
+];
+
+// 各市2024年水资源公报详细数据 (承德/邢台/保定为公报原文)
+export const cityBulletin2024 = [
+  {
+    city: '石家庄',
+    bulletinDate: '2026-03-11',
+    area: 13126, //  省级公报口径
+    precipitation: 567.2, //  mm
+    precipTotal: 74.45, //  亿m³（省级公报，面积13126km²）
+    multiAvgPrecip: 534.1, //  mm（1956-2016系列）
+    prevYearPrecip: 106.56,
+    prevYearCompare: '-30.1%',
+    grade: '偏丰',
+    surfaceWater: 7.87,
+    groundWater: 16.58,
+    repeatCalc: 5.62, //  7.87+16.58-18.83
+    totalWater: 18.83,
+    coeff: 0.21,
+    multiAvgTotal: 21.95,
+    perCapita: null,
+    totalSupply: 29.82, //  亿m³（省级公报29.8160）
+    localSurfaceSupply: 9.49, //  本地地表水
+    interBasinTransferSupply: 7.23, //  跨流域调水(引江7.23)
+    groundSupply: 10.06,
+    otherSupply: 3.04,
+    agriUse: 11.59,
+    industryUse: 1.87,
+    domesticUse: 5.18,
+    ecoUse: 11.18,
+    southWaterDiversion: 7.23, //  引江水
+    inflow: 17.33, //  入境水量亿m³
+    outflow: 9.55, //  出境水量亿m³
+    reservoirStorage: 13.68, //  12座大中型水库年末蓄水亿m³
+    reservoirStorageChange: -1.84, //  比去年减少
+    shallowDepth: 27.25, //  m（平原区平均）
+    shallowChange: 0.95, //  回升m
+    plainStorageChange: 7.27, //  亿m³, 平原地下水蓄水量增加
+    gdpWaterUse: 41.69, //  万元GDP用水量m³（2015价）
+    industrialWaterUse: 11.58, //  万元工业增加值用水量m³
+    counties: [,
+      { name: '市内四区', precip: 650.0, surface: 0, ground: null, total: null, agri: 0.0689, industry: 0.1167, domestic: 2.7784, eco: 1.9256, totalUse: 4.8896, gwUse: 0.1028 },
+      { name: '高新区', precip: null, surface: 0, ground: null, total: null, agri: 0.1317, industry: 0.3330, domestic: 0.1856, eco: 0.0852, totalUse: 0.7355, gwUse: 0.1510 },
+      { name: '行唐县', precip: 580.0, surface: null, ground: null, total: null, agri: 1.0317, industry: 0.0112, domestic: 0.0919, eco: 0.1425, totalUse: 1.2773, gwUse: 1.0217 },
+      { name: '灵寿县', precip: 658.4, surface: 1.12, ground: null, total: null, agri: 0.6855, industry: 0.0188, domestic: 0.0928, eco: 0.1181, totalUse: 0.9152, gwUse: 0.4824 },
+      { name: '平山县', precip: 550.0, surface: 3.25, ground: null, total: null, agri: 0.9120, industry: 0.4453, domestic: 0.0917, eco: 0.0642, totalUse: 1.5132, gwUse: 0.1618 },
+      { name: '井陉县', precip: 580.0, surface: 1.21, ground: null, total: null, agri: 0.2673, industry: 0.1437, domestic: 0.0640, eco: 0.0453, totalUse: 0.5203, gwUse: 0.1818 },
+      { name: '井陉矿区', precip: 560.0, surface: null, ground: null, total: null, agri: 0.0588, industry: 0.0397, domestic: 0.0261, eco: 0.0397, totalUse: 0.1643, gwUse: 0.0420 },
+      { name: '鹿泉区', precip: 640.0, surface: null, ground: null, total: null, agri: 0.7746, industry: 0.1515, domestic: 0.3857, eco: 0.1555, totalUse: 1.4673, gwUse: 0.2473 },
+      { name: '元氏县', precip: 570.0, surface: null, ground: null, total: null, agri: 0.6715, industry: 0.0483, domestic: 0.1373, eco: 0.1879, totalUse: 1.0451, gwUse: 0.5773 },
+      { name: '赞皇县', precip: 660.0, surface: null, ground: null, total: null, agri: 0.2313, industry: 0.0033, domestic: 0.0693, eco: 0.1427, totalUse: 0.4466, gwUse: 0.1398 },
+      { name: '高邑县', precip: 590.0, surface: 0, ground: null, total: null, agri: 0.2940, industry: 0.0090, domestic: 0.0679, eco: 0.0549, totalUse: 0.4258, gwUse: 0.2940 },
+      { name: '赵县', precip: 560.0, surface: 0, ground: null, total: null, agri: 1.0565, industry: 0.0716, domestic: 0.1404, eco: 0.1256, totalUse: 1.3941, gwUse: 1.0571 },
+      { name: '栾城区', precip: 590.0, surface: 0, ground: null, total: null, agri: 0.5095, industry: 0.1067, domestic: 0.1272, eco: 0.0790, totalUse: 0.8224, gwUse: 0.5218 },
+      { name: '藁城区', precip: 540.0, surface: 0, ground: null, total: null, agri: 1.1986, industry: 0.2296, domestic: 0.2220, eco: 0.0596, totalUse: 1.7098, gwUse: 1.3361 },
+      { name: '晋州市', precip: 470.0, surface: 0, ground: null, total: null, agri: 0.6942, industry: 0.0425, domestic: 0.1175, eco: 0.0574, totalUse: 0.9116, gwUse: 0.6956 },
+      { name: '深泽县', precip: 462.4, surface: 0, ground: null, total: null, agri: 0.4941, industry: 0.0232, domestic: 0.0564, eco: 0.0210, totalUse: 0.5948, gwUse: 0.5069 },
+      { name: '无极县', precip: 480.0, surface: 0, ground: null, total: null, agri: 0.6307, industry: 0.0297, domestic: 0.0933, eco: 0.1210, totalUse: 0.8747, gwUse: 0.6466 },
+      { name: '正定县', precip: 570.0, surface: 0, ground: null, total: null, agri: 0.8664, industry: 0.0220, domestic: 0.2633, eco: 0.0652, totalUse: 1.2170, gwUse: 0.8769 },
+      { name: '新乐市', precip: 550.0, surface: 0, ground: null, total: null, agri: 1.0132, industry: 0.0200, domestic: 0.1710, eco: 2.0309, totalUse: 3.2351, gwUse: 1.0132 },
+    ],
+    reservoirs: [,
+      { name: '岗南', type: '大型', lastYearStorage: 8.3470, yearEndStorage: 7.8050, change: -0.5420, inflow: 5.9990, outflow: 6.5410 },
+      { name: '黄壁庄', type: '大型', lastYearStorage: 3.9030, yearEndStorage: 3.1000, change: -0.8030, inflow: 10.0870, outflow: 10.8900 },
+      { name: '横山岭', type: '大型', lastYearStorage: 1.1010, yearEndStorage: 0.7816, change: -0.3194, inflow: 0.4683, outflow: 0.7877 },
+      { name: '口头', type: '大型', lastYearStorage: 0.5168, yearEndStorage: 0.4455, change: -0.0713, inflow: 0.0902, outflow: 0.1615 },
+      { name: '红领巾', type: '中型', lastYearStorage: 0.1168, yearEndStorage: 0.0913, change: -0.0255, inflow: 0, outflow: 0.0208 },
+      { name: '燕川', type: '中型', lastYearStorage: 0.0634, yearEndStorage: 0.0642, change: 0.0008, inflow: 0.0627, outflow: 0.0619 },
+      { name: '石板', type: '中型', lastYearStorage: 0.0951, yearEndStorage: 0.0605, change: -0.0346, inflow: 0.2943, outflow: 0.3289 },
+      { name: '下观', type: '中型', lastYearStorage: 0.0669, yearEndStorage: 0.0310, change: -0.0359, inflow: 0.0202, outflow: 0.0561 },
+      { name: '张河湾', type: '中型', lastYearStorage: 0.5911, yearEndStorage: 0.6046, change: 0.0135, inflow: 0.7046, outflow: 0.6911 },
+      { name: '八一', type: '中型', lastYearStorage: 0.3283, yearEndStorage: 0.2948, change: -0.0335, inflow: 0.1109, outflow: 0.1444 },
+      { name: '白草坪', type: '中型', lastYearStorage: 0.2231, yearEndStorage: 0.2416, change: 0.0185, inflow: 0.1621, outflow: 0.1436 },
+      { name: '南平旺', type: '中型', lastYearStorage: 0.1685, yearEndStorage: 0.1595, change: -0.0090, inflow: 0.0405, outflow: 0.0495 },
+    ],
+    rivers: {
+      inflow: [,
+        { river: '滹沱河', volume: 4.2052 },
+        { river: '绵河', volume: 2.8230 },
+        { river: '甘陶河', volume: 0.7046 },
+        { river: '沙河', volume: 2.3653 },
+        { river: '南水北调中线', volume: 7.2328 },
+      ],
+      outflow: [,
+        { river: '滹沱河', volume: 2.7487 },
+        { river: '石津渠', volume: 4.5532 },
+        { river: '沙河', volume: 2.0751 },
+        { river: '磁河(木刀沟)', volume: 0 },
+        { river: '槐河', volume: 0.1715 },
+        { river: '泜河', volume: 0 },
+        { river: '洨河', volume: 0 },
+      ],
+    },
+    modulus: 14.35,
+    notes: '石家庄水位降落漏斗2016年已消散；平原地下水蓄水量增加7.27亿m³；全市水位均回升',
+  },
+  {
+    city: '沧州',
+    bulletinDate: '2026-04-07',
+    area: 13904, //  省级公报口径km²
+    precipitation: 731.2, //  mm
+    precipTotal: 101.67, //  亿m³ (省级公报)
+    multiAvgPrecip: 543.8, //  mm（1956-2015系列）
+    modulus: 11.81,
+    prevYearPrecip: 80.99,
+    prevYearCompare: '+25.5%',
+    grade: '丰水',
+    surfaceWater: 6.74, //  亿m³ (67465万m³)
+    groundWater: 11.96, //  亿m³ (119809万m³, 降雨入渗96763+地表水体入渗23046)
+    repeatCalc: 2.28, //  6.74+11.96-16.42
+    totalWater: 16.42, //  亿m³ (164228万m³)
+    coeff: 0.16,
+    totalSupply: 15.29, //  亿m³ (152873.6万m³)
+    localSurfaceSupply: 3.42, //  本地地表水
+    interBasinTransferSupply: 7.31, //  外调水
+    groundSupply: 2.85, //  亿m³ (28510万m³)
+    shallowGround: 1.91, //  浅层地下水19124万m³
+    deepGround: 0.94, //  深层地下水9386万m³
+    otherSupply: 1.71, //  亿m³ (17105.3万m³)
+    agriUse: 8.65,
+    industryUse: 1.62,
+    domesticUse: 2.58,
+    ecoUse: 2.44,
+    inflow: 17.36, //  亿m³
+    outflow: 1.51, //  亿m³
+    seaOutflow: 18.56, //  亿m³
+    southWaterDiversion: 3.92, //  南水北调中线引江水
+    yellowRiverWater: 2.24, //  引黄水
+    notes: '特丰水年，降水量偏多34.5%；深层地下水开采9386万m³；黄骅沧县深层漏斗面积197.56→0km²消散',
+    counties: [
+      { name: '新华区', precip: 807.8, surface: 0.0794, ground: 0.0063, total: 0.0794, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.3365, gwUse: null },
+      { name: '运河区', precip: 803.8, surface: 0.0814, ground: 0.133, total: 0.1409, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.4183, gwUse: null },
+      { name: '沧县', precip: 785.2, surface: 1.1663, ground: 1.2277, total: 2.2303, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.7618, gwUse: null },
+      { name: '青县', precip: 702.0, surface: 0.439, ground: 0.7881, total: 1.0354, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.8662, gwUse: null },
+      { name: '东光县', precip: 659.3, surface: 0.0425, ground: 0.8191, total: 0.6907, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.014, gwUse: null },
+      { name: '海兴县', precip: 804.8, surface: 0.8331, ground: 0.165, total: 0.9232, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.2692, gwUse: null },
+      { name: '盐山县', precip: 690.1, surface: 0.461, ground: 0.4731, total: 0.8281, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.5885, gwUse: null },
+      { name: '肃宁县', precip: 607.2, surface: 0.0129, ground: 0.6455, total: 0.5578, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.6354, gwUse: null },
+      { name: '南皮县', precip: 752.5, surface: 0.3617, ground: 1.1933, total: 1.4367, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.832, gwUse: null },
+      { name: '吴桥县', precip: 630.1, surface: 0.0246, ground: 0.9488, total: 0.7717, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.7507, gwUse: null },
+      { name: '献县', precip: 663.1, surface: 0.1418, ground: 1.2535, total: 1.1517, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.3206, gwUse: null },
+      { name: '孟村回族自治县', precip: 717.3, surface: 0.257, ground: 0.4211, total: 0.6423, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.3694, gwUse: null },
+      { name: '泊头市', precip: 721.6, surface: 0.1855, ground: 1.251, total: 1.1676, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.0995, gwUse: null },
+      { name: '任丘市', precip: 754.5, surface: 0.2409, ground: 1.6535, total: 1.5656, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.4768, gwUse: null },
+      { name: '黄骅市', precip: 833.2, surface: 2.2799, ground: 0.0645, total: 2.3304, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.6597, gwUse: null },
+      { name: '河间市', precip: 671.5, surface: 0.1395, ground: 0.9374, total: 0.871, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.3867, gwUse: null }
+    ],
+  },
+  {
+    city: '承德',
+    bulletinDate: '2026-02-12',
+    area: 39489, //  省级公报口径km²;市级公报39489.53
+    precipitation: 662.1, //  mm
+    precipTotal: 26.15, //  亿m³ (公报值)
+    multiAvgPrecip: 519.1, //  mm (1956-2014系列)
+    prevYearPrecip: null,
+    prevYearCompare: null,
+    grade: '丰水',
+    surfaceWater: 37.86, //  亿m³ (378624万m³)
+    groundWater: 22.31, //  亿m³ (223107万m³)
+    repeatCalc: 19.71, //  亿m³ (197142万m³)
+    totalWater: 40.46, //  亿m³ (404589万m³)
+    coeff: 0.15,
+    modulus: 10.25,
+    totalSupply: 7.38, //  亿m³ (73784万m³)
+    localSurfaceSupply: 2.80, //  亿m³ (27952万m³)
+    groundSupply: 4.18, //  亿m³ (41826万m³, 全浅层)
+    otherSupply: 0.40, //  亿m³ (4006万m³)
+    agriUse: 4.38,
+    industryUse: 0.96,
+    domesticUse: 1.46,
+    ecoUse: 0.57,
+    shallowDepth: 7.31, //  m
+    shallowChange: 0.28, //  +m
+    inflow: 2.95, //  亿m³ (29516万m³, 内蒙25452+辽宁4064)
+    outflow: 21.20, //  亿m³ (212016万m³)
+    notes: '不涉及超采区，全部为浅层地下水自动监测站;全省面积最大(39489km²);出境水量21.20亿m³全省第二',
+    counties: [
+      { name: '双桥区', precip: 625.0, surface: 0.42, ground: null, total: 0.5594, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.255, gwUse: null },
+      { name: '双滦区', precip: 705.0, surface: 0.4185, ground: null, total: 0.5483, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.4226, gwUse: null },
+      { name: '鹰手营子矿区', precip: 708.0, surface: 1.2564, ground: null, total: 0.5654, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.0874, gwUse: null },
+      { name: '承德县', precip: 622.0, surface: 3.7946, ground: null, total: 4.1353, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.6623, gwUse: null },
+      { name: '兴隆县', precip: 842.3, surface: 7.137, ground: null, total: 7.3619, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.4874, gwUse: null },
+      { name: '平泉市', precip: 660.0, surface: 3.549, ground: null, total: 3.8756, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.648, gwUse: null },
+      { name: '滦平县', precip: 650.0, surface: 2.6404, ground: null, total: 2.9797, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.9143, gwUse: null },
+      { name: '隆化县', precip: 635.0, surface: 4.0705, ground: null, total: 4.3802, agri: null, industry: null, domestic: null, eco: null, totalUse: 1.2971, gwUse: null },
+      { name: '丰宁满族自治县', precip: 600.8, surface: 5.8267, ground: null, total: 6.1219, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.9679, gwUse: null },
+      { name: '宽城满族自治县', precip: 815.0, surface: 3.2474, ground: null, total: 3.4235, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.5685, gwUse: null },
+      { name: '围场满族蒙古族自治县', precip: 655.0, surface: 6.2441, ground: null, total: 6.5075, agri: null, industry: null, domestic: null, eco: null, totalUse: 0.4803, gwUse: null }
+    ],
+    supplyByCounty: [,
+      { name: '围场县', surface: 712, ground: 3770, other: 392, total: 4874 },
+      { name: '丰宁县', surface: 2529, ground: 2841, other: 316, total: 5685 },
+      { name: '隆化县', surface: 1165, ground: 5194, other: 264, total: 6623 },
+      { name: '滦平县', surface: 360, ground: 5636, other: 484, total: 6480 },
+      { name: '承德县', surface: 7784, ground: 4996, other: 191, total: 12971 },
+      { name: '平泉市', surface: 240, ground: 4459, other: 105, total: 4803 },
+      { name: '兴隆县', surface: 47, ground: 4439, other: 305, total: 4787 },
+      { name: '宽城县', surface: 4935, ground: 5185, other: 51, total: 9143 },
+      { name: '双桥区', surface: 3920, ground: 494, other: 638, total: 5052 },
+      { name: '双滦区', surface: 0, ground: 1753, other: 0, total: 1753 },
+      { name: '营子区', surface: 0, ground: 2094, other: 1216, total: 4226 },
+    ],
+  },
+  {
+    city: '邢台',
+    bulletinDate: '2026-02-26',
+    area: 12456,
+    precipitation: 540.1, //  mm (公报值)
+    precipTotal: 67.27, //  亿m³
+    multiAvgPrecip: 525.1, //  mm (多年平均)
+    prevYearPrecip: 96.14,
+    prevYearCompare: '-30.0%',
+    grade: '平水', //  省级公报口径;市级公报为丰水(2.9%)
+    surfaceWater: 4.12, //  亿m³
+    groundWater: 12.40, //  亿m³
+    repeatCalc: 3.76, //  4.12+12.40-12.76
+    totalWater: 12.76, //  亿m³
+    coeff: 0.19,
+    modulus: 10.2,
+    perCapita: 520.3, //  m³
+    totalSupply: 18.42, //  亿m³
+    surfaceSupply: 9.81, //  亿m³
+    localSurfaceSupply: 6.93, //  本地地表水
+    interBasinTransferSupply: 2.88, //  跨流域调水(引江)
+    groundSupply: 6.93, //  亿m³
+    otherSupply: 1.69, //  亿m³
+    agriUse: 10.96,
+    industryUse: 0.89,
+    domesticUse: 2.13,
+    ecoUse: 4.44,
+    shallowDepth: 19.34, //  m
+    shallowChange: 2.71, //  回升m
+    deepDepth: 51.49, //  m
+    deepChange: 1.62, //  回升m
+    shallowOverExploitDepth: 23.90,
+    deepOverExploitDepth: 54.65,
+    gwReduction: 0.21, //  压减地下水亿m³
+    inflow: 14.64, //  入境水量(清临干渠+洨河+汪洋沟+老漳河+滏阳河+留垒河+沙洺河+老沙河+引江)
+    outflow: 10.24, //  出境水量(滏阳河+滏东排河+清凉江)
+    reservoirs: [,
+      { name: '朱庄', type: '大型', lastYearStorage: 2.088, yearEndStorage: 1.614, change: -0.474, inflow: null, outflow: null },
+      { name: '临城', type: '大型', lastYearStorage: 0.593, yearEndStorage: 0.465, change: -0.128, inflow: null, outflow: null },
+      { name: '野沟门', type: '中型', lastYearStorage: 0.243, yearEndStorage: 0.063, change: -0.180, inflow: null, outflow: null },
+      { name: '东石岭', type: '中型', lastYearStorage: 0.373, yearEndStorage: 0.297, change: -0.077, inflow: null, outflow: null },
+      { name: '乱木', type: '中型', lastYearStorage: 0.049, yearEndStorage: 0.028, change: -0.021, inflow: null, outflow: null },
+      { name: '马河', type: '中型', lastYearStorage: 0.096, yearEndStorage: 0.109, change: 0.013, inflow: null, outflow: null },
+    ],
+    counties: [,
+      { name: '沙河市', area: 890, precip: 525.6, precipTotal: 4.68, surface: 0.746, ground: 1.259, total: 1.436, agri: 0.591, industry: 0.109, domestic: 0.102, eco: 0.076, totalUse: 0.878, gwUse: 0.556 },
+      { name: '信都区', area: 1893, precip: 622.3, precipTotal: 11.78, surface: 2.319, ground: 2.453, total: 3.289, agri: 0.433, industry: 0.206, domestic: 0.373, eco: 0.451, totalUse: 1.463, gwUse: 0.340 },
+      { name: '内丘县', area: 775, precip: 612.3, precipTotal: 4.75, surface: 0.456, ground: 1.330, total: 1.544, agri: 0.223, industry: 0.050, domestic: 0.070, eco: 0.025, totalUse: 0.369, gwUse: 0.223 },
+      { name: '临城县', area: 797, precip: 590.4, precipTotal: 4.71, surface: 0.508, ground: 0.693, total: 0.925, agri: 0.218, industry: 0.015, domestic: 0.054, eco: 0.012, totalUse: 0.298, gwUse: 0.145 },
+      { name: '任泽区', area: 431, precip: 546.2, precipTotal: 2.35, surface: 0.000, ground: 0.581, total: 0.468, agri: 0.612, industry: 0.006, domestic: 0.079, eco: 0.060, totalUse: 0.758, gwUse: 0.347 },
+      { name: '南和区', area: 413, precip: 466.1, precipTotal: 1.92, surface: 0.000, ground: 0.413, total: 0.347, agri: 0.569, industry: 0.090, domestic: 0.114, eco: 0.078, totalUse: 0.852, gwUse: 0.570 },
+      { name: '襄都区', area: 91, precip: 544.8, precipTotal: 0.50, surface: 0.037, ground: 0.127, total: 0.147, agri: 0.093, industry: 0.058, domestic: 0.223, eco: 0.061, totalUse: 0.435, gwUse: 0.095 },
+      { name: '经开区', area: 159, precip: 464.4, precipTotal: 0.74, surface: 0.035, ground: 0.177, total: 0.205, agri: 0.188, industry: 0.002, domestic: 0.051, eco: 0.049, totalUse: 0.290, gwUse: 0.193 },
+      { name: '邢东新区', area: 68, precip: 550.0, precipTotal: 0.37, surface: 0.008, ground: 0.098, total: 0.094, agri: 0.049, industry: 0.009, domestic: 0.028, eco: 0.072, totalUse: 0.159, gwUse: 0.067 },
+      { name: '柏乡县', area: 268, precip: 529.6, precipTotal: 1.42, surface: 0.000, ground: 0.330, total: 0.326, agri: 0.399, industry: 0.014, domestic: 0.049, eco: 0.028, totalUse: 0.490, gwUse: 0.400 },
+      { name: '隆尧县', area: 749, precip: 550.0, precipTotal: 4.12, surface: 0.001, ground: 0.815, total: 0.789, agri: 1.033, industry: 0.059, domestic: 0.106, eco: 0.061, totalUse: 1.259, gwUse: 1.026 },
+      { name: '宁晋县', area: 1107, precip: 550.0, precipTotal: 6.09, surface: 0.001, ground: 0.780, total: 0.656, agri: 1.478, industry: 0.109, domestic: 0.175, eco: 0.137, totalUse: 1.899, gwUse: 0.611 },
+      { name: '巨鹿县', area: 631, precip: 546.8, precipTotal: 3.45, surface: 0.004, ground: 0.255, total: 0.119, agri: 0.744, industry: 0.017, domestic: 0.083, eco: 0.020, totalUse: 0.864, gwUse: 0.174 },
+      { name: '新河县', area: 366, precip: 541.3, precipTotal: 1.98, surface: 0.002, ground: 0.104, total: 0.002, agri: 0.451, industry: 0.005, domestic: 0.066, eco: 0.023, totalUse: 0.544, gwUse: 0.094 },
+      { name: '广宗县', area: 513, precip: 493.0, precipTotal: 2.53, surface: 0.000, ground: 0.236, total: 0.151, agri: 0.455, industry: 0.013, domestic: 0.057, eco: 0.045, totalUse: 0.570, gwUse: 0.109 },
+      { name: '平乡县', area: 406, precip: 450.3, precipTotal: 1.83, surface: 0.000, ground: 0.277, total: 0.200, agri: 0.399, industry: 0.013, domestic: 0.057, eco: 0.031, totalUse: 0.501, gwUse: 0.119 },
+      { name: '威县', area: 994, precip: 465.6, precipTotal: 4.63, surface: 0.000, ground: 0.679, total: 0.502, agri: 0.925, industry: 0.036, domestic: 0.110, eco: 0.059, totalUse: 1.130, gwUse: 0.618 },
+      { name: '清河县', area: 501, precip: 529.6, precipTotal: 2.65, surface: 0.001, ground: 0.629, total: 0.531, agri: 0.637, industry: 0.054, domestic: 0.174, eco: 0.076, totalUse: 0.941, gwUse: 0.348 },
+      { name: '临西县', area: 550, precip: 438.1, precipTotal: 2.41, surface: 0.000, ground: 0.442, total: 0.362, agri: 0.664, industry: 0.015, domestic: 0.057, eco: 0.062, totalUse: 0.798, gwUse: 0.400 },
+      { name: '南宫市', area: 854, precip: 512.1, precipTotal: 4.37, surface: 0.000, ground: 0.721, total: 0.667, agri: 0.796, industry: 0.013, domestic: 0.103, eco: 0.062, totalUse: 0.974, gwUse: 0.492 },
+    ],
+    notes: '浅层超采区连续42个月水位回升，百泉新增16处泉眼复涌;宁柏隆浅层漏斗面积-313.28km²;南宫深层漏斗回升0.57m',
+  },
+  {
+    city: '保定',
+    bulletinDate: '2026-01-05',
+    area: 19220,
+    precipitation: 677.2, //  mm
+    precipTotal: 130.16, //  亿m³
+    multiAvgPrecip: 577.8, //  mm (1956-2014系列)
+    prevYearPrecip: 171.92,
+    prevYearCompare: '-24.3%',
+    grade: '偏丰',
+    surfaceWater: 15.43, //  亿m³ (154300万m³)
+    groundWater: 28.86, //  亿m³ (288600万m³, 平原185200+山区134600)
+    repeatCalc: 12.03, //  亿m³ (河川基流107300+重复120300)
+    totalWater: 32.26, //  亿m³
+    coeff: 0.25,
+    modulus: 16.79,
+    perCapita: 357, //  m³
+    totalSupply: 22.45, //  亿m³ (224502万m³)
+    localSurfaceSupply: 1.42, //  本地地表水
+    interBasinTransferSupply: 7.28, //  跨流域调水(引江)
+    groundSupply: 11.11, //  亿m³ (浅层109440+深层1671)
+    otherSupply: 2.64, //  亿m³ (再生水26449万m³)
+    agriUse: 11.18,
+    industryUse: 0.84,
+    domesticUse: 3.45,
+    ecoUse: 6.98,
+    shallowDepth: 16.65, //  m (平原区平均)
+    shallowChange: 1.97, //  +m
+    reservoirStorage: 14.70, //  10座大中型水库年末蓄水亿m³
+    baiyangdianLevel: 7.24, //  m (85高程)
+    baiyangdianStorage: 4.355, //  亿m³
+    inflow: 20.67, //  亿m³
+    outflow: 27.98, //  亿m³
+    notes: '4座大型水库(王快/西大洋/安格庄/龙门)水质Ⅱ类;生态补水6.98亿m³占总用水31.1%;一亩泉地下水埋深回升到3.97m',
+    counties: [,
+      { name: '涞水县', area: 1644, precip: 688.9, precipTotal: 11.33, surface: 2.03, ground: 3.03, total: 3.03, agri: 0.38, industry: 0.01, domestic: 0.13, eco: 0.03, totalUse: 0.55, gwUse: 0.44 },
+      { name: '涿州市', area: 742, precip: 742.5, precipTotal: 5.51, surface: 0, ground: 1.51, total: 1.51, agri: 0.96, industry: 0.06, domestic: 0.41, eco: 0.25, totalUse: 1.67, gwUse: 1.09 },
+      { name: '易县', area: 2534, precip: 713.9, precipTotal: 18.09, surface: 2.96, ground: 4.99, total: 4.99, agri: 0.56, industry: 0.03, domestic: 0.20, eco: 0.05, totalUse: 0.84, gwUse: 0.62 },
+      { name: '高碑店市', area: 672, precip: 699.6, precipTotal: 4.70, surface: 0, ground: 1.21, total: 1.21, agri: 0.81, industry: 0.03, domestic: 0.30, eco: 0.10, totalUse: 1.24, gwUse: 0.87 },
+      { name: '定兴县', area: 707, precip: 685.1, precipTotal: 4.84, surface: 0, ground: 1.19, total: 1.19, agri: 0.91, industry: 0.01, domestic: 0.13, eco: 0.11, totalUse: 1.17, gwUse: 0.95 },
+      { name: '徐水区', area: 748, precip: 759.8, precipTotal: 5.68, surface: 0.12, ground: 1.53, total: 1.53, agri: 0.78, industry: 0.05, domestic: 0.14, eco: 0.22, totalUse: 1.19, gwUse: 0.83 },
+      { name: '满城区', area: 630, precip: 745.8, precipTotal: 4.70, surface: 0.42, ground: 1.34, total: 1.34, agri: 0.52, industry: 0.12, domestic: 0.12, eco: 0.03, totalUse: 0.78, gwUse: 0.56 },
+      { name: '顺平县', area: 708, precip: 610.6, precipTotal: 4.32, surface: 0.60, ground: 1.08, total: 1.08, agri: 0.51, industry: 0.01, domestic: 0.08, eco: 0.08, totalUse: 0.69, gwUse: 0.55 },
+      { name: '唐县', area: 1402, precip: 650.0, precipTotal: 9.11, surface: 1.51, ground: 2.16, total: 2.16, agri: 0.66, industry: 0.01, domestic: 0.14, eco: 0.04, totalUse: 0.85, gwUse: 0.37 },
+      { name: '望都县', area: 374, precip: 709.3, precipTotal: 2.65, surface: 0, ground: 0.68, total: 0.68, agri: 0.54, industry: 0.02, domestic: 0.06, eco: 0.05, totalUse: 0.67, gwUse: 0.52 },
+      { name: '清苑区', area: 863, precip: 682.3, precipTotal: 5.89, surface: 0, ground: 1.32, total: 1.32, agri: 0.99, industry: 0.06, domestic: 0.11, eco: 0.05, totalUse: 1.21, gwUse: 0.89 },
+      { name: '曲阳县', area: 1068, precip: 580.0, precipTotal: 6.19, surface: 1.07, ground: 1.76, total: 1.76, agri: 0.57, industry: 0.01, domestic: 0.11, eco: 0.02, totalUse: 0.71, gwUse: 0.40 },
+      { name: '安国市', area: 486, precip: 516.6, precipTotal: 2.51, surface: 0, ground: 0.52, total: 0.52, agri: 0.95, industry: 0.01, domestic: 0.11, eco: 0.09, totalUse: 1.16, gwUse: 1.00 },
+      { name: '博野县', area: 340, precip: 625.3, precipTotal: 2.13, surface: 0, ground: 0.55, total: 0.55, agri: 0.36, industry: 0.01, domestic: 0.06, eco: 0.04, totalUse: 0.47, gwUse: 0.34 },
+      { name: '蠡县', area: 644, precip: 681.1, precipTotal: 4.39, surface: 0, ground: 1.02, total: 1.02, agri: 0.62, industry: 0.03, domestic: 0.11, eco: 0.02, totalUse: 0.77, gwUse: 0.57 },
+      { name: '高阳县', area: 435, precip: 720.5, precipTotal: 3.13, surface: 0, ground: 0.68, total: 0.68, agri: 0.51, industry: 0.13, domestic: 0.11, eco: 0.07, totalUse: 0.83, gwUse: 0.46 },
+      { name: '莲池/竞秀区', area: 304, precip: 795.3, precipTotal: 2.42, surface: 0.01, ground: 0.67, total: 0.67, agri: 0.01, industry: 0.20, domestic: 0.82, eco: 2.49, totalUse: 3.52, gwUse: 0.14 },
+      { name: '涞源县', area: 2448, precip: 680.8, precipTotal: 16.67, surface: 3.57, ground: 3.74, total: 3.74, agri: 0.10, industry: 0.02, domestic: 0.15, eco: 0.05, totalUse: 0.31, gwUse: 0.19 },
+      { name: '阜平县', area: 2471, precip: 642.5, precipTotal: 15.88, surface: 3.15, ground: 3.27, total: 3.27, agri: 0.25, industry: 0.03, domestic: 0.05, eco: 0.03, totalUse: 0.33, gwUse: 0.15 },
+    ],
+    reservoirs: [,
+      { name: '王快', type: '大型', lastYearStorage: 5.864, yearEndStorage: 6.891, change: 1.027, inflow: 4.931, outflow: 3.882 },
+      { name: '西大洋', type: '大型', lastYearStorage: 5.534, yearEndStorage: 5.748, change: 0.214, inflow: 4.105, outflow: 3.800 },
+      { name: '安格庄', type: '大型', lastYearStorage: 1.220, yearEndStorage: 1.536, change: 0.316, inflow: 0.811, outflow: 2.307 },
+      { name: '龙门', type: '大型', lastYearStorage: 0.518, yearEndStorage: 0.335, change: -0.184, inflow: 1.048, outflow: 1.223 },
+    ],
+    countyGroundwater: [,
+      { name: '竞秀区', depth2024: 9.17, depth2023: 11.92, change: 2.75 },
+      { name: '莲池区', depth2024: 13.84, depth2023: 16.24, change: 2.40 },
+      { name: '满城区', depth2024: 13.51, depth2023: 16.61, change: 3.10 },
+      { name: '清苑区', depth2024: 23.01, depth2023: 25.46, change: 2.45 },
+      { name: '徐水区', depth2024: 12.66, depth2023: 17.00, change: 4.34 },
+      { name: '涞水县', depth2024: 10.14, depth2023: 12.31, change: 2.17 },
+      { name: '定兴县', depth2024: 9.75, depth2023: 11.48, change: 1.73 },
+      { name: '唐县', depth2024: 21.13, depth2023: 21.70, change: 0.57 },
+      { name: '高阳县', depth2024: 28.61, depth2023: 30.56, change: 1.95 },
+      { name: '望都县', depth2024: 23.57, depth2023: 25.56, change: 1.99 },
+      { name: '易县', depth2024: 11.83, depth2023: 13.15, change: 1.32 },
+      { name: '曲阳县', depth2024: 16.03, depth2023: 17.38, change: 1.35 },
+      { name: '蠡县', depth2024: 35.11, depth2023: 35.61, change: 0.50 },
+      { name: '顺平县', depth2024: 16.56, depth2023: 20.79, change: 4.23 },
+      { name: '博野县', depth2024: 30.50, depth2023: 31.71, change: 1.21 },
+      { name: '涿州市', depth2024: 10.41, depth2023: 12.62, change: 2.21 },
+      { name: '安国市', depth2024: 25.30, depth2023: 26.71, change: 1.41 },
+      { name: '高碑店市', depth2024: 15.89, depth2023: 19.04, change: 3.15 },
+    ],
+  },
+
+  {
+    city: '唐山',
+    area: 13385,
+    precipitation: 891.1,
+    precipTotal: 119.27,
+    multiAvgPrecip: 629.8, //  省级公报未给出各市多年平均
+    modulus: 27.74,
+    prevYearPrecip: 75.45,
+    prevYearCompare: '+58.1%',
+    grade: '丰水',
+    surfaceWater: 23.55,
+    groundWater: 19.74,
+    totalWater: 37.13,
+    coeff: 0.31,
+    totalSupply: 25.31,
+    localSurfaceSupply: 11.43,
+    interBasinTransferSupply: 0,
+    groundSupply: 10.41,
+    otherSupply: 3.47,
+    agriUse: 12.34,
+    industryUse: 5.05,
+    domesticUse: 3.76,
+    ecoUse: 4.16,
+    notes: '降水丰水年，浅层地下水供给10.41亿m³，海水入侵回补试验场建成',
+    counties: [
+      { name: '路南区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '路北区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '古冶区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '开平区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '丰南区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '丰润区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '曹妃甸区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '滦南县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '乐亭县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '迁西县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '玉田县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '遵化市', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '迁安市', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null }
+    ],
+  },
+  {
+    city: '秦皇岛',
+    area: 7750,
+    precipitation: 1054.7,
+    precipTotal: 81.74,
+    multiAvgPrecip: 655.5,
+    modulus: 41.86,
+    prevYearPrecip: 46.09,
+    prevYearCompare: '+77.3%',
+    grade: '丰水',
+    surfaceWater: 26.08,
+    groundWater: 15.15,
+    totalWater: 32.44,
+    coeff: 0.40,
+    totalSupply: 6.96,
+    localSurfaceSupply: 3.00,
+    interBasinTransferSupply: 0,
+    groundSupply: 3.42,
+    otherSupply: 0.54,
+    agriUse: 3.88,
+    industryUse: 0.69,
+    domesticUse: 1.51,
+    ecoUse: 0.88,
+    notes: '全省降水量最大(1054.7mm)，入海水量20.85亿m³全省第一',
+    counties: [
+      { name: '海港区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '山海关区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '北戴河区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '抚宁区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '青龙满族自治县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '昌黎县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '卢龙县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+    ],
+  },
+  {
+    city: '邯郸',
+    area: 12047,
+    precipitation: 462.6,
+    precipTotal: 55.73,
+    multiAvgPrecip: 541.9,
+    modulus: 10.08,
+    prevYearPrecip: 98.34,
+    prevYearCompare: '-43.3%',
+    grade: '偏枯',
+    surfaceWater: 5.78,
+    groundWater: 12.51,
+    totalWater: 12.14,
+    coeff: 0.22,
+    totalSupply: 19.53,
+    localSurfaceSupply: 7.10,
+    interBasinTransferSupply: 3.26,
+    groundSupply: 7.78,
+    otherSupply: 1.39,
+    agriUse: 12.64,
+    industryUse: 2.14,
+    domesticUse: 2.75,
+    ecoUse: 2.00,
+    notes: '全省降水量最小(462.6mm)，偏枯水年，入境水量57.54亿m³全省最大',
+    counties: [
+      { name: '丛台区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '复兴区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '邯山区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '峰峰矿区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '永年区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '肥乡区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '鸡泽县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '邱县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '曲周县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '馆陶县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '涉县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '广平县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '成安县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '魏县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '磁县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '临漳县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '大名县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null }
+    ],
+  },
+  {
+    city: '张家口',
+    area: 36965,
+    precipitation: 586.0,
+    precipTotal: 216.61,
+    multiAvgPrecip: 416.6,
+    modulus: 6.03,
+    prevYearPrecip: 146.53,
+    prevYearCompare: '+47.8%',
+    grade: '丰水',
+    surfaceWater: 12.61,
+    groundWater: 15.13,
+    totalWater: 22.28,
+    coeff: 0.10,
+    totalSupply: 6.95,
+    localSurfaceSupply: 1.56,
+    interBasinTransferSupply: 0,
+    groundSupply: 4.79,
+    otherSupply: 0.60,
+    agriUse: 4.58,
+    industryUse: 0.57,
+    domesticUse: 1.42,
+    ecoUse: 0.36,
+    notes: '面积全省最大(36965km²)，产水系数0.10全省最低',
+    counties: [
+      { name: '桥东区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '桥西区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '宣化区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '下花园区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '万全区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '崇礼区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '张北县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '康保县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '沽源县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '尚义县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '蔚县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '阳原县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '怀安县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '怀来县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '涿鹿县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '赤城县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null }
+    ],
+  },
+  {
+    city: '廊坊',
+    area: 6429,
+    precipitation: 757.7,
+    precipTotal: 48.71,
+    multiAvgPrecip: 541.0,
+    modulus: 15.76,
+    prevYearPrecip: 40.51,
+    prevYearCompare: '+20.2%',
+    grade: '丰水',
+    surfaceWater: 1.15,
+    groundWater: 10.09,
+    totalWater: 10.13,
+    coeff: 0.21,
+    totalSupply: 8.71,
+    localSurfaceSupply: 1.71,
+    interBasinTransferSupply: 1.58,
+    groundSupply: 3.74,
+    otherSupply: 1.68,
+    agriUse: 4.36,
+    industryUse: 0.59,
+    domesticUse: 2.49,
+    ecoUse: 1.28,
+    notes: '出境水量19.64亿m³全省最大(流入京津)',
+    counties: [
+      { name: '安次区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '广阳区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '固安县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '永清县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '香河县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '大城县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '文安县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '大厂回族自治县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '霸州市', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '三河市', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+    ],
+  },
+  {
+    city: '衡水',
+    area: 8815,
+    precipitation: 569.2,
+    precipTotal: 50.17,
+    multiAvgPrecip: 507.0,
+    modulus: 7.60,
+    prevYearPrecip: 56.56,
+    prevYearCompare: '-11.3%',
+    grade: '偏丰',
+    surfaceWater: 0.17,
+    groundWater: 8.41,
+    totalWater: 6.70,
+    coeff: 0.13,
+    totalSupply: 14.43,
+    localSurfaceSupply: 6.01,
+    interBasinTransferSupply: 3.67,
+    groundSupply: 3.84,
+    otherSupply: 0.91,
+    agriUse: 11.12,
+    industryUse: 0.48,
+    domesticUse: 1.30,
+    ecoUse: 1.53,
+    notes: '深层严重超采区2024年8076.6km²全面清零(全国最大漏斗区治理取得决定性胜利)',
+    counties: [
+      { name: '桃城区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '冀州区', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '枣强县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '武邑县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '武强县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '饶阳县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '安平县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '故城县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '景县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '阜城县', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null },
+      { name: '深州市', precip: null, surface: null, ground: null, total: null, agri: null, industry: null, domestic: null, eco: null, totalUse: null, gwUse: null }
+    ],
+  },
+  {
+    city: '雄安新区',
+    area: 1770,
+    precipitation: 722.6,
+    precipTotal: 12.79,
+    multiAvgPrecip: 507.3,
+    prevYearPrecip: 12.12,
+    prevYearCompare: '+5.5%',
+    grade: '丰水',
+    surfaceWater: 0.04,
+    groundWater: 3.06,
+    totalWater: 3.06,
+    coeff: 0.24,
+    totalSupply: 9.79,
+    localSurfaceSupply: 7.42,
+    interBasinTransferSupply: 0.88,
+    groundSupply: 1.27,
+    otherSupply: 0.21,
+    agriUse: 1.17,
+    industryUse: 0.03,
+    domesticUse: 0.55,
+    ecoUse: 8.05,
+    modulus: 17.29,
+    notes: '生态补水8.05亿m³占总用水82.2%，白洋淀蓄水4.36亿m³',
+  },
+  {
+    city: '定州',
+    area: 1274,
+    precipitation: 552.9,
+    precipTotal: 7.04,
+    multiAvgPrecip: 492.2,
+    prevYearPrecip: 9.90,
+    prevYearCompare: '-28.9%',
+    grade: '偏丰',
+    surfaceWater: 0,
+    groundWater: 1.81,
+    totalWater: 1.72,
+    coeff: 0.24,
+    totalSupply: 2.62,
+    localSurfaceSupply: 0.13,
+    interBasinTransferSupply: 0.43,
+    groundSupply: 1.84,
+    otherSupply: 0.22,
+    agriUse: 1.85,
+    industryUse: 0.25,
+    domesticUse: 0.30,
+    ecoUse: 0.22,
+    modulus: 13.5,
+    notes: '省直辖县级市，地下水供给1.84亿m³占供水70.2%',
+  },
+  {
+    city: '辛集',
+    area: 951,
+    precipitation: 485.5,
+    precipTotal: 4.62,
+    multiAvgPrecip: 467.9,
+    prevYearPrecip: 6.43,
+    prevYearCompare: '-28.1%',
+    grade: '平水',
+    surfaceWater: 0,
+    groundWater: 0.96,
+    totalWater: 0.73,
+    coeff: 0.16,
+    totalSupply: 2.15,
+    localSurfaceSupply: 0.58,
+    interBasinTransferSupply: 0.39,
+    groundSupply: 0.97,
+    otherSupply: 0.22,
+    agriUse: 1.53,
+    industryUse: 0.19,
+    domesticUse: 0.21,
+    ecoUse: 0.22,
+    modulus: 7.68,
+    notes: '省直辖县级市，面积最小(951km²)，地下水供给0.97亿m³',
+  },
+
+];
+
+// 秦皇岛市2022年水资源公报（swj.qhd.gov.cn，仅秦皇岛有2022年完整数据）
+// 数据来源：秦皇岛市2022年水资源公报PDF（9页，水资源实况/平原区地下水动态/水资源开发利用）
+export const cityBulletin2022 = [
+  {
+    city: '秦皇岛',
+    bulletinDate: '2023（2022年公报）',
+    year: 2022,
+    area: 7750,
+    precipitation: 748.3, //  mm
+    precipTotal: 57.99, //  亿m³（748.3mm × 7750km²）
+    multiAvgPrecip: null,
+    prevYearPrecip: null,
+    prevYearCompare: null,
+    grade: '偏丰',
+    surfaceWater: 13.43, //  亿m³（134316万m³）
+    groundWater: 10.35, //  亿m³（103480万m³）
+    repeatCalc: null, //  公报未给出重复计算量
+    totalWater: 18.73, //  亿m³（187323万m³）
+    coeff: 0.32,
+    totalSupply: 7.05, //  亿m³（70464万m³）
+    localSurfaceSupply: 2.54, //  亿m³（25387万m³）
+    interBasinTransferSupply: 1.08, //  亿m³（10818万m³，桃林口水库调水）
+    groundSupply: 3.42, //  亿m³（34159万m³）
+    otherSupply: null,
+    agriUse: 4.13, //  亿m³（41311万m³）
+    industryUse: 0.68, //  亿m³（6778万m³）
+    domesticUse: 1.45, //  亿m³（14543万m³）
+    ecoUse: 0.78, //  亿m³（7832万m³）
+    shallowDepth: 5.04, //  m（平原区浅层平均埋深）
+    shallowChange: -0.56, //  下降0.56m
+    deepDepth: 42.38, //  m（平原区深层平均埋深）
+    deepChange: -1.76, //  下降1.76m
+    notes: '2022年公报数据；平原区浅层地下水埋深5.04m（下降0.56m），深层42.38m（下降1.76m）；全市地下水供水34159万m³占总供水48.5%',
+    counties: [,
+      { name: '青龙县', precip: null, agri: 0.65, industry: 0.02, domestic: 0.13, eco: 0.07, totalUse: 0.87, gwUse: 0.70 },
+      { name: '卢龙县', precip: null, agri: 0.86, industry: 0.04, domestic: 0.11, eco: 0.06, totalUse: 1.07, gwUse: 0.89 },
+      { name: '昌黎县', precip: null, agri: 1.22, industry: 0.25, domestic: 0.16, eco: 0.06, totalUse: 1.69, gwUse: 1.06 },
+      { name: '抚宁区', precip: null, agri: 0.52, industry: 0.30, domestic: 0.09, eco: 0.04, totalUse: 0.95, gwUse: 0.56 },
+      { name: '海港区', precip: null, agri: 0.11, industry: 0.04, domestic: 0.52, eco: 0.10, totalUse: 0.77, gwUse: 0.10 },
+      { name: '山海关区', precip: null, agri: 0.13, industry: 0.02, domestic: 0.15, eco: 0.02, totalUse: 0.32, gwUse: 0.16 },
+      { name: '北戴河区', precip: null, agri: 0.04, industry: 0.00, domestic: 0.06, eco: 0.04, totalUse: 0.14, gwUse: 0.01 },
+      { name: '经开区', precip: null, agri: 0.03, industry: 0.01, domestic: 0.14, eco: 0.03, totalUse: 0.21, gwUse: 0.03 },
+      { name: '北戴河新区', precip: null, agri: 0.57, industry: 0.00, domestic: 0.07, eco: 0.36, totalUse: 1.00, gwUse: 0.01 },
+    ],
+  },
+];
+
+// 各市地下水动态对比
+
+
+// 各市地下水动态对比 (2024年末)
+// 省级公报: 全省浅层平均埋深12.72m(回升0.70m), 平原区14.32m(回升0.63m), 深层43.78m(回升1.91m)
+export const cityGroundwaterDynamic2024 = [
+  { city: '石家庄', shallowDepth: 27.25, shallowChange: 0.95, deepDepth: null, deepChange: null, overExploit: '漏斗2016年消散，平原水位均回升' },
+  { city: '唐山', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '深层地下水回补防治海(咸)水入侵试验场建成;丰南浅层漏斗回升3.34m' },
+  { city: '秦皇岛', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '上升区覆盖全市北部，稳定区分布南部' },
+  { city: '邯郸', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '下降区主要分布中部;滏西平原降水量259.4mm为全省最小' },
+  { city: '邢台', shallowDepth: 19.34, shallowChange: 2.71, deepDepth: 51.49, deepChange: 1.62, overExploit: '浅层超采23.9m/深层超采54.7m;百泉新增16处泉眼复涌' },
+  { city: '保定', shallowDepth: 16.65, shallowChange: 1.97, deepDepth: null, deepChange: null, overExploit: '上升区覆盖大部;一亩泉地下水埋深回升到3.97m' },
+  { city: '张家口', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '坝上退灌区，地下水开采4.79亿m³' },
+  { city: '承德', shallowDepth: 7.31, shallowChange: 0.28, deepDepth: null, deepChange: null, overExploit: '不涉及超采区，全部为浅层地下水自动监测站' },
+  { city: '沧州', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '深层地下水开采9386万m³;黄骅沧县深层漏斗面积197.56→0km²消散' },
+  { city: '廊坊', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '霸州文安深层漏斗146.38→0km²消散，回升5.45m;出境水量19.64亿m³全省最大' },
+  { city: '衡水', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '深层严重超采区8076.6km²全面清零，下半年水位回升6.30m(全国第二);景县故城深层漏斗消散' },
+  { city: '雄安新区', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '雄县固安浅层漏斗中心水位回升2.82m;上升区覆盖大部' },
+  { city: '定州', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '地下水供给1.84亿m³占供水70.2%' },
+  { city: '辛集', shallowDepth: null, shallowChange: null, deepDepth: null, deepChange: null, overExploit: '地下水供给0.97亿m³占供水45.1%' },
+  { city: '全省', shallowDepth: 12.72, shallowChange: 0.70, deepDepth: 43.78, deepChange: 1.91, overExploit: '严重超采区减少99%,深层承压水降落漏斗全部消散;平原蓄水变量+33.33亿m³' },
+];
+
+
+// 2024年河北省水土保持公报
+export const soilWaterConservation2024 = {
+  year: 2024,
+  totalLossArea: 37871.11, //  km²
+  lossRatio: 20.23, //  占国土面积%
+  conservationRate: 79.77, //  %
+  conservationRateChange: 0.48, //  较2023年+0.48%
+  areaChange: -889.25, //  km²，较2023年减少
+  waterErosion: 33623.84, //  km², 占88.78%
+  windErosion: 4247.27, //  km², 占11.22%
+  treatmentArea: 2195.97, //  km² (22.0万公顷)
+  treatmentInvestment: 193694.78, //  万元
+  centralInvestment: 148458.39, //  万元
+  provinceInvestment: 22603.46, //  万元
+  averagePrecipitation: 659.3, //  mm，比常年偏多26%
+  ecologicalCleanWatershed: 29, //  条
+  completedWatershed: 57, //  条
+  planApproval: 3631, //  个水保方案审批
+  planCommitment: 2283, //  承诺制管理项目
+  planRejected: 17, //  不予许可
+  acceptanceRecord: 1567, //  验收报备
+  violationCases: 18, //  查处违法案件
+  cities: [,
+    { name: '石家庄', mild: 2764.49, moderate: 92.69, strong: 44.84, extremeStrong: 2.31, severe: 0.18, total: 2904.51, change: -119.09, rate: 78.61, rateChange: 0.88 },
+    { name: '承德', mild: 11430.63, moderate: 251.66, strong: 102.07, extremeStrong: 23.29, severe: 2.87, total: 11810.52, change: -189.58, rate: 70.26, rateChange: 0.47 },
+    { name: '张家口', mild: 11948.25, moderate: 175.65, strong: 120.90, extremeStrong: 4.02, severe: 0.12, total: 12248.94, change: -191.06, rate: 66.25, rateChange: 0.53 },
+    { name: '秦皇岛', mild: 1839.73, moderate: 35.27, strong: 27.07, extremeStrong: 0.81, severe: 0.22, total: 1903.10, change: -57.86, rate: 75.64, rateChange: 0.74 },
+    { name: '唐山', mild: 1639.64, moderate: 91.22, strong: 24.14, extremeStrong: 1.16, severe: 0.18, total: 1756.34, change: -80.69, rate: 87.30, rateChange: 0.58 },
+    { name: '廊坊', mild: 26.76, moderate: 0, strong: 0, extremeStrong: 0, severe: 0, total: 26.76, change: -3.17, rate: 99.58, rateChange: 0.05 },
+    { name: '保定', mild: 3738.69, moderate: 152.24, strong: 52.38, extremeStrong: 3.69, severe: 2.46, total: 3949.46, change: -130.89, rate: 79.47, rateChange: 0.62 },
+    { name: '沧州', mild: 37.14, moderate: 0, strong: 0, extremeStrong: 0, severe: 0, total: 37.14, change: -6.92, rate: 99.72, rateChange: 0.05 },
+    { name: '衡水', mild: 10.64, moderate: 0, strong: 0, extremeStrong: 0, severe: 0, total: 10.64, change: -0.31, rate: 99.88, rateChange: 0.01 },
+    { name: '邢台', mild: 1321.48, moderate: 58.27, strong: 12.52, extremeStrong: 1.12, severe: 0.65, total: 1394.04, change: -48.83, rate: 88.52, rateChange: 0.40 },
+    { name: '邯郸', mild: 1767.85, moderate: 48.18, strong: 10.24, extremeStrong: 0.90, severe: 0.03, total: 1827.20, change: -60.45, rate: 84.86, rateChange: 0.50 },
+    { name: '雄安新区', mild: 0.18, moderate: 0, strong: 0, extremeStrong: 0, severe: 0, total: 0.18, change: -0.28, rate: 99.99, rateChange: 0.02 },
+    { name: '定州', mild: 1.12, moderate: 0, strong: 0, extremeStrong: 0, severe: 0, total: 1.12, change: -0.09, rate: 99.91, rateChange: 0.00 },
+    { name: '辛集', mild: 1.16, moderate: 0, strong: 0, extremeStrong: 0, severe: 0, total: 1.16, change: -0.03, rate: 99.88, rateChange: 0.01 },
+  ],
+  reservoirInflow: [,
+    { system: '滦河', name: '庙宫水库', year2024: 1.827, year2023: 0.3239, multiAvg: 0.9000 },
+    { system: '滦河', name: '双峰寺水库', year2024: 1.532, year2023: 0.2250, multiAvg: 0 },
+    { system: '滦河', name: '桃林口水库', year2024: 12.60, year2023: 1.979, multiAvg: 3.660 },
+    { system: '冀东沿海', name: '洋河水库', year2024: 3.511, year2023: 0.6937, multiAvg: 1.235 },
+    { system: '冀东沿海', name: '陡河水库', year2024: 1.692, year2023: 1.390, multiAvg: 1.097 },
+    { system: '蓟运河', name: '邱庄水库', year2024: 3.669, year2023: 3.262, multiAvg: 2.071 },
+    { system: '潮白河', name: '云州水库', year2024: 0.6713, year2023: 0.1390, multiAvg: 0.3560 },
+    { system: '永定河', name: '友谊水库', year2024: 0.3580, year2023: 0.1168, multiAvg: 0.3200 },
+    { system: '大清河', name: '安各庄水库', year2024: 2.524, year2023: 3.987, multiAvg: 1.360 },
+    { system: '大清河', name: '龙门水库', year2024: 1.146, year2023: 2.500, multiAvg: 0.2380 },
+    { system: '大清河', name: '西大洋水库', year2024: 4.655, year2023: 8.651, multiAvg: 2.276 },
+    { system: '大清河', name: '王快水库', year2024: 4.877, year2023: 8.985, multiAvg: 3.598 },
+    { system: '大清河', name: '口头水库', year2024: 0.0879, year2023: 0.2917, multiAvg: 0.1170 },
+    { system: '大清河', name: '横山岭水库', year2024: 0.4471, year2023: 1.417, multiAvg: 0.5510 },
+    { system: '子牙河', name: '岗南水库', year2024: 6.043, year2023: 12.50, multiAvg: 4.859 },
+    { system: '子牙河', name: '黄壁庄水库', year2024: 10.09, year2023: 24.07, multiAvg: 6.731 },
+    { system: '子牙河', name: '临城水库', year2024: 0.3392, year2023: 1.542, multiAvg: 0.2510 },
+    { system: '子牙河', name: '朱庄水库', year2024: 0.7277, year2023: 6.328, multiAvg: 1.017 },
+    { system: '子牙河', name: '东武仕水库', year2024: 3.482, year2023: 4.120, multiAvg: 2.256 },
+  ],
+  treatmentByCity: [,
+    { name: '石家庄', total: 38760, terrace: 65, forest: 15073, economic: 310, grass: 3915, closure: 19340, other: 57 },
+    { name: '承德', total: 59498, terrace: 167, forest: 20048, economic: 1612, grass: 1512, closure: 27686, other: 8473 },
+    { name: '张家口', total: 41000, terrace: 0, forest: 12945, economic: 49, grass: 8131, closure: 19875, other: 0 },
+    { name: '秦皇岛', total: 11000, terrace: 30, forest: 2744, economic: 51, grass: 0, closure: 6764, other: 1411 },
+    { name: '唐山', total: 9082, terrace: 8, forest: 1619, economic: 13, grass: 0, closure: 6951, other: 491 },
+    { name: '保定', total: 28900, terrace: 4033, forest: 5157, economic: 1500, grass: 0, closure: 18210, other: 0 },
+    { name: '邢台', total: 16347, terrace: 0, forest: 1588, economic: 3840, grass: 0, closure: 8880, other: 2039 },
+    { name: '邯郸', total: 15010, terrace: 192, forest: 6248, economic: 366, grass: 62, closure: 7911, other: 231 },
+  ],
+  source: '河北省水利厅《2024年度河北省水土保持公报》(2025年6月发布)',
+};
+
+// 2024年地下水超采治理成效
+export const overExploitControl2024 = {
+  year: 2024,
+  // 总体数据
+  projects: 121, //  年度治理项目数
+  techAssists: 2, //  技术帮扶次数
+  warnings: 42, //  预警提醒(次/市)
+  rewardPenalty: 4160, // 奖惩资金(万元)
+  // 外调水
+  southWaterDiversionCentral: 28.3, //  引江中线(亿m³)
+  yellowRiverDiversion: 7.70, //  引黄调水(亿m³)
+  southWaterDiversionEast: 1.67, //  引江东线(亿m³), 超计划1.35亿
+  totalDivertedWater: 37.67, // 外调水合计(亿m³)
+  // 生态补水
+  ecologicalRechargeRivers: 90, //  补水河湖(条/个)
+  ecologicalRechargeVolume: 52, //  补水总量(亿m³)
+  riverWithWaterLength: 4655, //  有水河长(km)
+  waterSurfaceArea: 306, //  水面面积(km²)
+  fullyConnectedRivers: 50, //  全线贯通河流(条)
+  ecoFlowCompliance: 100, // 生态流量达标率(%)
+  // 衡水市超采清零(里程碑事件)
+  hengshui: {
+    clearedArea: 8076.6, //  km²，深层严重超采区清零
+    waterLevelRecovery: 6.30, //  m, 2024下半年回升, 全国第二
+    efficientIrrigationArea: 254.4, //  万亩
+    gdpWaterDecline: 18.5, //  %, 万元GDP用水量较2020年
+    industrialWaterDecline: 45.9, //  %, 万元工业增加值用水量较2020年
+    divertedWater2024: 8.24, //  亿m³
+    ecoRecharge2024: 8.51, //  亿m³
+    surfaceIrrigationArea: 514.5, //  万亩
+    storageCapacity: 4.92, //  亿m³
+    waterTradeVolume: 2142, //  万m³
+    riversConnected: ['京杭大运河', '滹沱河', '滏阳河'], // 连续4年全线贯通
+  },
+  // 泉域治理
+  springRecovery: [,
+    { name: '邢台百泉', detail: '新增16处泉眼复涌, 日均2万m³, 水面790亩, 蓄水1050万m³' },
+    { name: '保定一亩泉', detail: '地下水埋深回升到3.97m' },
+    { name: '黑龙洞泉', detail: '监测系统完成409个调查点, 70个统测点, 成井14眼' },
+  ],
+  // 地下水质量(来源: 生态环境状况公报),
+  groundwaterQuality: {
+    classVRatio: 20, //  国考区域Ⅴ类水比例(%), 优于国家要求≤27.1%
+    drinkingSourceRectified: 13, // 完成整改的地下水型饮用水水源(个)
+  },
+  source: '河北省水利厅2024年生态环境保护工作情况(2025.1) + 生态环境状况公报(2025.5)',
+};
+
+
+// ============================================================================
+// 基础水文地质数据扩展
+// 数据来源：《河北省水文地质工程地质》（682页，1980年代前数据）
+// 整理日期：2026-05-21
+// 说明：基础水文地质参数为经典参考值，地下水位、漏斗等历史时序性数据未纳入
+// ============================================================================
+
+// 河北省泉水数据库（126条，数据来源：《河北省水文地质工程地质》1980s）
+export const springDatabase = [
+  { id: 1, region: '邯邢', location: "峰峰黑龙洞泉", flow: "21600.0~32400.0", geology: "中奥陶系石灰岩" },
+  { id: 2, region: '邯邢', location: "涉县青塔龙洞村", flow: "648.0", geology: "中寒武系灰岩" },
+  { id: 3, region: '邯邢', location: "涉县东风湖泉群", flow: "5832.0~7488.0", geology: "" },
+  { id: 4, region: '邯邢', location: "武安县红首村", flow: "64.8", geology: "下奥陶系灰岩" },
+  { id: 5, region: '邯邢', location: "磁县北食口南", flow: "103.0", geology: "中寒武系灰岩" },
+  { id: 6, region: '邯邢', location: "涉县西达公社牛家庄", flow: "29.8", geology: "中寒武系灰岩" },
+  { id: 7, region: '邯邢', location: "涉县赵郝", flow: "124.0", geology: "中寒武系灰岩" },
+  { id: 8, region: '邯邢', location: "邢台县王山铺", flow: "106.0", geology: "下寒武系灰岩" },
+  { id: 9, region: '邯邢', location: "邢台县龙也沟", flow: "90.7", geology: "震旦亚界大红峪砂岩" },
+  { id: 10, region: '邯邢', location: "台县小鼠沟", flow: "64.8", geology: "震旦亚界大红IU谷砂岩" },
+  { id: 11, region: '邯邢', location: "邢台县朱温坪", flow: "66.9", geology: "震旦亚界大红峪砾岩" },
+  { id: 12, region: '邯邢', location: "内邱县井行室", flow: "12.0", geology: "前震旦亚界片麻岩" },
+  { id: 13, region: '邯邢', location: "台县浆水镇", flow: "58.8", geology: "前震旦亚界片麻岩" },
+  { id: 14, region: '邯邢', location: "武安县丰峪村", flow: "129.6", geology: "前震旦亚界片麻岩" },
+  { id: 15, region: '石家庄', location: "灵寿县宅南公社瓦房台猪石沟", flow: "1.08", geology: "太古界片麻岩" },
+  { id: 16, region: '石家庄', location: "灵寿县南营公社木佛塔村南", flow: "6.48", geology: "太古界片麻岩" },
+  { id: 17, region: '石家庄', location: "灵寿县瓦房台村西", flow: "1.62", geology: "片麻岩与岩脉接触" },
+  { id: 18, region: '石家庄', location: "平山县孟家庄公社北平村", flow: "46.8", geology: "太古界大理岩接触泉" },
+  { id: 19, region: '石家庄', location: "井陉县胡摊家公社洞沟", flow: "1.0~44.0", geology: ". 44 下元古界变质石英岩接触泉" },
+  { id: 20, region: '石家庄', location: "获鹿县梁庄公社水峪南", flow: "57.6", geology: "元古界长石在！，、岩，断层上盘" },
+  { id: 21, region: '石家庄', location: "行唐县泉子头村中", flow: "12.0", geology: "太古界白云岩" },
+  { id: 22, region: '石家庄', location: "平山县甘秋公社观南庄南坪", flow: "139.6", geology: "中寒武系鲕状灰岩" },
+  { id: 23, region: '石家庄', location: "平山县塔崖公社汤汤水村", flow: "1.0~720.0", geology: "中寒武系鲕状灰岩" },
+  { id: 24, region: '石家庄', location: "平山县塔崖公社井子峪村", flow: "50.0", geology: "中寒武系鲕状灰岩" },
+  { id: 25, region: '石家庄', location: "灵寿县团泊口公社河东村", flow: "38.52", geology: "第四系卵石层" },
+  { id: 26, region: '石家庄', location: "井陉县戚州公社段庄西北", flow: "2160.0", geology: "" },
+  { id: 27, region: '石家庄', location: "井陉县戚州公社河西村", flow: "1944.0", geology: "" },
+  { id: 28, region: '石家庄', location: "井陉县孙庄公社冶里村", flow: "72.0", geology: "鲕状结晶灰岩上升泉" },
+  { id: 29, region: '石家庄', location: "行唐县九口子公社东寺上村", flow: "2.88", geology: "太古界片麻岩" },
+  { id: 31, region: '唐山', location: "迁安县大五里公社王家湾", flow: "49.2", geology: "" },
+  { id: 32, region: '唐山', location: "抚宁县猩猩寺路公社红亮寺", flow: "54.0", geology: "燕山期花岗岩" },
+  { id: 33, region: '唐山', location: "抚宁县姚周寨公社崖子山", flow: "1.85", geology: "| 花岗岩" },
+  { id: 34, region: '唐山', location: "抚宁县猩猩", flow: "11.0~108.0", geology: "燕山期花岗岩" },
+  { id: 35, region: '唐山', location: "遵化建明公社白马峪 :", flow: "11.0", geology: ". s I 震旦亚界大红源白石英砂岩" },
+  { id: 36, region: '唐山', location: "遵化县刘备寨公社干河草东南", flow: "93.0", geology: "震旦亚界砂岩上升泉" },
+  { id: 37, region: '唐山', location: "迁安县徐流营九龙泉", flow: "2.0~4.0", geology: "震旦亚界白云岩" },
+  { id: 38, region: '唐山', location: "迁西县忍宇口公社北山南头", flow: "2.0", geology: "震旦亚界高于庄组白云岩" },
+  { id: 39, region: '唐山', location: "迁回县新集公社泉庄村 |", flow: "78.2", geology: "｜震旦亚界白云岩接触泉" },
+  { id: 40, region: '唐山', location: "迁安县铜洞子西北", flow: "2.0~20.0", geology: "震旦亚界白云岩" },
+  { id: 41, region: '唐山', location: "芦龙县大杨各庄公社荆子峪l", flow: "32.2", geology: "I 震旦亚界白云岩" },
+  { id: 42, region: '唐山', location: "山 抚宁县平山营公社王庄 |", flow: "27.0", geology: "I 震旦亚界灰岩" },
+  { id: 43, region: '唐山', location: "迁安县大五里公社水峪西霸王峰", flow: "68.0", geology: "震旦亚界白云岩上升泉" },
+  { id: 44, region: '唐山', location: "迁安县北营公社水泉村", flow: "128.0", geology: "L 震旦亚界白云雹主主主" },
+  { id: 45, region: '唐山', location: "玉田县螺山公社前螺山", flow: "21.6~17.0", geology: "震旦亚界白云岩水温17℃" },
+  { id: 46, region: '唐山', location: ", 玉田县郭家屯西大泉庄", flow: "78.2", geology: "" },
+  { id: 47, region: '唐山', location: "玉田县亮甲山店公社小泉庄", flow: "111.0~9.0", geology: ". 9" },
+  { id: 48, region: '唐山', location: "丰润县王营营公社上水路村", flow: "30.0~13.0", geology: "震旦亚界白云岩水温13℃" },
+  { id: 49, region: '唐山', location: "滦县杨柳庄公社东赵庄", flow: "106.5", geology: "震旦亚界白云岩逆断层阻水" },
+  { id: 50, region: '唐山', location: "迁安县崇家岭尚庄西北", flow: "29.9~13.0", geology: "I 震旦亚界白云岩水温13℃" },
+  { id: 51, region: '唐山', location: "迁西县南观公社", flow: "32.0~90.0", geology: "岭村 | 90.0 | 震旦亚界白云岩" },
+  { id: 52, region: '唐山', location: "迁安县新房子公社水泉村北", flow: "1738.0", geology: "震旦亚界白云岩" },
+  { id: 53, region: '唐山', location: "芦龙县刘家营公社刘家口 |", flow: "126.0~13.5", geology: "i震旦亚界白云岩水温13.5℃" },
+  { id: 54, region: '唐山', location: "卢龙县刘家营公社佛峪东南", flow: "489.86", geology: "" },
+  { id: 55, region: '唐山', location: "玉田县八里铺公社石家庄北东", flow: "864.0", geology: "" },
+  { id: 56, region: '唐山', location: "深县高城子公社福山寺东", flow: "1759.0", geology: "第四系土层，上升泉" },
+  { id: 57, region: '承德', location: "承德县 围场县龙头沟脑", flow: "6.66", geology: "" },
+  { id: 58, region: '承德', location: "兴隆县牛圈子四马道大梁南王台", flow: "56.2", geology: "" },
+  { id: 59, region: '承德', location: "丰宁县选将营木沟脑", flow: "12.6", geology: "花岗岩" },
+  { id: 60, region: '承德', location: "围场县锥子山六道岔七道", flow: "9.18~1.0", geology: "在；主i岩" },
+  { id: 61, region: '承德', location: "丰宁县南关企水沟", flow: "2.52", geology: "花岗岩" },
+  { id: 62, region: '承德', location: "台头营黑沟西北", flow: "10.8~10.0", geology: "花岗岩水温10℃" },
+  { id: 63, region: '承德', location: "丰宁县高地南西", flow: "15.93", geology: "安山凝灰岩，水温3℃" },
+  { id: 64, region: '承德', location: "围场县套作窝铺", flow: "18.36~2.0", geology: "安山斑岩水温2℃" },
+  { id: 65, region: '承德', location: "围场县豆奎乡石梁沟", flow: "15.93~6.5", geology: "凝灰岩，水温6.5℃" },
+  { id: 66, region: '承德', location: "隆化县荒地", flow: "11.0~12.96", geology: "，村 12.96 凝灰岩水温8.5℃" },
+  { id: 67, region: '承德', location: "围场县城子台公社二阜新地", flow: "35.6~7.5", geology: "玄武岩水温7.5℃" },
+  { id: 68, region: '承德', location: "围场县二人盘", flow: "37.0", geology: "第＝系玄武岩" },
+  { id: 69, region: '承德', location: "隆化县丰富沟", flow: "11.0~5.0", geology: ". 5 第三系玄武岩水温 8 ℃" },
+  { id: 70, region: '承德', location: "大常岗，西山岔", flow: "10.8~17.0", geology: "保罗系安山岩水祖17℃" },
+  { id: 71, region: '承德', location: "德县六沟公社水泉", flow: "204.0", geology: "" },
+  { id: 72, region: '承德', location: "兴隆县大石洞", flow: "777.0", geology: "" },
+  { id: 73, region: '承德', location: "德县滴水崖", flow: "104.8", geology: "" },
+  { id: 74, region: '承德', location: "兴隆县阎杖子水帘洞北", flow: "540.0", geology: "" },
+  { id: 75, region: '石家庄', location: "在出露，水温", flow: "17.0", geology: "℃" },
+  { id: 76, region: '承德', location: "青龙县西周杖子", flow: "216.0", geology: "震旦亚界雾迷山组灰岩" },
+  { id: 77, region: '承德', location: "平泉县五十家子鹰手营子", flow: "12.8", geology: "奥陶系灰岩，水温12.8℃" },
+  { id: 78, region: '承德', location: "平泉县刘八店大院", flow: "288.0~11.0", geology: "奥陶亚界灰岩水温11℃" },
+  { id: 79, region: '唐山', location: "迁安县建昌营", flow: "1224.0", geology: "奥陶亚界灰岩" },
+  { id: 80, region: '石家庄', location: "楝源县乌龙沟", flow: "36.0", geology: "太古界片麻岩下降泉" },
+  { id: 81, region: '保定', location: "易县龙家铺村南", flow: "180.0", geology: "太古界断层：F降泉" },
+  { id: 82, region: '保定', location: "阜平县夹石腰东南", flow: "72.0", geology: "太古界下降泉" },
+  { id: 83, region: '保定', location: "阜平县栗j对槽西南", flow: "36.0", geology: "太古界下降泉" },
+  { id: 84, region: '保定', location: "阜平县土穹里东南", flow: "36.0", geology: "花岗岩裂隙下降泉" },
+  { id: 85, region: '保定', location: "涞源县牌角村东", flow: "111.0~27.0", geology: "杏谷 27 震旦亚界灰岩·下降泉" },
+  { id: 86, region: '保定', location: "涞水县跑马泉", flow: "194.4", geology: "" },
+  { id: 87, region: '保定', location: "易县五花也村东南沟", flow: "54.0", geology: "震旦亚界白云岩裂隙下降泉" },
+  { id: 88, region: '保定', location: "易县桐角村东北", flow: "30.0", geology: "震旦亚界白云岩断层下降泉" },
+  { id: 89, region: '保定', location: "易县果树沟村东", flow: "28.8", geology: "震系亚界灰岩下降泉群" },
+  { id: 90, region: '保定', location: "易县上黄蔷龙潭寺", flow: "632.8", geology: "！震旦亚界灰岩断层上升泉型：" },
+  { id: 91, region: '保定', location: "易县六平地南", flow: "36.0", geology: "震旦系灰岩、裂隙下降泉" },
+  { id: 92, region: '保定', location: "曲阳县鱼边屋去南", flow: "50.0", geology: "震旦亚界灰岩、断层下降泉" },
+  { id: 93, region: '保定', location: "阜平县金龙洞村西南", flow: "1800.0", geology: "震旦亚界白云岩岩溶下降泉" },
+  { id: 94, region: '保定', location: "曲阳县北请阳贯北京", flow: "100.0~55.0", geology: "早时55 震旦亚界白云岩断层下降泉" },
+  { id: 95, region: '保定', location: "沫源县城西南", flow: "108.0~540.0", geology: "原为540 震旦亚界灰岩断层泉" },
+  { id: 96, region: '保定', location: "涞源 湖海东偏南", flow: "21.6", geology: "震旦亚界灰岩断层下降泉" },
+  { id: 97, region: '保定', location: "沫源县四角台", flow: "121.3", geology: "震旦亚界灰岩岩溶下降泉" },
+  { id: 98, region: '保定', location: "涞水县北龙泉村东", flow: "90.0", geology: "震旦亚界灰岩裂隙上升泉群" },
+  { id: 99, region: '保定', location: "涞水县悟空寺西南", flow: "259.2", geology: "震旦亚界灰岩下降泉" },
+  { id: 100, region: '保定', location: "涞水县马各庄东南", flow: "1080.0", geology: "中寒武系灰岩，岩容上升泉" },
+  { id: 101, region: '保定', location: "涞源 县谢家沟南", flow: "540.0", geology: "中寒武系下降泉" },
+  { id: 102, region: '保定', location: "易县北棋村东南", flow: "36.0", geology: "中寒武系下降泉" },
+  { id: 103, region: '保定', location: "沫源陈庄村东北", flow: "40.0", geology: "下奥陶灰岩下降泉" },
+  { id: 104, region: '保定', location: "曲阳县北镇水磨糟", flow: "1258.0", geology: "中奥陶灰岩，上升泉" },
+  { id: 105, region: '保定', location: "曲阳县槐树晗西", flow: "60.0", geology: "大早无水 中奥陶灰岩，下降泉" },
+  { id: 106, region: '保定', location: "涞水县南庄村南", flow: "30.0", geology: "裂隙下降泉" },
+  { id: 107, region: '保定', location: "沫源县城东北海第一泉", flow: "2376.0", geology: "第四系上升泉" },
+  { id: 108, region: '保定', location: "沫源县三甲村东南", flow: "21.6", geology: "第四系下降泉" },
+  { id: 109, region: '保定', location: "沫源、县宋家庄南", flow: "75.0", geology: "第四系下降泉" },
+  { id: 110, region: '保定', location: "涞源 县东团堡东北", flow: "108.0", geology: "第四系洪积扇溢出带" },
+  { id: 111, region: '保定', location: "涞水县下庄村东偏北", flow: "72.0", geology: "第四系下降泉" },
+  { id: 112, region: '保定', location: "阜平县炭灰铺金龙洞泉", flow: "3600.0", geology: "奥陶系灰岩" },
+  { id: 113, region: '保定', location: "沫师、县荠麦峪西", flow: "4.8", geology: "岩浆岩" },
+  { id: 114, region: '保定', location: "曲阳县嘉山", flow: "10.5", geology: "片麻岩" },
+  { id: 115, region: '张家口', location: "北县永太昌公社水泉滩", flow: "24.8", geology: "花岗岩" },
+  { id: 116, region: '张家口', location: "张北县永太昌公社自砾脑包村", flow: "72.5", geology: "在花岗岩裂隙中，水量稳定" },
+  { id: 117, region: '张家口', location: "北县八一公社沟中村", flow: "39.95", geology: "在玄武接触带，不稳定" },
+  { id: 118, region: '张家口', location: "张北县八一公社大水泉", flow: "51.3", geology: "玄武岩接触泉雨季增大" },
+  { id: 119, region: '张家口', location: "北县馒头营公社老庙)Jill）商", flow: "22.6", geology: "玄武岩裂隙泉" },
+  { id: 120, region: '张家口', location: "北县大河公社后狼窝沟村", flow: "59.7", geology: "玄武岩下降泉群" },
+  { id: 121, region: '张家口', location: "张北县大河公社上房子村", flow: "39.95", geology: "玄武岩风化带下降泉群" },
+  { id: 122, region: '张家口', location: "北县大河公社塞埠台村", flow: "65.1", geology: "玄武岩裂隙中" },
+  { id: 123, region: '张家口', location: "北县单晶河公社自房子", flow: "59.0~8.0", geology: ",8 玄武岩裂隙中下降泉" },
+  { id: 124, region: '张家口', location: "北县单晶河公社安老尼塔", flow: "21.0~6.0", geology: ",6 玄武岩风化带" },
+  { id: 125, region: '张家口', location: "北县海流图公社鸟士沟", flow: "22.7", geology: "玄武岩风化带" },
+  { id: 126, region: '张家口', location: "北县海流图宝兴庙南营村", flow: "5.76", geology: "玄武岩风化带、稳定 I" }
+];
+
+// 河北省水文地质分区（5区30亚区，数据来源：《河北省水文地质工程地质》）
+export const hydrogeoZones = [
+  { zoneId: 'I', zoneName: '河北平原水文地质区', subZones: [
+    { subId: 'I-1', name: '山前冲洪积平原孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'I-2', name: '中部湖积冲积平原孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'I-3', name: '东部冲积平原孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'I-4', name: '滨海海积冲积平原孔隙水亚区', waterType: '孔隙水' },
+  ]},
+  { zoneId: 'II', zoneName: '太行山山地水文地质区', subZones: [
+    { subId: 'II-1', name: '涉县盆地裂隙岩溶水亚区', waterType: '裂隙岩溶水' },
+    { subId: 'II-2', name: '井陉盆地裂隙岩溶水亚区', waterType: '裂隙岩溶水' },
+    { subId: 'II-3', name: '灵山盆地岩溶水亚区', waterType: '岩溶水' },
+    { subId: 'II-4', name: '涞源盆地孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'II-5', name: '峰峰-邢台低山丘陵岩溶水亚区', waterType: '岩溶水' },
+    { subId: 'II-6', name: '涞源北部中山裂隙岩溶水亚区', waterType: '裂隙岩溶水' },
+    { subId: 'II-7', name: '赞皇-路罗中低山裂隙水亚区', waterType: '裂隙水' },
+    { subId: 'II-8', name: '阜平-京西中低山裂隙水亚区', waterType: '裂隙水' },
+  ]},
+  { zoneId: 'III', zoneName: '燕山山地水文地质区', subZones: [
+    { subId: 'III-1', name: '张北-围场高原裂隙水亚区', waterType: '裂隙水' },
+    { subId: 'III-2', name: '张家口-宣化盆地孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'III-3', name: '蔚县-阳原盆地孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'III-4', name: '遵化-迁安山间盆地孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'III-5', name: '滦河冲洪积平原孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'III-6', name: '冀东山前冲洪积平原孔隙水亚区', waterType: '孔隙水' },
+  ]},
+  { zoneId: 'IV', zoneName: '冀西北山地水文地质区', subZones: [
+    { subId: 'IV-1', name: '桑干河洋河河谷平原孔隙水亚区', waterType: '孔隙水' },
+    { subId: 'IV-2', name: '冀西北中低山裂隙水亚区', waterType: '裂隙水' },
+  ]},
+  { zoneId: 'V', zoneName: '平原深层水水文地质区', subZones: [
+    { subId: 'V-1', name: '沧州深层水亚区', waterType: '深层承压水' },
+    { subId: 'V-2', name: '衡水深层水亚区', waterType: '深层承压水' },
+    { subId: 'V-3', name: '邢台深层水亚区', waterType: '深层承压水' },
+  ]},
+];
+
+// 含水层水文地质参数（数据来源：《河北省水文地质工程地质》）
+export const aquiferParameters = [
+  { id: 1, area: '怀来盆地-冲洪积扇顶部', lithology: '漂砾、卵石', thickness: '>100', unitYield: '32~98', k: '', source: '怀来盆地' },
+  { id: 2, area: '怀来盆地-冲洪积扇中部', lithology: '砂、卵石', thickness: '33', unitYield: '17', k: '', source: '怀来盆地' },
+  { id: 3, area: '怀来盆地-冲洪积扇前缘', lithology: '粉砂、砂砾石', thickness: '0~18', unitYield: '3~10', k: '', source: '怀来盆地' },
+  { id: 4, area: '怀来盆地-河流冲积平原', lithology: '粉细砂', thickness: '16', unitYield: '<1', k: '', source: '怀来盆地' },
+  { id: 5, area: '邯邢-白龙洞径流段', lithology: '中奥陶系灰岩', thickness: '', unitYield: '116.7~217.6', k: '', source: '抽水资料' },
+  { id: 6, area: '邯邢-黑龙洞北洛河径流带', lithology: '中奥陶系灰岩', thickness: '', unitYield: '3124.8', k: '', source: '注水试验' },
+  { id: 7, area: '邯邢-黑龙洞漳河径流带', lithology: '中奥陶系灰岩', thickness: '', unitYield: '23.2~318.9', k: '', source: '抽水资料' },
+  { id: 8, area: '邯邢-康二城径流带', lithology: '中奥陶系灰岩', thickness: '', unitYield: '18.4~19.6', k: '', source: '抽水资料' },
+  { id: 9, area: '邢台-白马河百泉径流带', lithology: '寒武-奥陶系灰岩', thickness: '', unitYield: '13.9~6006', k: '', source: '抽水资料' },
+  { id: 10, area: '邢台-七里河百泉径流带', lithology: '寒武-奥陶系灰岩', thickness: '', unitYield: '8.1~330', k: '', source: '抽水资料' },
+  { id: 11, area: '邢台-沙河百泉径流带', lithology: '寒武-奥陶系灰岩', thickness: '', unitYield: '8.4~67.7', k: '', source: '抽水资料' },
+  { id: 12, area: '邢台-北洺河百泉径流带', lithology: '寒武-奥陶系灰岩', thickness: '', unitYield: '5.9~330', k: '', source: '抽水资料' },
+  { id: 13, area: '赞皇-路罗片麻岩区', lithology: '片麻岩', thickness: '', unitYield: '0.4~20.8', k: '', source: '钻孔抽水' },
+  { id: 14, area: '阜平-京西片麻岩区', lithology: '片麻岩/花岗岩', thickness: '', unitYield: '<1', k: '', source: '钻孔抽水' },
+  { id: 15, area: '曲阳-易县雾迷山白云岩', lithology: '震旦亚界白云质灰岩', thickness: '', unitYield: '~9.1(最大)', k: '', source: '钻孔抽水' },
+  { id: 16, area: '曲阳-易县寒武系', lithology: '寒武系灰岩', thickness: '', unitYield: '1.6~450', k: '', source: '钻孔抽水' },
+  { id: 17, area: '曲阳-易县奥陶系', lithology: '奥陶系灰岩', thickness: '', unitYield: '1.6~40', k: '', source: '钻孔抽水' },
+  { id: 18, area: '遵化山间盆地', lithology: '粗砂/砾石', thickness: '20~100', unitYield: '10~50', k: '', depth: '2~5', source: '钻孔抽水' },
+  { id: 19, area: '滦县-迁西震旦亚界', lithology: '震旦亚界白云岩', thickness: '', unitYield: '0.1~20.9(最大)', k: '', source: '钻孔抽水' },
+  { id: 20, area: '迁安-卢龙宽谷', lithology: '冲洪积砂砾石', thickness: '10~100', unitYield: '8~10', k: '', source: '钻孔抽水' },
+  { id: 21, area: '山海关-马兰峪', lithology: '砂砾石/粗砂', thickness: '', unitYield: '10~20', k: '', source: '钻孔抽水' },
+  { id: 22, area: '兴隆-平泉震旦亚界', lithology: '震旦亚界雾迷山白云岩', thickness: '', unitYield: '0.1~1.7', k: '', source: '钻孔抽水' },
+  { id: 23, area: '张家口-宣化盆地', lithology: '砂砾石', thickness: '20~100', unitYield: '10~50', k: '', depth: '30~2', source: '钻孔抽水' },
+  { id: 24, area: '张家口-宣化盆地中部', lithology: '砂砾石', thickness: '40~80', unitYield: '30~100', k: '', depth: '2~5', source: '钻孔抽水' },
+  { id: 25, area: '怀来-延庆盆地冲积层', lithology: '砾石/砂', thickness: '25~100', unitYield: '30~100', k: '', depth: '<5', source: '钻孔抽水' },
+  { id: 26, area: '怀来-延庆盆地山前', lithology: '冲洪积砂砾石', thickness: '25~100', unitYield: '30~150', k: '', depth: '5~6', source: '钻孔抽水' },
+];
+
+// 深层水参数（数据来源：《河北省水文地质工程地质》）
+export const deepWaterParameters = [
+  { region: '沧州', storageCoeff: '0.364×10⁻²', leakageFactor: '0.177×10⁻⁴', leakMax: 2660, leakMin: 152 },
+  { region: '衡水', storageCoeff: '0.428×10⁻²', leakageFactor: '0.189×10⁻⁴', leakMax: 1716, leakMin: 171 },
+  { region: '邢台', storageCoeff: '0.277×10⁻²', leakageFactor: '0.134×10⁻⁴', leakMax: 2660, leakMin: 158 },
+];
+
+// 渗透系数K值统计（表112，单位m/d，数据来源：《河北省水文地质工程地质》）
+export const permeabilityKValues = {
+  aquiferI: { // 第I含水组
+    label: '第I含水组',
+    data: [
+      { lithology: '粉砂', front: '5~8', middle: '4~6', east: '8~5(推断)' },
+      { lithology: '细砂', front: '8~12', middle: '6~10', east: '5~8' },
+      { lithology: '中砂', front: '15~25', middle: '12~18', east: '10~15' },
+      { lithology: '粗砂', front: '20~50', middle: '18~25(推断)', east: '15~20' },
+      { lithology: '砾石', front: '50~70或>70', middle: '/', east: '/' },
+      { lithology: '卵石', front: '>100(推断)', middle: '/', east: '/' },
+    ],
+  },
+  aquiferII: { // 第II含水组
+    label: '第II含水组',
+    data: [
+      { lithology: '粉砂', front: '<3.5', middle: '<2.5', east: '<1' },
+      { lithology: '细砂', front: '3.8~8', middle: '4.5~10', east: '1~8' },
+      { lithology: '中砂', front: '4.5~12', middle: '5~15', east: '8~10' },
+      { lithology: '粗砂', front: '5.5~13', middle: '8~20', east: '6~12' },
+      { lithology: '砾石', front: '20~50(推断)', middle: '/', east: '/' },
+      { lithology: '卵石', front: '>50', middle: '/', east: '/' },
+    ],
+  },
+  aquiferIII: { // 第III含水组
+    label: '第III含水组',
+    data: [
+      { lithology: '粉砂', front: '<1.5', middle: '<1.5', east: '<1.5' },
+      { lithology: '细砂', front: '1.5~5', middle: '1.5~8', east: '1.5~6' },
+      { lithology: '中砂', front: '', middle: '8~8', east: '5~9' },
+      { lithology: '粗砂', front: '6~10', middle: '7~11', east: '/' },
+      { lithology: '砾石', front: '/', middle: '/', east: '/' },
+      { lithology: '卵石', front: '/', middle: '/', east: '/' },
+    ],
+  },
+};
+
+// 含水层出水率（表100，单位m³/h·m，数据来源：《河北省水文地质工程地质》）
+export const aquiferYieldRates = {
+  aquiferI: {
+    label: '第I含水组',
+    freshFull: [ // 山前全淡水区(邯/邢/石/保)
+      { lithology: '粉砂', min: 0.30, max: 0.50 },
+      { lithology: '细砂', min: 0.40, max: 0.70 },
+      { lithology: '中砂', min: 0.60, max: 0.80 },
+      { lithology: '粗砂', min: 0.80, max: 1.20 },
+      { lithology: '砾石', min: 2.20, max: 2.80 },
+      { lithology: '卵石', min: 3.00, max: 5.00 },
+    ],
+    langfangFresh: [ // 廊坊全淡水
+      { lithology: '粉砂', min: 0.30, max: 0.50 },
+      { lithology: '细砂', min: 0.60, max: 0.65 },
+      { lithology: '中砂', min: 0.80, max: 1.00 },
+      { lithology: '粗砂', min: 1.12, max: 1.50 },
+      { lithology: '砾石', min: 1.50, max: 2.00 },
+      { lithology: '卵石', min: 2.00, max: 3.00 },
+    ],
+    salineHNW: [ // 邯邢咸水区
+      { lithology: '粉砂', min: 0.12, max: 0.12 },
+      { lithology: '细砂', min: 0.15, max: 0.17 },
+      { lithology: '中砂', min: 0.30, max: 0.36 },
+      { lithology: '粗砂', min: 0.43, max: 0.56 },
+    ],
+    salineHengshuiNW: [ // 衡水西北部咸水区
+      { lithology: '粉砂', min: 0.26, max: 0.34 },
+      { lithology: '细砂', min: 0.38, max: 0.45 },
+      { lithology: '中砂', min: 0.53, max: 0.61 },
+      { lithology: '粗砂', min: 0.60, max: 0.81 },
+    ],
+  },
+  aquiferII: {
+    label: '第II含水组',
+    freshFull: [
+      { lithology: '粉砂', min: 0.25, max: 0.30 },
+      { lithology: '细砂', min: 0.35, max: 0.45 },
+      { lithology: '中砂', min: 0.45, max: 0.60 },
+      { lithology: '粗砂', min: 0.60, max: 0.80 },
+      { lithology: '砾石', min: 1.50, max: 2.00 },
+      { lithology: '卵石', min: 2.00, max: 3.00 },
+    ],
+    langfangFresh: [
+      { lithology: '粉砂', min: 0.16, max: 0.24 },
+      { lithology: '细砂', min: 0.25, max: 0.37 },
+      { lithology: '中砂', min: 0.38, max: 0.48 },
+      { lithology: '粗砂', min: 0.49, max: 0.50 },
+      { lithology: '砾石', min: 0.90, max: 1.10 },
+      { lithology: '卵石', min: 1.30, max: 1.70 },
+    ],
+    salineHNW: [
+      { lithology: '粉砂', min: 0.12, max: 0.14 },
+      { lithology: '细砂', min: 0.19, max: 0.25 },
+      { lithology: '中砂', min: 0.34, max: 0.36 },
+      { lithology: '粗砂', min: 0.48, max: 0.50 },
+    ],
+    salineHengshuiNW: [
+      { lithology: '粉砂', min: 0.14, max: 0.17 },
+      { lithology: '细砂', min: 0.19, max: 0.25 },
+      { lithology: '中砂', min: 0.30, max: 0.36 },
+      { lithology: '粗砂', min: 0.40, max: 0.50 },
+    ],
+  },
+  aquiferIII: {
+    label: '第III含水组',
+    salineHNW: [
+      { lithology: '粉砂', min: 0.09, max: 0.09 },
+      { lithology: '细砂', min: 0.20, max: 0.25 },
+      { lithology: '中砂', min: 0.33, max: 0.40 },
+      { lithology: '粗砂', min: 0.50, max: 0.70 },
+      { lithology: '砾石', min: 0.70, max: 0.90 },
+      { lithology: '卵石', min: 1.00, max: 1.30 },
+    ],
+    salineHengshuiNW: [
+      { lithology: '粉砂', min: 0.09, max: 0.10 },
+      { lithology: '细砂', min: 0.17, max: 0.23 },
+      { lithology: '中砂', min: 0.30, max: 0.35 },
+      { lithology: '粗砂', min: 0.41, max: 0.43 },
+    ],
+  },
+};
+
+// 给水度与降雨入渗系数经验值（数据来源：《河北省水文地质工程地质》）
+export const specificYieldInfiltration = {
+  thicknessYield: [ // 出水率与含水层厚度关系（表101）
+    { lithology: '粉砂', t1: '0.18~0.23', t2: '0.23~0.28', t3: '0.28~0.34' },
+    { lithology: '细砂', t1: '0.35~0.40', t2: '0.40~0.45', t3: '0.45~0.52' },
+    { lithology: '中砂', t1: '0.50~0.60', t2: '0.60~0.80', t3: '0.80~1.00' },
+    { lithology: '粗砂', t1: '1.00~1.50', t2: '1.50~2.00', t3: '2.00~3.00' },
+  ],
+  depthYield: [ // 出水率与深度关系（表102）
+    { lithology: '粉砂', d1: '0.08~0.10', d2: '0.10~0.12', d3: '0.12~0.15' },
+    { lithology: '细砂', d1: '0.07~0.10', d2: '0.10~0.12', d3: '0.12~0.15' },
+  ],
+  regionalParams: [ // 南皮县分区参数（表113）
+    { zone: 'I(东片)', sy: 0.07, alpha: 0.30 },
+    { zone: 'II(中片)', sy: 0.04, alpha: 0.20 },
+    { zone: 'III(西片)', sy: 0.05, alpha: 0.24 },
+  ],
+};
+
+// 河北省主要地层岩性（数据来源：《河北省水文地质工程地质》）
+export const stratigraphyLayers = [
+  { era: '新生界', system: '第四系', series: '全新统-更新统', code: 'Q', thickness: '', desc: '冲洪积/冲积/海积/坡积砂砾石、粉砂、粘土、黄土' },
+  { era: '新生界', system: '上第三系', series: '上新统', code: 'N₂', thickness: '', desc: '砾岩、砂岩、泥岩、玄武岩夹层' },
+  { era: '新生界', system: '下第三系', series: '始新-渐新统', code: 'E', thickness: '', desc: '砂岩、泥岩、石膏、褐煤，含水层以砂岩为主' },
+  { era: '中生界', system: '白垩系', series: '上统', code: 'K', thickness: '', desc: '火山熔岩、凝灰质砂岩' },
+  { era: '中生界', system: '侏罗系', series: '中统', code: 'J₂', thickness: '1100~2260', desc: '安山岩、凝灰岩、砂岩、砾岩，含煤层' },
+  { era: '中生界', system: '三迭系', series: '中下统', code: 'T', thickness: '440~650', desc: '长石砂岩、页岩' },
+  { era: '上古生界', system: '二迭系', series: '上统', code: 'P₂', thickness: '654', desc: '杂色砂岩、页岩、泥岩' },
+  { era: '上古生界', system: '二迭系', series: '下统', code: 'P₁', thickness: '110', desc: '杂色页岩、砂岩，底部为灰质角砾岩' },
+  { era: '上古生界', system: '石炭系', series: '中统', code: 'C₂', thickness: '130~190', desc: '铝土页岩、砂岩、灰岩夹煤层' },
+  { era: '上古生界', system: '奥陶系', series: '中统', code: 'O₂', thickness: '600~700', desc: '厚层灰岩，主要岩溶含水层' },
+  { era: '上古生界', system: '奥陶系', series: '下统', code: 'O₁', thickness: '124~210', desc: '白云岩、灰岩、竹叶状灰岩' },
+  { era: '上古生界', system: '寒武系', series: '中统', code: '∈₂', thickness: '259~361', desc: '鲕状灰岩、紫红色页岩，底部肾状铁矿' },
+  { era: '上古生界', system: '寒武系', series: '下统', code: '∈₁', thickness: '116~281', desc: '粗砂岩、砾岩、页岩、泥灰岩、灰岩' },
+  { era: '上元古界', system: '震旦亚界', series: '中统', code: 'Z₂', thickness: '最厚层位', desc: '雾迷山组白云岩、白云质灰岩，主要含水层' },
+  { era: '上元古界', system: '震旦亚界', series: '下统', code: 'Z₁', thickness: '', desc: '高于庄组/大红峪组白云岩、石英砂岩' },
+  { era: '下元古界', system: '', series: '', code: 'Pt₁', thickness: '366~3000', desc: '甘陶河群：砂岩、板岩、安山岩、白云岩、角砾岩' },
+  { era: '太古界', system: '', series: '', code: 'Ar', thickness: '', desc: '阜平群：各种片岩、片麻岩，夹大理岩' },
+];
+
+// 岩石工程地质分组（数据来源：《河北省水文地质工程地质》）
+export const rockEngineeringGroups = [
+  { category: '坚硬岩石类', strength: '>1000 kg/cm²', desc: '坚固、致密、完整、不可压缩，裂隙节理不发育' },
+  { category: '坚硬-岩浆岩组', strength: '>1000', rocks: '花岗岩、闪长岩、辉长岩、正长岩、橄榄岩、玄武岩' },
+  { category: '坚硬-沉积岩组', strength: '>1000', rocks: '砂质灰岩、石英砂岩、砾岩、结晶灰岩、结晶白云岩' },
+  { category: '坚硬-变质岩组', strength: '>1000', rocks: '板岩、片岩、片麻岩、石英岩、大理岩、千枚岩' },
+  { category: '半坚硬岩石类', strength: '500-1000 kg/cm²', desc: '较坚硬、密实，稍具压缩性，节理裂隙较发育' },
+  { category: '半坚硬-粘土岩组', strength: '500-1000', rocks: '粘土岩、泥岩、泥灰岩、砂岩、页岩、铝土页岩及煤系地层' },
+  { category: '半坚硬-碎屑岩组', strength: '500-1000', rocks: '粉砂岩、砂砾岩、角砾岩、集块岩' },
+  { category: '松散岩石类', strength: '<100 kg/cm²', desc: '松软粘性土、砂砾石，具可塑性，压缩性随颗粒和密实度而异' },
+  { category: '松散-粘质土岩组', strength: '<10', rocks: '亚砂土、亚粘土、粘土、泥砾' },
+  { category: '松散-砂质土岩组', strength: '<100', rocks: '碎石层、砾卵石层、砂层、风成砂丘' },
+  { category: '特殊岩石类', strength: '极低', desc: '高压缩性或湿陷性的软弱土层，需特殊处理' },
+  { category: '特殊-黄土类岩组', strength: '极低', rocks: '黄土、黄土状土、次生黄土，具大孔隙、垂直节理、湿陷性' },
+  { category: '特殊-淤泥类岩组', strength: '极低', rocks: '淤泥、淤泥质土、流砂层，高压缩性、承载力低' },
+];
+
+// 岩石风化带厚度（数据来源：《河北省水文地质工程地质》）
+export const weatheringThickness = [
+  { lithology: '花岗岩(一般)', full: '1~5', half: '15~25', note: '一般风化带厚1-5m' },
+  { lithology: '花岗岩(岗南水库)', full: '1~8', half: '15~25' },
+  { lithology: '花岗岩(洋河水库)', full: '1~8', half: '15~25' },
+  { lithology: '花岗岩(二龙山)', full: '8~15', half: '15~25' },
+  { lithology: '花岗岩(冀东山前)', full: '44', half: '', note: '构造裂隙影响，最厚44m' },
+  { lithology: '闪长斑岩(楼里水库)', full: '3~5', half: '8~20' },
+  { lithology: '煌斑岩(王快水库)', full: '5~10', half: '>20' },
+  { lithology: '辉绿岩(西大洋水库)', full: '8~15', half: '>7' },
+  { lithology: '玄武岩(一般)', full: '<20', half: '', note: '一般风化带厚度小于20m' },
+];
+
+// 热泉/地热数据（数据来源：《河北省水文地质工程地质》）
+export const hotSpringData = {
+  summary: { totalPoints: 31, above37C: 23, above42C: 18, maxTemp: 89, maxLocation: '怀来后郝窑热水孔', commonFlow: '10~15 m³/h', hydrochemType: '硫酸钠型、硫酸重碳酸钠型为主' },
+  hotSprings: [
+    { name: '后郝窑热水孔', location: '怀来县', temp: 89, flow: 36, type: '' },
+    { name: '阳原棵洗搪泉', location: '阳原县', temp: null, flow: 180, type: '' },
+    { name: '赤城周立沟汤泉', location: '赤城县', temp: null, flow: 86.7, type: '' },
+    { name: '隆化西大坝暖水泉', location: '隆化县', temp: null, flow: 36, type: '' },
+    { name: '丰宁县汤河公社泉', location: '丰宁县', temp: null, flow: null, type: 'SO4-Na' },
+    { name: '赤城县大庙公社西大汤泉', location: '赤城县', temp: null, flow: null, type: 'SO4-Na' },
+    { name: '遵化县汤泉村泉', location: '遵化县', temp: null, flow: null, type: 'HCO3-SO4-Na' },
+  ],
+  geothermalAnomalies: [
+    { name: '牛驼镇凸起', location: '雄县、安次、霸县一带', temp: '40~70°C(1000m)', note: '埋藏浅、温度高、开采条件好' },
+    { name: '沧宁凸起-黄骅-盐山', location: '黄骅-盐山一带', temp: '', note: '1000m深度内可获热水' },
+    { name: '山海关隆起', location: '昌黎-龙泉店一带', temp: '', note: '热水埋藏浅、温度高、开采条件较好' },
+  ],
+};
+
+// 河流渗漏数据（数据来源：《河北省水文地质工程地质》）
+export const riverLeakageData = [
+  { id: 1, river: '滏阳河', section: '韩村', avgLeakage: '0.36', note: '漏失段大部为碳酸盐岩分布' },
+  { id: 2, river: '小马河', section: '交台村以下', avgLeakage: '', note: '上游常年有水' },
+  { id: 3, river: '白马河', section: '南青山以下至潭村', avgLeakage: '0.98', note: '南青山测流量0.48m³/s' },
+  { id: 4, river: '七里河', section: '黄店以下', avgLeakage: '', note: '漏失段仅汛期有水' },
+  { id: 5, river: '沙河(朱庄川)', section: '朱庄以下至东坚固', avgLeakage: '2.64', note: '56-74年朱庄平均值' },
+  { id: 6, river: '渡口川', section: '渡口以下至八里庙', avgLeakage: '0.61', note: '渡口以上常年有水' },
+  { id: 7, river: '马会河', section: '柴关以下至西石门', avgLeakage: '0.22', note: '柴关以上常年有水' },
+  { id: 8, river: '北洛河', section: '高村', avgLeakage: '0.86', note: '贺进一带断流' },
+  { id: 9, river: '南洺河', section: '小店以下', avgLeakage: '0.1', note: '多年平均流量0.15~0.2m³/s' },
+  { id: 10, river: '清漳河', section: '石门以下至涉县断层', avgLeakage: '0.59', note: '多年旱季一般断流' },
+  { id: 11, river: '通天河(曲阳)', section: '南宋家庄至南家庄', avgLeakage: '0.5~1', note: '至渗失段全部潜入地下' },
+  { id: 12, river: '干沟河(曲阳)', section: '葫芦汪至磨子山', avgLeakage: '0.3~0.5', note: '至渗失段全部潜入地下' },
+];
+
+// 地下径流模数（数据来源：《河北省水文地质工程地质》）
+export const runoffModulus = [
+  { rockType: '第四系松散岩石与部分沉积岩', range: '8.89', avg: 8.89 },
+  { rockType: '沉积岩', range: '3.13~5.47', avg: 3.77 },
+  { rockType: '沉积岩与岩浆岩', range: '2.41~4.39', avg: 3.26 },
+  { rockType: '沉积岩与变质岩', range: '2.28~3.74', avg: 2.81 },
+  { rockType: '变质岩', range: '1.63~2.99', avg: 2.40 },
+];
+
+// 河北省主要水库工程地质参数（数据来源：《河北省水文地质工程地质》+2024水资源公报）
+export const reservoirEngineeringData = [
+  { name: '岗南', location: '石家庄平山', river: '滹沱河', catchArea: 15900, capacity: 15.71, damType: '粘土斜墙坝', foundation: '片麻岩', geoIssue: '岩石风化破碎，节理裂隙发育，构成渗漏通道' },
+  { name: '黄壁庄', location: '石家庄鹿泉', river: '滹沱河', catchArea: 23400, capacity: 12.1, damType: '均质土坝', foundation: '砂卵石层(覆盖层>60m)', geoIssue: '付坝河床覆盖层厚>60m' },
+  { name: '岳城', location: '邯郸磁县', river: '漳河', catchArea: 18100, capacity: 10.9, damType: '均质土坝/斜墙坝', foundation: '砂卵石层', geoIssue: '覆盖层>25m' },
+  { name: '王快', location: '保定曲阳', river: '沙河', catchArea: 3770, capacity: 13.89, damType: '斜墙土坝', foundation: '片麻岩/砂卵石', geoIssue: '覆盖层>25m' },
+  { name: '西大洋', location: '保定唐县', river: '唐河', catchArea: 4420, capacity: 10.71, damType: '均质土坝', foundation: '片麻岩/砂卵石', geoIssue: '覆盖层>25m' },
+  { name: '临城', location: '邢台临城', river: '泜河', catchArea: 384, capacity: 1.595, damType: '斜墙土坝', foundation: '花岗岩', geoIssue: '' },
+  { name: '朱庄', location: '邢台沙河', river: '南澧河', catchArea: 1220, capacity: 4.16, damType: '浆砌石重力拱坝', foundation: '石英砂岩/石英岩', geoIssue: '石英岩节理裂隙发育，易破碎' },
+  { name: '潘家口', location: '唐山迁西', river: '滦河', catchArea: 33700, capacity: 29.3, damType: '混凝土宽缝重力坝', foundation: '片麻岩', geoIssue: '' },
+  { name: '大黑汀', location: '唐山迁西', river: '滦河', catchArea: 35100, capacity: 3.37, damType: '混凝土宽缝重力坝', foundation: '石英岩/石英砂岩', geoIssue: '' },
+  { name: '洋河', location: '张家口怀来', river: '洋河', catchArea: 14140, capacity: 0.66, damType: '重力坝', foundation: '', geoIssue: '' },
+  { name: '闪电河', location: '张家口沽源', river: '闪电河', catchArea: 890, capacity: 0.357, damType: '斜墙壤土坝', foundation: '砂砾石', geoIssue: '覆盖层40-50m' },
+  { name: '安各庄', location: '保定易县', river: '中易水', catchArea: 476, capacity: 2.85, damType: '', foundation: '白云质灰岩', geoIssue: '白云质灰岩岩溶发育' },
+  { name: '邱庄', location: '唐山丰润', river: '还乡河', catchArea: 525, capacity: 2.04, damType: '', foundation: '砂卵石层', geoIssue: '覆盖层>25m' },
+  { name: '陡河', location: '唐山', river: '陡河', catchArea: 530, capacity: 5.15, damType: '', foundation: '砂卵石层', geoIssue: '' },
+  { name: '口头', location: '石家庄行唐', river: '郜河', catchArea: 142, capacity: 1.056, damType: '', foundation: '片麻岩', geoIssue: '岩石风化破碎，节理裂隙发育' },
+  { name: '钓鱼台', location: '承德国场', river: '', catchArea: 160, capacity: 0.135, damType: '均质土坝', foundation: '花岗岩', geoIssue: '1969~1972' },
+  { name: '大青沟', location: '张家口尚义', river: '大青沟', catchArea: 248, capacity: 0.17, damType: '心墙土坝', foundation: '粘土', geoIssue: '1958~1960' },
+];
+
+// 城市供水水文地质概况（数据来源：《河北省水文地质工程地质》1970s）
+export const citySupplyHydrogeology = [
+  { city: '石家庄', extraction: 26, area: '', unitYield: '', wellDepth: '', aquifer: '第二含水组为主要开采层，底界30-60m，含水层厚20-40m，岩性以砾石、粗砂为主，单井单位涌水量40-80 m³/h·m' },
+  { city: '沧州', extraction: 3.6, area: 404, unitYield: '', wellDepth: '', aquifer: '第一含水组底界30m，第二含水组顶界30-52m、底界160-180m，岩性以粉砂及粉细砂为主' },
+  { city: '张家口', extraction: 4, area: 706, unitYield: '', wellDepth: '', aquifer: '枯水季节供水能力2.6万m³/d' },
+  { city: '秦皇岛', extraction: 2.4, area: '', unitYield: '', wellDepth: '', aquifer: '人口30余万' },
+  { city: '保定', extraction: 15.5, area: '', unitYield: '15-30', wellDepth: '', aquifer: '山前冲积扇前缘地带' },
+  { city: '唐山市东矿区', extraction: 10.6, area: '', unitYield: '1-2', wellDepth: '', aquifer: '第二含水组顶界21-32m，含水层厚20-42m，岩性为砾石及细砂' },
+  { city: '邢台', extraction: '', area: 6, unitYield: '', wellDepth: '100-200', aquifer: '' },
+];
+
+// 岩石抗压强度（表249，数据来源：《河北省水文地质工程地质》）
+export const rockCompressiveStrength = [
+  { reservoir: '岗南', location: '库区及坝址', rock: '均质花岗片麻岩', dry: 1589, saturated: 1303 },
+  { reservoir: '岗南', location: '库区及坝址', rock: '含铁花岗片麻岩', dry: 1747, saturated: 1225 },
+  { reservoir: '岗南', location: '库区及坝址', rock: '角闪石片麻岩', dry: 1795, saturated: 1256 },
+  { reservoir: '岗南', location: '库区及坝址', rock: '云母花岗片麻岩', dry: 912, saturated: 524 },
+  { reservoir: '岗南', location: '库区及坝址', rock: '大理岩', dry: 832, saturated: 792 },
+  { reservoir: '岗南', location: '库区及坝址', rock: '中性岩脉', dry: 2304, saturated: 1233 },
+  { reservoir: '岗南', location: '南隧洞', rock: '钙质片麻岩', dry: 761, saturated: 708 },
+  { reservoir: '横山岭', location: '输水洞', rock: '古花岗岩', dry: 1900, saturated: 1700 },
+  { reservoir: '横山岭', location: '输水洞', rock: '新鲜黑云母花岗片麻岩', dry: 800, saturated: 500 },
+  { reservoir: '横山岭', location: '输水洞', rock: '辉绿岩脉', dry: 400, saturated: 300 },
+  { reservoir: '王快', location: '', rock: '混合片麻岩', dry: 1639, saturated: 1063 },
+  { reservoir: '王快', location: '', rock: '煌斑岩', dry: 1319, saturated: 1254 },
+  { reservoir: '王快', location: '', rock: '闪长岩', dry: 1341, saturated: 692 },
+  { reservoir: '王快', location: '', rock: '伟晶岩', dry: 1207, saturated: 1113 },
+  { reservoir: '临城', location: '', rock: '花岗岩', dry: 1544, saturated: 1285 },
+  { reservoir: '黄壁庄', location: '', rock: '半风化千枚岩', dry: 367, saturated: 418 },
+  { reservoir: '黄壁庄', location: '', rock: '砂质灰岩', dry: 1914, saturated: 1040 },
+  { reservoir: '西大洋', location: '', rock: '花岗片麻岩', dry: 1775, saturated: 950 },
+  { reservoir: '西大洋', location: '', rock: '黑云母片麻岩', dry: 746, saturated: 80 },
+  { reservoir: '大青沟', location: '', rock: '橄榄玄武岩', dry: 100, saturated: 0 },
+  { reservoir: '潘家口', location: '', rock: '角闪石片麻岩', dry: 1257, saturated: null },
+  { reservoir: '潘家口', location: '', rock: '角闪斜长片麻岩', dry: 1347.5, saturated: null },
+  { reservoir: '洋河', location: '', rock: '微风化花岗岩', dry: 400, saturated: null },
+  { reservoir: '朱庄', location: '', rock: '石英砂岩', dry: 1000, saturated: 2000 },
+  { reservoir: '朱庄', location: '城下', rock: '新鲜泥质灰岩', dry: 872, saturated: null },
+  { reservoir: '朱庄', location: '城下', rock: '新鲜砂质灰岩', dry: 1000, saturated: null },
+  { reservoir: '朱庄', location: '右坝肩', rock: '新鲜泥质页岩', dry: 568, saturated: 938 },
+  { reservoir: '二龙山', location: '右坝头', rock: '花岗岩及花岗闪长岩', dry: 1000, saturated: 1200 },
+  { reservoir: '二龙山', location: '左坝头', rock: '安山岩、安山斑岩', dry: 1200, saturated: 1500 },
+  { reservoir: '二龙山', location: '', rock: '完整石英岩', dry: 2220, saturated: 3620 },
+];
+
+// 灌区工程数据（数据来源：《河北省水文地质工程地质》）
+export const irrigationData = {
+  largeScale: [
+    { name: '石津灌区', source: '黄壁庄水库', designFlow: 100, actualFlow: 228, designArea: 200, actualArea: 134, efficiency: 0.354 },
+    { name: '民有渠灌区', source: '岳城水库', designFlow: 100, actualFlow: 240, designArea: 180, actualArea: null, efficiency: 0.3 },
+    { name: '滏阳河灌区', source: '东武仕水库', designFlow: 45, actualFlow: 30, designArea: 64.5, actualArea: 48, efficiency: 0.5 },
+    { name: '唐河灌区', source: '西大洋水库', designFlow: 68, actualFlow: 42, designArea: 100, actualArea: 47, efficiency: 0.52 },
+    { name: '王快灌区', source: '王快水库', designFlow: 80, actualFlow: 80, designArea: 208, actualArea: 150, efficiency: 0.4 },
+    { name: '易水灌区', source: '安各庄水库', designFlow: 23, actualFlow: 36.2, designArea: 34.7, actualArea: null, efficiency: 0.47 },
+    { name: '房涞溷灌区', source: '拒马河', designFlow: 22.45, actualFlow: 18.8, designArea: 40.7, actualArea: 30, efficiency: 0.403 },
+  ],
+  mediumScaleSummary: [
+    { region: '邯郸', count: 7, designFlow: 55.5, actualFlow: 38.5, designArea: 42.19 },
+    { region: '邢台', count: 14, designFlow: 64.7, actualFlow: 52.6, designArea: 81.80 },
+    { region: '石家庄', count: 19, designFlow: 107.9, actualFlow: 91.8, designArea: 111.56 },
+    { region: '保定', count: 17, designFlow: 84.7, actualFlow: 55.6, designArea: 53.21 },
+    { region: '廊坊', count: 6, designFlow: 102.5, actualFlow: 85.0, designArea: 32.95 },
+    { region: '沧州', count: 5, designFlow: 110.0, actualFlow: 56.0, designArea: 39.50 },
+    { region: '衡水', count: 11, designFlow: 129.4, actualFlow: 111.4, designArea: 58.48 },
+    { region: '张家口', count: 45, designFlow: 1312.3, actualFlow: 956.7, designArea: 122.54 },
+  ],
+};
+
+// 电性层-矿化度对应关系（表305，数据来源：《河北省水文地质工程地质》）
+export const resistivityMineralization = [
+  { resistivity: '>20', mineralization: '<1.2', waterType: '淡水' },
+  { resistivity: '14~20', mineralization: '1.2~2', waterType: '微咸水' },
+  { resistivity: '11~14', mineralization: '2~3', waterType: '半咸水' },
+  { resistivity: '8~11', mineralization: '3~5', waterType: '咸水' },
+  { resistivity: '<8', mineralization: '>5', waterType: '高矿化咸水' },
+];

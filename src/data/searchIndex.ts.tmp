@@ -1,0 +1,60 @@
+// ═══════════════════════════════════════════════════════════
+// 全局搜索索引 - 聚合所有数据模块的可搜索条目
+// 数据来源: 自动聚合自 25 个数据模块 (200+ 条索引)
+// 整理日期: 2026-05-21
+// 更新机制: 各数据模块更新后需同步更新本索引
+// ═══════════════════════════════════════════════════════════════════════
+
+export interface SearchResult {
+  id: string;
+  title: string;
+  category: string;
+  path: string;
+  keywords: string;
+  snippet?: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type D = any; // data item shorthand
+
+const kw = (...parts: unknown[]) => parts.filter(Boolean).join(' ');
+
+import { systemZones } from './systemZoning';
+import { karstBasinStructures, intermontaneBasinStructures, alluvialFanStructures, paleochannelStructures, storageStructureSummary, waterSourceClassification, waterSourceScaleStandard, importantWaterSources, mountainFrontRichZones } from './waterSource';
+import { geothermalFields, geothermalUtilization, geothermalTypes, geothermalZoning, geothermalGradient, geothermalResources, geothermalReinjection } from './geothermal';
+import { mineralWaterSites, mineralWaterTypes, mineralWaterStandards, mineralWaterIndustry } from './mineralWater';
+import { salineDistribution, salineTypes, salineUtilization, salineFeatures, salineHydroParams, interfaceChange } from './salineWater';
+import { salineSoilDistribution, salineSoilTypes, salineSoilMeasures, salineSoilGenesis, salineSoilZoning, salineSoilHistory } from './salineSoil';
+import { mineHydrogeologyData, mineHydrogeologyClassification, mineDrainageImpact, mineWaterUtilization, mineComplexityStandard, mineDrainageStatistics } from './mineHydrogeology';
+import { karstSprings, karstSystemZones, karstExploitation, karstWaterChemistry, karstProtectionZones, karstDevelopmentDepth } from './karstWater';
+import { fractureWaterTypes, fractureWaterZones, fractureWaterCases, fractureExplorationMethods, fractureWaterResources, fractureWaterChemistry, fractureWaterUtilization } from './fractureWater';
+import { aquiferGroups, lithologyMu, infiltrationCoeff, permeability, karstParams, fractureParams } from './hydroParams';
+import { waterPermit2024, wellManagement2024, cityOverExploitDetail, groundwaterExploitation2024, exploitation1990s, overExploitMilestones, waterSubstitutionProjects, wellCensusData, monitoringNetwork, exploitationTimeSeries, cityExploitationComparison } from './exploitation';
+import { shallowTotal2024, deepTotal2024, shallowCones2024, deepCones2024, historicalCones, envStatus2024, envProblems } from './environment';
+import { cityWaterSupply2024, cityBulletin2024, cityGroundwaterDynamic2024, overExploitControl2024, soilWaterConservation2024, waterResourceSummary2024, historicalComparison, cityGroundwater2024, groundwaterDynamic2024, resourceTimeSeries } from './resources';
+import { isotopeSamples, delta18OPathway, carbon14AgeDepth, resistivityMineralization, salineAlkaliLand, hydrochemicalZoning, isotopeData, gmwl, lmwl } from './hydrochemistry';
+import { overdraftOverview, cityOverdraftZones, restrictedZones, waterLevelRecovery, groundwaterFunctionZones, overdraftControlResults } from './groundwaterFunction';
+import { plainWaterBalance, cityWaterBalance, cityGroundwaterExtraction2000, shallowWaterQualityByClass, hydrogeologicalParams, cityExploitationPotential, potentialZoneSummary, cityGroundwaterPollution, pollutantDetectionRates, wastewaterDischarge1999 } from './groundwaterResources';
+import { tectonicUnits, quaternaryAquiferGroups, stratigraphyAquifer } from './geology';
+import { groundwaterBackground, cityExceedanceFactors, waterQualityStandard } from './backgroundValues';
+import { cityGroundwaterQuality2024, qualityLevelTrend2020_2024, groundwaterQualityStandard, shallowGroundwaterQuality2024, pollutionDegree1990s, industrialWaterQuality, typicalPollutants } from './waterQuality';
+import { landSubsidence2024, subsidenceRateTrend } from './environment';
+import { historicalSprings, springStatsByRegion, riverLeakageData, mountainRunoffModulus, hanxingKarstParams, reservoirGeology, largeIrrigationDistricts, deepWaterParams, aquiferYieldRate, kValueByZone, thicknessYieldRelation, regionSpecificYield, huailaiBasinParams, basinAquiferParams, historicalStratigraphy, mediumIrrigationByRegion, ionMobility, chengdeHydrochemistry, resistivitySalinityRelation, lithologyResistivity, plainResistivityZones } from './hydrogeologyHistorical';
+
+
+// @ts-ignore
+
+// ── 域数据导入 ──
+import { search-basic } from './search-basic';
+import { search-bulletin } from './search-bulletin';
+import { search-nav } from './search-nav';
+import { search-enhanced } from './search-enhanced';
+import { search-supplement } from './search-supplement';
+
+export const searchIndex: SearchResult[] = [
+  ...search-basic,
+  ...search-bulletin,
+  ...search-nav,
+  ...search-enhanced,
+  ...search-supplement,
+];

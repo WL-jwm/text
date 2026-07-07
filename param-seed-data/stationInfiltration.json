@@ -1,0 +1,317 @@
+[
+  {
+    "id": "hb-sta-1",
+    "category": "infiltration_station",
+    "name": "子牙河平山县文都河站",
+    "value": "17.67",
+    "unit": "%",
+    "lithology": "太古界片麻岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "106.5",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 1,
+      "station": "子牙河平山县文都河站",
+      "area": "106.5",
+      "lithology": "太古界片麻岩",
+      "alpha": "17.67"
+    }
+  },
+  {
+    "id": "hb-sta-2",
+    "category": "infiltration_station",
+    "name": "子牙河平山县刘家坪站",
+    "value": "16.34",
+    "unit": "%",
+    "lithology": "太古界片麻岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "140",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 2,
+      "station": "子牙河平山县刘家坪站",
+      "area": "140",
+      "lithology": "太古界片麻岩",
+      "alpha": "16.34"
+    }
+  },
+  {
+    "id": "hb-sta-3",
+    "category": "infiltration_station",
+    "name": "大清河阜平县西王林口站",
+    "value": "14.19",
+    "unit": "%",
+    "lithology": "太古界片麻岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "208",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 3,
+      "station": "大清河阜平县西王林口站",
+      "area": "208",
+      "lithology": "太古界片麻岩",
+      "alpha": "14.19"
+    }
+  },
+  {
+    "id": "hb-sta-4",
+    "category": "infiltration_station",
+    "name": "大清河阜平县新房站",
+    "value": "17.38",
+    "unit": "%",
+    "lithology": "太古界片麻岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "368",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 4,
+      "station": "大清河阜平县新房站",
+      "area": "368",
+      "lithology": "太古界片麻岩",
+      "alpha": "17.38"
+    }
+  },
+  {
+    "id": "hb-sta-5",
+    "category": "infiltration_station",
+    "name": "冀东沿海抚宁县峪门口站",
+    "value": "8.66",
+    "unit": "%",
+    "lithology": "太古界片麻岩、花岗岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "157",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 5,
+      "station": "冀东沿海抚宁县峪门口站",
+      "area": "157",
+      "lithology": "太古界片麻岩、花岗岩",
+      "alpha": "8.66"
+    }
+  },
+  {
+    "id": "hb-sta-6",
+    "category": "infiltration_station",
+    "name": "滦河平泉站",
+    "value": "9.43",
+    "unit": "%",
+    "lithology": "侏罗系碎屑岩与太古界片麻岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "372",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 6,
+      "station": "滦河平泉站",
+      "area": "372",
+      "lithology": "侏罗系碎屑岩与太古界片麻岩",
+      "alpha": "9.43"
+    }
+  },
+  {
+    "id": "hb-sta-7",
+    "category": "infiltration_station",
+    "name": "潮白河丰润县崖口站",
+    "value": "11.90",
+    "unit": "%",
+    "lithology": "蓟县系砂岩与白云岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "199",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 7,
+      "station": "潮白河丰润县崖口站",
+      "area": "199",
+      "lithology": "蓟县系砂岩与白云岩",
+      "alpha": "11.90"
+    }
+  },
+  {
+    "id": "hb-sta-8",
+    "category": "infiltration_station",
+    "name": "潮白河怀柔县口头站",
+    "value": "17.57",
+    "unit": "%",
+    "lithology": "蓟县系与侏罗系灰岩和砂岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "170",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 8,
+      "station": "潮白河怀柔县口头站",
+      "area": "170",
+      "lithology": "蓟县系与侏罗系灰岩和砂岩",
+      "alpha": "17.57"
+    }
+  },
+  {
+    "id": "hb-sta-9",
+    "category": "infiltration_station",
+    "name": "冀东沿海秦皇岛市小陈庄站",
+    "value": "8.02",
+    "unit": "%",
+    "lithology": "古生界灰岩、片麻岩及花岗岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "157",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 9,
+      "station": "冀东沿海秦皇岛市小陈庄站",
+      "area": "157",
+      "lithology": "古生界灰岩、片麻岩及花岗岩",
+      "alpha": "8.02"
+    }
+  },
+  {
+    "id": "hb-sta-10",
+    "category": "infiltration_station",
+    "name": "子牙河平山县郗家庄站",
+    "value": "14.94",
+    "unit": "%",
+    "lithology": "古生界灰岩、蓟县系灰岩等",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "322",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 10,
+      "station": "子牙河平山县郗家庄站",
+      "area": "322",
+      "lithology": "古生界灰岩、蓟县系灰岩等",
+      "alpha": "14.94"
+    }
+  },
+  {
+    "id": "hb-sta-11",
+    "category": "infiltration_station",
+    "name": "承德市罗锅子沟小流域",
+    "value": "19.00",
+    "unit": "%",
+    "lithology": "斜长岩与苏长岩占68%",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "4.9",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 11,
+      "station": "承德市罗锅子沟小流域",
+      "area": "4.9",
+      "lithology": "斜长岩与苏长岩占68%",
+      "alpha": "19.00"
+    }
+  },
+  {
+    "id": "hb-sta-12",
+    "category": "infiltration_station",
+    "name": "承德市罗锅子沟小流域",
+    "value": "17.3",
+    "unit": "%",
+    "lithology": "斜长岩与苏长岩占68%",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "4.9",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 12,
+      "station": "承德市罗锅子沟小流域",
+      "area": "4.9",
+      "lithology": "斜长岩与苏长岩占68%",
+      "alpha": "17.3"
+    }
+  },
+  {
+    "id": "hb-sta-13",
+    "category": "infiltration_station",
+    "name": "黑龙洞泉岩溶水系统",
+    "value": "41.0",
+    "unit": "%",
+    "lithology": "古生界灰岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "1142.5",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 13,
+      "station": "黑龙洞泉岩溶水系统",
+      "area": "1142.5",
+      "lithology": "古生界灰岩",
+      "alpha": "41.0"
+    }
+  },
+  {
+    "id": "hb-sta-14",
+    "category": "infiltration_station",
+    "name": "邢台百泉岩溶水系统",
+    "value": "33.0",
+    "unit": "%",
+    "lithology": "古生界灰岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "2525",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 14,
+      "station": "邢台百泉岩溶水系统",
+      "area": "2525",
+      "lithology": "古生界灰岩",
+      "alpha": "33.0"
+    }
+  },
+  {
+    "id": "hb-sta-15",
+    "category": "infiltration_station",
+    "name": "涞源泉岩溶水系统",
+    "value": "20.0",
+    "unit": "%",
+    "lithology": "古生界灰岩",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "813",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "山区典型水文站",
+    "metadata": {
+      "id": 15,
+      "station": "涞源泉岩溶水系统",
+      "area": "813",
+      "lithology": "古生界灰岩",
+      "alpha": "20.0"
+    }
+  }
+]

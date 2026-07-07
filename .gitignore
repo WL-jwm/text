@@ -1,0 +1,49 @@
+# === Dependencies ===
+node_modules/
+
+# === Build output ===
+dist/
+
+# === TypeScript ===
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Env ===
+.env
+.env.local
+.env.*.local
+
+# === Logs ===
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Temp / Recovery ===
+_recovery/
+*.bak
+/tmp/
+temp_test/
+server_pid.txt
+
+# === Dev artifacts (辅助脚本/中间产物，非项目源码) ===
+fix_hooks*.py
+fix_imports.py
+batch_integrate.py
+spa_server.py
+export_params.cjs
+server.cjs
+screenshot.png

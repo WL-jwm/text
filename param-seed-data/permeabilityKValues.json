@@ -1,0 +1,380 @@
+[
+  {
+    "id": "hb-kv-aquiferI-1",
+    "category": "K_regional",
+    "name": "第I含水组 粉砂",
+    "value": "前缘=5~8, 中部=4~6, 东部=8~5(推断)",
+    "unit": "m/d",
+    "lithology": "粉砂",
+    "aquifer_group": "第I含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "粉砂",
+      "front": "5~8",
+      "middle": "4~6",
+      "east": "8~5(推断)",
+      "group": "第I含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferI-2",
+    "category": "K_regional",
+    "name": "第I含水组 细砂",
+    "value": "前缘=8~12, 中部=6~10, 东部=5~8",
+    "unit": "m/d",
+    "lithology": "细砂",
+    "aquifer_group": "第I含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "细砂",
+      "front": "8~12",
+      "middle": "6~10",
+      "east": "5~8",
+      "group": "第I含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferI-3",
+    "category": "K_regional",
+    "name": "第I含水组 中砂",
+    "value": "前缘=15~25, 中部=12~18, 东部=10~15",
+    "unit": "m/d",
+    "lithology": "中砂",
+    "aquifer_group": "第I含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "中砂",
+      "front": "15~25",
+      "middle": "12~18",
+      "east": "10~15",
+      "group": "第I含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferI-4",
+    "category": "K_regional",
+    "name": "第I含水组 粗砂",
+    "value": "前缘=20~50, 中部=18~25(推断), 东部=15~20",
+    "unit": "m/d",
+    "lithology": "粗砂",
+    "aquifer_group": "第I含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "粗砂",
+      "front": "20~50",
+      "middle": "18~25(推断)",
+      "east": "15~20",
+      "group": "第I含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferI-5",
+    "category": "K_regional",
+    "name": "第I含水组 砾石",
+    "value": "前缘=50~70或>70, 中部=/, 东部=/",
+    "unit": "m/d",
+    "lithology": "砾石",
+    "aquifer_group": "第I含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "砾石",
+      "front": "50~70或>70",
+      "middle": "/",
+      "east": "/",
+      "group": "第I含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferI-6",
+    "category": "K_regional",
+    "name": "第I含水组 卵石",
+    "value": "前缘=>100(推断), 中部=/, 东部=/",
+    "unit": "m/d",
+    "lithology": "卵石",
+    "aquifer_group": "第I含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "卵石",
+      "front": ">100(推断)",
+      "middle": "/",
+      "east": "/",
+      "group": "第I含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferII-1",
+    "category": "K_regional",
+    "name": "第II含水组 粉砂",
+    "value": "前缘=<3.5, 中部=<2.5, 东部=<1",
+    "unit": "m/d",
+    "lithology": "粉砂",
+    "aquifer_group": "第II含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "粉砂",
+      "front": "<3.5",
+      "middle": "<2.5",
+      "east": "<1",
+      "group": "第II含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferII-2",
+    "category": "K_regional",
+    "name": "第II含水组 细砂",
+    "value": "前缘=3.8~8, 中部=4.5~10, 东部=1~8",
+    "unit": "m/d",
+    "lithology": "细砂",
+    "aquifer_group": "第II含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "细砂",
+      "front": "3.8~8",
+      "middle": "4.5~10",
+      "east": "1~8",
+      "group": "第II含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferII-3",
+    "category": "K_regional",
+    "name": "第II含水组 中砂",
+    "value": "前缘=4.5~12, 中部=5~15, 东部=8~10",
+    "unit": "m/d",
+    "lithology": "中砂",
+    "aquifer_group": "第II含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "中砂",
+      "front": "4.5~12",
+      "middle": "5~15",
+      "east": "8~10",
+      "group": "第II含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferII-4",
+    "category": "K_regional",
+    "name": "第II含水组 粗砂",
+    "value": "前缘=5.5~13, 中部=8~20, 东部=6~12",
+    "unit": "m/d",
+    "lithology": "粗砂",
+    "aquifer_group": "第II含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "粗砂",
+      "front": "5.5~13",
+      "middle": "8~20",
+      "east": "6~12",
+      "group": "第II含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferII-5",
+    "category": "K_regional",
+    "name": "第II含水组 砾石",
+    "value": "前缘=20~50(推断), 中部=/, 东部=/",
+    "unit": "m/d",
+    "lithology": "砾石",
+    "aquifer_group": "第II含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "砾石",
+      "front": "20~50(推断)",
+      "middle": "/",
+      "east": "/",
+      "group": "第II含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferII-6",
+    "category": "K_regional",
+    "name": "第II含水组 卵石",
+    "value": "前缘=>50, 中部=/, 东部=/",
+    "unit": "m/d",
+    "lithology": "卵石",
+    "aquifer_group": "第II含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "卵石",
+      "front": ">50",
+      "middle": "/",
+      "east": "/",
+      "group": "第II含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferIII-1",
+    "category": "K_regional",
+    "name": "第III含水组 粉砂",
+    "value": "前缘=<1.5, 中部=<1.5, 东部=<1.5",
+    "unit": "m/d",
+    "lithology": "粉砂",
+    "aquifer_group": "第III含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "粉砂",
+      "front": "<1.5",
+      "middle": "<1.5",
+      "east": "<1.5",
+      "group": "第III含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferIII-2",
+    "category": "K_regional",
+    "name": "第III含水组 细砂",
+    "value": "前缘=1.5~5, 中部=1.5~8, 东部=1.5~6",
+    "unit": "m/d",
+    "lithology": "细砂",
+    "aquifer_group": "第III含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "细砂",
+      "front": "1.5~5",
+      "middle": "1.5~8",
+      "east": "1.5~6",
+      "group": "第III含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferIII-3",
+    "category": "K_regional",
+    "name": "第III含水组 中砂",
+    "value": "前缘=, 中部=8~8, 东部=5~9",
+    "unit": "m/d",
+    "lithology": "中砂",
+    "aquifer_group": "第III含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "中砂",
+      "front": "",
+      "middle": "8~8",
+      "east": "5~9",
+      "group": "第III含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferIII-4",
+    "category": "K_regional",
+    "name": "第III含水组 粗砂",
+    "value": "前缘=6~10, 中部=7~11, 东部=/",
+    "unit": "m/d",
+    "lithology": "粗砂",
+    "aquifer_group": "第III含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "粗砂",
+      "front": "6~10",
+      "middle": "7~11",
+      "east": "/",
+      "group": "第III含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferIII-5",
+    "category": "K_regional",
+    "name": "第III含水组 砾石",
+    "value": "前缘=/, 中部=/, 东部=/",
+    "unit": "m/d",
+    "lithology": "砾石",
+    "aquifer_group": "第III含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "砾石",
+      "front": "/",
+      "middle": "/",
+      "east": "/",
+      "group": "第III含水组"
+    }
+  },
+  {
+    "id": "hb-kv-aquiferIII-6",
+    "category": "K_regional",
+    "name": "第III含水组 卵石",
+    "value": "前缘=/, 中部=/, 东部=/",
+    "unit": "m/d",
+    "lithology": "卵石",
+    "aquifer_group": "第III含水组",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "lithology": "卵石",
+      "front": "/",
+      "middle": "/",
+      "east": "/",
+      "group": "第III含水组"
+    }
+  }
+]

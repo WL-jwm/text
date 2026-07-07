@@ -1,0 +1,65 @@
+[
+  {
+    "id": "hb-dwp-1",
+    "category": "deep_water_param",
+    "name": "沧州 深层承压水参数",
+    "value": "0.364×10⁻²",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "深层承压水",
+    "zone": "",
+    "region": "沧州",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "region": "沧州",
+      "storageCoeff": "0.364×10⁻²",
+      "leakageFactor": "0.177×10⁻⁴",
+      "leakMax": 2660,
+      "leakMin": 152
+    }
+  },
+  {
+    "id": "hb-dwp-2",
+    "category": "deep_water_param",
+    "name": "衡水 深层承压水参数",
+    "value": "0.428×10⁻²",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "深层承压水",
+    "zone": "",
+    "region": "衡水",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "region": "衡水",
+      "storageCoeff": "0.428×10⁻²",
+      "leakageFactor": "0.189×10⁻⁴",
+      "leakMax": 1716,
+      "leakMin": 171
+    }
+  },
+  {
+    "id": "hb-dwp-3",
+    "category": "deep_water_param",
+    "name": "邢台 深层承压水参数",
+    "value": "0.277×10⁻²",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "深层承压水",
+    "zone": "",
+    "region": "邢台",
+    "source": "1999年河北省地下水",
+    "reliability": "实测值",
+    "reference": "",
+    "metadata": {
+      "region": "邢台",
+      "storageCoeff": "0.277×10⁻²",
+      "leakageFactor": "0.134×10⁻⁴",
+      "leakMax": 2660,
+      "leakMin": 158
+    }
+  }
+]

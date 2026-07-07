@@ -1,0 +1,102 @@
+[
+  {
+    "id": "hb-ss-1",
+    "category": "storage_coeff",
+    "name": "Q3(第一含水层组) 释水系数",
+    "value": "0.05~0.15",
+    "unit": "无量纲",
+    "lithology": "砂、砾石",
+    "aquifer_group": "Q3(第一含水层组)",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "浅层, 表6-22",
+    "metadata": {
+      "era": "Q3(第一含水层组)",
+      "lithology": "砂、砾石",
+      "mu_e": "0.05~0.15",
+      "note": "浅层, 表6-22"
+    }
+  },
+  {
+    "id": "hb-ss-2",
+    "category": "storage_coeff",
+    "name": "Q2(第二含水层组) 释水系数",
+    "value": "0.005~0.02",
+    "unit": "无量纲",
+    "lithology": "中细砂",
+    "aquifer_group": "Q2(第二含水层组)",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-22",
+    "metadata": {
+      "era": "Q2(第二含水层组)",
+      "lithology": "中细砂",
+      "mu_e": "0.005~0.02",
+      "note": "表6-22"
+    }
+  },
+  {
+    "id": "hb-ss-3",
+    "category": "storage_coeff",
+    "name": "Q1(第三含水层组) 释水系数",
+    "value": "0.001~0.005",
+    "unit": "无量纲",
+    "lithology": "细砂、粉砂",
+    "aquifer_group": "Q1(第三含水层组)",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-22",
+    "metadata": {
+      "era": "Q1(第三含水层组)",
+      "lithology": "细砂、粉砂",
+      "mu_e": "0.001~0.005",
+      "note": "表6-22"
+    }
+  },
+  {
+    "id": "hb-ss-4",
+    "category": "storage_coeff",
+    "name": "N2(第四含水层组) 释水系数",
+    "value": "0.0005~0.002",
+    "unit": "无量纲",
+    "lithology": "粉砂",
+    "aquifer_group": "N2(第四含水层组)",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "表6-22",
+    "metadata": {
+      "era": "N2(第四含水层组)",
+      "lithology": "粉砂",
+      "mu_e": "0.0005~0.002",
+      "note": "表6-22"
+    }
+  },
+  {
+    "id": "hb-ss-5",
+    "category": "storage_coeff",
+    "name": "N1(明化镇组下段) 释水系数",
+    "value": "0.0005~0.001",
+    "unit": "无量纲",
+    "lithology": "粉砂",
+    "aquifer_group": "N1(明化镇组下段)",
+    "zone": "",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "era": "N1(明化镇组下段)",
+      "lithology": "粉砂",
+      "mu_e": "0.0005~0.001",
+      "note": ""
+    }
+  }
+]

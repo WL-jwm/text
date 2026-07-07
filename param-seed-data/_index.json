@@ -1,0 +1,76 @@
+{
+  "exportTime": "2026-06-20T10:42:14.322Z",
+  "source": "hebei-groundwater-platform",
+  "totalCategories": 17,
+  "totalRecords": 315,
+  "categories": {
+    "permeability": {
+      "count": 9,
+      "file": "permeability.json"
+    },
+    "aquiferGroups": {
+      "count": 4,
+      "file": "aquiferGroups.json"
+    },
+    "specificYield": {
+      "count": 7,
+      "file": "specificYield.json"
+    },
+    "infiltration": {
+      "count": 5,
+      "file": "infiltration.json"
+    },
+    "dispersivity": {
+      "count": 5,
+      "file": "dispersivity.json"
+    },
+    "karstParams": {
+      "count": 4,
+      "file": "karstParams.json"
+    },
+    "fractureParams": {
+      "count": 4,
+      "file": "fractureParams.json"
+    },
+    "storageCoeff": {
+      "count": 5,
+      "file": "storageCoeff.json"
+    },
+    "springs": {
+      "count": 125,
+      "file": "springs.json"
+    },
+    "hydrogeoZones": {
+      "count": 5,
+      "file": "hydrogeoZones.json"
+    },
+    "aquiferParams": {
+      "count": 26,
+      "file": "aquiferParams.json"
+    },
+    "deepWaterParams": {
+      "count": 3,
+      "file": "deepWaterParams.json"
+    },
+    "permeabilityKValues": {
+      "count": 18,
+      "file": "permeabilityKValues.json"
+    },
+    "aquiferYield": {
+      "count": 50,
+      "file": "aquiferYield.json"
+    },
+    "stationInfiltration": {
+      "count": 15,
+      "file": "stationInfiltration.json"
+    },
+    "lithInfiltration": {
+      "count": 20,
+      "file": "lithInfiltration.json"
+    },
+    "hotSprings": {
+      "count": 10,
+      "file": "hotSprings.json"
+    }
+  }
+}

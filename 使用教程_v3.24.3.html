@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>河北省地下水环境信息平台 使用教程 v3.24.3</title>
+<style>
+body {
+  font-family: Arial, "Microsoft YaHei", SimSun, sans-serif;
+  font-size: 11pt;
+  line-height: 1.7;
+  color: #222222;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 30px;
+}
+h1 {
+  font-size: 22pt;
+  color: #1a3c5e;
+  border-bottom: 3px solid #1a3c5e;
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+}
+h2 {
+  font-size: 16pt;
+  color: #1a3c5e;
+  border-bottom: 1.5px solid #b0c4de;
+  padding-bottom: 6px;
+  margin-top: 36px;
+}
+h3 {
+  font-size: 13pt;
+  color: #2c5f8a;
+  margin-top: 24px;
+}
+h4 {
+  font-size: 11.5pt;
+  color: #3a7ab5;
+  margin-top: 18px;
+}
+.subtitle {
+  font-size: 12pt;
+  color: #666666;
+  margin-bottom: 30px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+  font-size: 10pt;
+}
+th {
+  background-color: #e8f0f8;
+  color: #1a3c5e;
+  border: 1px solid #b0c4de;
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: bold;
+}
+td {
+  border: 1px solid #d0d8e0;
+  padding: 5px 10px;
+  vertical-align: top;
+}
+tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+code {
+  background-color: #f0f3f6;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: Consolas, monospace;
+  font-size: 9.5pt;
+  color: #c7254e;
+}
+pre {
+  background-color: #f4f6f9;
+  border: 1px solid #d0d8e0;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 9pt;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+ul, ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+li {
+  margin-bottom: 4px;
+}
+blockquote {
+  border-left: 4px solid #2c5f8a;
+  background-color: #f0f6fc;
+  padding: 10px 16px;
+  margin: 16px 0;
+  font-size: 10.5pt;
+}
+.note {
+  background-color: #fffbe6;
+  border-left: 4px solid #f0c000;
+  padding: 8px 14px;
+  margin: 12px 0;
+  font-size: 10pt;
+}
+.toc {
+  background-color: #f8fafc;
+  border: 1px solid #d0d8e0;
+  padding: 16px 24px;
+  margin: 20px 0;
+}
+.toc a {
+  color: #2c5f8a;
+  text-decoration: none;
+}
+.footer-note {
+  font-size: 9pt;
+  color: #999999;
+  margin-top: 40px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<h1>河北省地下水环境信息平台</h1>
+<p class="subtitle">使用教程 v3.24.3 &mdash; 2026年6月</p>
+
+<div class="toc">
+<strong>目录</strong><br>
+<a href="#sec1">1 平台简介</a><br>
+<a href="#sec2">2 启动与访问</a><br>
+<a href="#sec3">3 页面导航</a><br>
+<a href="#sec4">4 数据查询与搜索</a><br>
+<a href="#sec5">5 数据导出</a><br>
+<a href="#sec6">6 高级可视化组件</a><br>
+<a href="#sec7">7 个人工作台</a><br>
+<a href="#sec8">8 打印与离线使用</a><br>
+<a href="#sec9">9 常见问题</a><br>
+</div>
+
+<!-- ==================== 第1章 ==================== -->
+<h2 id="sec1">1 平台简介</h2>
+
+<p>河北省地下水环境信息平台是一款面向环保技术咨询领域的专业Web应用，由河北瑞三元环境科技有限公司技术团队开发。平台聚焦河北省地下水环境影响评价、水文地质调查与碳核查等业务场景，系统整合了河北省全境水文地质基础数据，提供数据检索、可视化分析与辅助决策支持。</p>
+
+<p><strong>核心能力：</strong></p>
+<ul>
+<li>水文地质基础资料：地质构造、第四纪地层、含水层组划分、水文地质参数</li>
+<li>地下水资源评价：平原区水资源平衡、各市开采量、补给模数、可开采量评价</li>
+<li>地下水环境质量：水质监测、地下水质量标准、污染程度评价、水化学分区</li>
+<li>地下水超采与治理：浅/深层漏斗分布、超采区划定、水位恢复、取水许可管理</li>
+<li>特种地下水：岩溶水、裂隙水、地热水、矿泉水、咸水</li>
+<li>矿山水文地质：矿床充水条件、突水案例、矿井排水影响评价</li>
+<li>环境地质：土壤盐渍化、咸水分布与利用、地下水功能区划</li>
+<li>高级可视化：水文地质剖面图、含水层三维结构、等值线图、动态时间轴</li>
+</ul>
+
+<!-- ==================== 第2章 ==================== -->
+<h2 id="sec2">2 启动与访问</h2>
+
+<h3>2.1 桌面快捷方式启动</h3>
+<p>安装完成后，桌面会出现以下文件：</p>
+<table>
+<tr><th style="width:35%">文件</th><th>用途</th></tr>
+<tr><td>河北地下水环境信息平台.lnk</td><td>桌面快捷方式，双击即可启动平台</td></tr>
+<tr><td>河北地下水环境信息平台.bat</td><td>启动脚本，双击启动本地服务器并自动打开浏览器</td></tr>
+<tr><td>河北地下水环境信息平台_使用说明.txt</td><td>使用说明文档</td></tr>
+</table>
+
+<p><strong>启动步骤：</strong></p>
+<ol>
+<li>双击桌面 "河北地下水环境信息平台" 快捷方式</li>
+<li>系统会自动弹出命令行窗口，显示 "正在启动本地服务器..."</li>
+<li>浏览器自动打开并访问 <code>http://localhost:3000</code></li>
+<li>等待页面加载完成，即可看到平台总览页</li>
+</ol>
+
+<div class="note">
+<strong>提示：</strong> 关闭命令行窗口即可停止服务器。如浏览器未自动打开，可手动在地址栏输入 http://localhost:3000。
+</div>
+
+<h3>2.2 手动启动</h3>
+<p>也可通过以下方式手动启动：</p>
+<ol>
+<li>打开项目目录 <code>E:\OWNclaw\20260509-21-58-28-174\frontend\dist</code></li>
+<li>在该目录下打开命令行，执行 <code>python -m http.server 3000</code></li>
+<li>打开浏览器访问 <code>http://localhost:3000</code></li>
+</ol>
+
+<h3>2.3 更新平台</h3>
+<p>当平台有新版本时，按以下步骤更新：</p>
+<ol>
+<li>打开项目目录 <code>E:\OWNclaw\20260509-21-58-28-174\frontend</code></li>
+<li>执行 <code>npm run build</code> 重新构建</li>
+<li>重启桌面快捷方式，即可加载最新版本</li>
+<li>桌面快捷方式无需重新创建，自动指向最新构建产物</li>
+</ol>
+
+<!-- ==================== 第3章 ==================== -->
+<h2 id="sec3">3 页面导航</h2>
+
+<h3>3.1 总览页（首页）</h3>
+<p>平台首页为总览页（Overview），是进入各模块的入口。页面按功能分为多个区域：</p>
+<ul>
+<li><strong>顶部统计卡片</strong>：展示平台核心数据指标（数据模块数、页面数、组件数、搜索条目数等）</li>
+<li><strong>模块导航网格</strong>：16个专业模块的快捷入口，点击即可跳转至对应页面</li>
+<li><strong>历史演变</strong>：河北省地下水开采量、水位等历史趋势概览</li>
+<li><strong>开采管理</strong>：取水许可、超采治理等数据概览</li>
+<li><strong>水质概览</strong>：水质类别分布、主要超标因子等</li>
+<li><strong>专业工具箱</strong>：9个专业分析工具的快捷入口</li>
+<li><strong>工作台入口</strong>：进入个人工作台的快捷按钮</li>
+</ul>
+
+<h3>3.2 页面路由清单</h3>
+<p>平台共23个路由页面，涵盖地下水环评全链条数据：</p>
+<table>
+<tr><th style="width:30%">路径</th><th>页面名称</th><th>功能</th></tr>
+<tr><td><code>/</code></td><td>总览</td><td>平台总览、全模块导航入口</td></tr>
+<tr><td><code>/resources</code></td><td>水资源</td><td>2024年公报数据、各市供水量、开采潜力</td></tr>
+<tr><td><code>/water-quality</code></td><td>水质评价</td><td>水质监测、污染评价、质量标准</td></tr>
+<tr><td><code>/environment</code></td><td>地下水环境</td><td>浅/深层漏斗分布、地面沉降</td></tr>
+<tr><td><code>/exploitation</code></td><td>开采管理</td><td>取水许可、机井管理、超采治理</td></tr>
+<tr><td><code>/hydrochemistry</code></td><td>水化学</td><td>水化学类型分区、苏卡列夫分类</td></tr>
+<tr><td><code>/geology</code></td><td>地质构造</td><td>构造单元、第四纪地层、含水层组</td></tr>
+<tr><td><code>/hydro-zone-params</code></td><td>参数分区</td><td>水文地质参数分区（14个可筛选表格）</td></tr>
+<tr><td><code>/water-source</code></td><td>水源地</td><td>蓄水构造类型、岩溶盆地、冲洪积扇</td></tr>
+<tr><td><code>/geothermal</code></td><td>地热</td><td>地热田、地热梯度、开发利用</td></tr>
+<tr><td><code>/mineral-water</code></td><td>矿泉水</td><td>产地、类型、水质标准</td></tr>
+<tr><td><code>/saline-water</code></td><td>咸水</td><td>咸水分布、类型、开发利用</td></tr>
+<tr><td><code>/saline-soil</code></td><td>土壤盐渍化</td><td>分布、成因、治理措施</td></tr>
+<tr><td><code>/mine-hydrogeology</code></td><td>矿山水文地质</td><td>充水条件、突水案例、排水利用</td></tr>
+<tr><td><code>/karst-water</code></td><td>岩溶水</td><td>岩溶泉、岩溶系统分区</td></tr>
+<tr><td><code>/fracture-water</code></td><td>裂隙水</td><td>类型分区、勘查方法、资源量</td></tr>
+<tr><td><code>/map</code></td><td>地图标注</td><td>多图层标注、分类筛选、交互弹窗</td></tr>
+<tr><td><code>/data-insight</code></td><td>数据洞察</td><td>资源-水质-环境-开采四维度交叉分析</td></tr>
+<tr><td><code>/system-zoning</code></td><td>系统分区</td><td>地下水系统、子系统划分</td></tr>
+<tr><td><code>/workspace</code></td><td>工作台</td><td>数据导入/标注/收藏/校验四面板</td></tr>
+<tr><td><code>/county-compare</code></td><td>县域对比</td><td>县域水资源多指标横向对比</td></tr>
+<tr><td><code>/changelog</code></td><td>版本日志</td><td>版本变更日志 + 数据源注册表 + 校验报告</td></tr>
+</table>
+
+<h3>3.3 页面间导航</h3>
+<p>每个页面底部都有"关联页面"链接（CrossLink组件），点击可直接跳转到相关页面。例如在水资源页面，可快速跳转到水质评价、开采管理等关联页面。页面顶部有面包屑导航，显示当前页面路径，并支持Tab锚点显示。</p>
+
+<!-- ==================== 第4章 ==================== -->
+<h2 id="sec4">4 数据查询与搜索</h2>
+
+<h3>4.1 全局搜索</h3>
+<p>平台内置全局搜索功能，搜索框位于页面顶部导航栏。支持以下搜索方式：</p>
+<ul>
+<li><strong>中文关键词</strong>：输入"漏斗"、"含水层"、"岩溶"等中文术语</li>
+<li><strong>拼音首字母</strong>：输入"LD"搜索漏斗、"HS"搜索含水层等</li>
+<li><strong>英文术语</strong>：输入"karst"、"aquifer"等英文关键词</li>
+</ul>
+<p>搜索索引覆盖全部25个数据模块，共200余条索引条目，搜索结果实时显示。</p>
+
+<h3>4.2 表格筛选</h3>
+<p>平台中所有技术表格（TechTable / FilterableTechTable）均支持列头搜索过滤。在表格顶部的搜索框中输入关键词，表格会自动筛选匹配的行。此功能在以下页面大量使用：</p>
+<ul>
+<li>水文地质参数分区（14个可筛选表格）</li>
+<li>地热资源（3个可筛选表格）</li>
+<li>裂隙水（5个可筛选表格）</li>
+<li>各页面明细数据表格</li>
+</ul>
+
+<h3>4.3 数据溯源查询</h3>
+<p>每个数据模块的来源信息可在 <code>/changelog</code> 页面的"数据源注册表"区块查看。注册表包含以下信息：</p>
+<ul>
+<li>模块名、数据类别</li>
+<li>数据来源（文献/公报/标准）</li>
+<li>数据年份</li>
+<li>更新频率（年度/5-10年/调查年限型/固定型）</li>
+<li>可靠度（高/中/低）</li>
+</ul>
+
+<!-- ==================== 第5章 ==================== -->
+<h2 id="sec5">5 数据导出</h2>
+
+<h3>5.1 图表数据导出</h3>
+<p>平台所有关键图表和表格数据均支持一键导出。在每个TechCard的右上角，点击"导出数据"按钮，可选择以下格式：</p>
+<table>
+<tr><th style="width:20%">格式</th><th>说明</th><th>适用场景</th></tr>
+<tr><td>XLSX</td><td>Excel表格（UTF-8编码，BOM头）</td><td>直接用于报告数据表、进一步分析</td></tr>
+<tr><td>CSV</td><td>逗号分隔文本</td><td>导入其他分析软件（SPSS、Python等）</td></tr>
+<tr><td>JSON</td><td>结构化数据</td><td>程序化处理、数据交换</td></tr>
+</table>
+
+<h3>5.2 导出覆盖范围</h3>
+<p>以下页面均已集成数据导出功能：</p>
+<ul>
+<li>Resources（各市水资源量）</li>
+<li>DataInsight（数据洞察快照）</li>
+<li>Environment（浅层漏斗/深层漏斗/地面沉降）</li>
+<li>Exploitation（开采量/开采量明细/机井管理）</li>
+<li>Geology（含水层组/构造单元/功能区划/超标因子）</li>
+<li>Hydrochemistry（苏卡列夫分类）</li>
+<li>KarstWater（开发状态）</li>
+<li>FractureWater（裂隙水类型/富水性分区）</li>
+<li>MineHydrogeology（矿区水文地质/突水事故）</li>
+<li>SalineWater（咸水分布）</li>
+<li>SalineSoil（盐碱地分布）</li>
+<li>MineralWater（矿泉水产地）</li>
+<li>WaterSource（蓄水构造）</li>
+<li>SystemZoning（系统分区）</li>
+</ul>
+
+<!-- ==================== 第6章 ==================== -->
+<h2 id="sec6">6 高级可视化组件</h2>
+
+<h3>6.1 水文地质剖面图（HydroProfile）</h3>
+<p><strong>位置：</strong> 地质构造页面（/geology）→ "地层剖面"Tab</p>
+<p>SVG绘制的河北平原典型水文地质剖面图，展示山前冲洪积带 → 中部冲积湖积带 → 滨海海积带三带剖面，深度范围0~600m。鼠标悬停在岩性区域上可查看岩性详情。</p>
+
+<h3>6.2 含水层三维结构（Aquifer3D）</h3>
+<p><strong>位置：</strong> 地质构造页面（/geology）→ "含水层组"Tab</p>
+<p>CSS 3D Transform实现的含水层三维结构示意。支持鼠标拖拽旋转查看各层关系，点击各层可查看参数信息。</p>
+
+<h3>6.3 等值线图（ContourMap）</h3>
+<p><strong>位置：</strong> 地下水环境页面（/environment）→ "浅层漏斗"/"深层漏斗"Tab</p>
+<p>Canvas 2D绘制的等值线/等值面填充图，基于IDW插值和Marching Squares算法生成。鼠标悬停显示坐标和插值。用于展示浅层和深层地下水漏斗分布。</p>
+
+<h3>6.4 动态时间轴（TimeAxis）</h3>
+<p><strong>位置：</strong> 开采管理页面（/exploitation）→ "趋势演变"/"治理里程碑"Tab</p>
+<p>Canvas 2D动画驱动的时间轴可视化，展示河北省地下水开采量演变趋势和治理里程碑。支持播放/暂停、速度调节、进度条拖拽跳转。</p>
+
+<!-- ==================== 第7章 ==================== -->
+<h2 id="sec7">7 个人工作台</h2>
+<p><strong>位置：</strong> /workspace 或 总览页"工作台"按钮</p>
+<p>工作台集成了四个面板，用于个性化数据管理：</p>
+
+<h3>7.1 数据导入面板</h3>
+<p>支持CSV/JSON文件导入，解析预览后存储到IndexedDB。适用于将外部监测数据导入平台进行对比分析。</p>
+
+<h3>7.2 标注面板</h3>
+<p>支持四类标注：笔记、勘误、参考、疑问。标注数据通过IndexedDB持久化存储，跨会话保留。</p>
+
+<h3>7.3 收藏面板</h3>
+<p>支持页面收藏和搜索快照保存，可按分组管理收藏内容。</p>
+
+<h3>7.4 数据校验面板</h3>
+<p>提供字段校验、类型检查、范围验证、枚举校验等功能，生成校验报告。</p>
+
+<!-- ==================== 第8章 ==================== -->
+<h2 id="sec8">8 打印与离线使用</h2>
+
+<h3>8.1 打印适配</h3>
+<p>平台已针对环评报告附录打印场景优化：</p>
+<ul>
+<li>A4页面尺寸，15mm边距</li>
+<li>白底深色文字，隐藏交互元素（按钮、搜索框、导航栏等）</li>
+<li>表格避免跨页断行</li>
+<li>图表容器避免跨页</li>
+<li>数据来源标注保留在打印输出中</li>
+</ul>
+<p>使用浏览器"打印"功能（Ctrl+P）即可输出。</p>
+
+<h3>8.2 PWA离线缓存</h3>
+<p>平台支持PWA离线缓存，首次访问后所有静态资源（约2MB）自动缓存到本地。离线状态下仍可正常浏览已缓存的页面和数据。</p>
+<p><strong>启用条件：</strong> 通过 <code>http://localhost:3000</code> 访问（非 file:// 协议），浏览器支持Service Worker。</p>
+
+<h3>8.3 版本更新提示</h3>
+<p>平台版本更新后，Service Worker会自动检测新版本并提示用户刷新页面加载最新内容。每次构建后precache-manifest.json自动更新，SW激活时清理过期缓存。</p>
+
+<!-- ==================== 第9章 ==================== -->
+<h2 id="sec9">9 常见问题</h2>
+
+<h3>9.1 启动后浏览器显示空白</h3>
+<p><strong>原因：</strong> 使用 file:// 协议直接打开 index.html 时，浏览器安全策略禁止加载ES Module。</p>
+<p><strong>解决：</strong> 必须通过本地服务器访问。使用桌面快捷方式启动，或手动执行 <code>python -m http.server 3000</code> 后访问 <code>http://localhost:3000</code>。</p>
+
+<h3>9.2 数据是否实时更新</h3>
+<p>平台数据为静态内嵌数据，更新频率取决于数据来源（水资源公报为年度更新，地质志为固定型）。更新需重新构建部署。</p>
+
+<h3>9.3 如何判断数据可靠度</h3>
+<p>每个数据模块在"数据源注册表"（/changelog）中标注了可靠度（高/中/低）。高可靠度数据来自官方公报和国标，中可靠度来自文献和历史资料。</p>
+
+<h3>9.4 离线时部分功能不可用</h3>
+<p>PWA离线缓存确保页面浏览和数据查看正常，但数据导入/导出等需要浏览器API支持的功能可能受限。</p>
+
+<h3>9.5 如何反馈问题或建议</h3>
+<p>可通过以下方式反馈：</p>
+<ul>
+<li>在平台任一页面按下WPS灵犀响应下方的"点踩"按钮</li>
+<li>联系河北瑞三元环境科技有限公司技术团队</li>
+</ul>
+
+<h3>9.6 如何将数据引用到环评报告</h3>
+<p>推荐工作流：</p>
+<ol>
+<li>在平台中查找所需数据</li>
+<li>点击TechCard右上角"导出数据"按钮，选择XLSX格式导出</li>
+<li>将导出的Excel数据表直接粘贴或引用到Word报告中</li>
+<li>如需截图图表，使用浏览器打印功能（Ctrl+P）输出为PDF</li>
+</ol>
+
+<p class="footer-note">本文档由河北省地下水环境信息平台自动生成，版本 v3.24.3，生成日期 2026年6月16日。</p>
+
+</body>
+</html>

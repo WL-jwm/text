@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>河北地下水基础资料数据库 v3.26.0</title>
+    <meta name="description" content="河北省地下水基础资料数据库平台 - 23个数据模块 / 27个功能页面 / PWA离线支持" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="./pwa-icon-192.png" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="./pwa-icon.svg" />
+  </head>
+  <body>
+    <!-- PWA: 离线提示横幅 -->
+    <div id="offline-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#dc2626;color:#fff;padding:8px 16px;font-size:13px;text-align:center;font-family:sans-serif;">
+      &#9888; 当前处于离线状态，部分功能可能受限
+    </div>
+    <!-- PWA: 安装到桌面按钮 -->
+    <button id="install-pwa-btn" onclick="installPWA()" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9998;background:#3b82f6;color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);align-items:center;gap:8px;font-family:sans-serif;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      安装到桌面
+    </button>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+    <script>
+      // PWA: Service Worker 注册
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').then(reg => {
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  if (confirm('新版本已可用，是否刷新应用？')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          }).catch(() => {});
+        });
+
+        function updateOnlineStatus() {
+          const banner = document.getElementById('offline-banner');
+          if (banner) banner.style.display = navigator.onLine ? 'none' : 'flex';
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+      }
+
+      // PWA: 添加到主屏幕
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('install-pwa-btn');
+        if (btn) btn.style.display = 'flex';
+      });
+      window.addEventListener('appinstalled', () => {
+        const btn = document.getElementById('install-pwa-btn');
+        if (btn) btn.style.display = 'none';
+      });
+      function installPWA() {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+        }
+      }
+    </script>
+  </body>
+</html>

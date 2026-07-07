@@ -1,0 +1,173 @@
+[
+  {
+    "id": "hb-K-1",
+    "category": "K",
+    "name": "粘土 渗透系数",
+    "value": "0.001~0.05",
+    "unit": "m/d",
+    "lithology": "粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-24",
+    "reliability": "经验值",
+    "reference": "表6-24",
+    "metadata": {
+      "Kh": "0.001~0.05",
+      "Kv": "0.0001~0.01",
+      "KhKvRatio": "5~10"
+    }
+  },
+  {
+    "id": "hb-K-2",
+    "category": "K",
+    "name": "亚粘土 渗透系数",
+    "value": "0.01~0.5",
+    "unit": "m/d",
+    "lithology": "亚粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-24",
+    "reliability": "经验值",
+    "reference": "表6-24",
+    "metadata": {
+      "Kh": "0.01~0.5",
+      "Kv": "0.001~0.1",
+      "KhKvRatio": "5~10"
+    }
+  },
+  {
+    "id": "hb-K-3",
+    "category": "K",
+    "name": "亚砂土 渗透系数",
+    "value": "0.05~2.0",
+    "unit": "m/d",
+    "lithology": "亚砂土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-24",
+    "reliability": "经验值",
+    "reference": "表6-24",
+    "metadata": {
+      "Kh": "0.05~2.0",
+      "Kv": "0.01~0.5",
+      "KhKvRatio": "3~8"
+    }
+  },
+  {
+    "id": "hb-K-4",
+    "category": "K",
+    "name": "粉砂 渗透系数",
+    "value": "0.5~5.0",
+    "unit": "m/d",
+    "lithology": "粉砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-16, 6-17",
+    "reliability": "经验值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "Kh": "0.5~5.0",
+      "Kv": "0.1~1.0",
+      "KhKvRatio": "3~5"
+    }
+  },
+  {
+    "id": "hb-K-5",
+    "category": "K",
+    "name": "细砂 渗透系数",
+    "value": "2.0~15",
+    "unit": "m/d",
+    "lithology": "细砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-16, 6-17",
+    "reliability": "经验值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "Kh": "2.0~15",
+      "Kv": "0.5~5.0",
+      "KhKvRatio": "2~4"
+    }
+  },
+  {
+    "id": "hb-K-6",
+    "category": "K",
+    "name": "中砂 渗透系数",
+    "value": "10~50",
+    "unit": "m/d",
+    "lithology": "中砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-16, 6-17",
+    "reliability": "经验值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "Kh": "10~50",
+      "Kv": "2~15",
+      "KhKvRatio": "2~3"
+    }
+  },
+  {
+    "id": "hb-K-7",
+    "category": "K",
+    "name": "粗砂 渗透系数",
+    "value": "20~100",
+    "unit": "m/d",
+    "lithology": "粗砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-16, 6-17",
+    "reliability": "经验值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "Kh": "20~100",
+      "Kv": "5~30",
+      "KhKvRatio": "2~3"
+    }
+  },
+  {
+    "id": "hb-K-8",
+    "category": "K",
+    "name": "卵石 渗透系数",
+    "value": "100~500",
+    "unit": "m/d",
+    "lithology": "卵石",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "冲洪积扇轴部",
+    "reliability": "经验值",
+    "reference": "冲洪积扇轴部",
+    "metadata": {
+      "Kh": "100~500",
+      "Kv": "20~200",
+      "KhKvRatio": "2~5"
+    }
+  },
+  {
+    "id": "hb-K-9",
+    "category": "K",
+    "name": "砾砂 渗透系数",
+    "value": "50~200",
+    "unit": "m/d",
+    "lithology": "砾砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北省",
+    "source": "表6-16, 6-17",
+    "reliability": "经验值",
+    "reference": "表6-16, 6-17",
+    "metadata": {
+      "Kh": "50~200",
+      "Kv": "10~80",
+      "KhKvRatio": "2~4"
+    }
+  }
+]

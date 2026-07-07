@@ -1,0 +1,217 @@
+[
+  {
+    "id": "hb-zone-1",
+    "category": "hydrogeo_zone",
+    "name": "河北平原水文地质区",
+    "value": "",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "I",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "固定",
+    "reference": "",
+    "metadata": {
+      "zoneId": "I",
+      "zoneName": "河北平原水文地质区",
+      "subZones": [
+        {
+          "subId": "I-1",
+          "name": "山前冲洪积平原孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "I-2",
+          "name": "中部湖积冲积平原孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "I-3",
+          "name": "东部冲积平原孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "I-4",
+          "name": "滨海海积冲积平原孔隙水亚区",
+          "waterType": "孔隙水"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hb-zone-2",
+    "category": "hydrogeo_zone",
+    "name": "太行山山地水文地质区",
+    "value": "",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "II",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "固定",
+    "reference": "",
+    "metadata": {
+      "zoneId": "II",
+      "zoneName": "太行山山地水文地质区",
+      "subZones": [
+        {
+          "subId": "II-1",
+          "name": "涉县盆地裂隙岩溶水亚区",
+          "waterType": "裂隙岩溶水"
+        },
+        {
+          "subId": "II-2",
+          "name": "井陉盆地裂隙岩溶水亚区",
+          "waterType": "裂隙岩溶水"
+        },
+        {
+          "subId": "II-3",
+          "name": "灵山盆地岩溶水亚区",
+          "waterType": "岩溶水"
+        },
+        {
+          "subId": "II-4",
+          "name": "涞源盆地孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "II-5",
+          "name": "峰峰-邢台低山丘陵岩溶水亚区",
+          "waterType": "岩溶水"
+        },
+        {
+          "subId": "II-6",
+          "name": "涞源北部中山裂隙岩溶水亚区",
+          "waterType": "裂隙岩溶水"
+        },
+        {
+          "subId": "II-7",
+          "name": "赞皇-路罗中低山裂隙水亚区",
+          "waterType": "裂隙水"
+        },
+        {
+          "subId": "II-8",
+          "name": "阜平-京西中低山裂隙水亚区",
+          "waterType": "裂隙水"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hb-zone-3",
+    "category": "hydrogeo_zone",
+    "name": "燕山山地水文地质区",
+    "value": "",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "III",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "固定",
+    "reference": "",
+    "metadata": {
+      "zoneId": "III",
+      "zoneName": "燕山山地水文地质区",
+      "subZones": [
+        {
+          "subId": "III-1",
+          "name": "张北-围场高原裂隙水亚区",
+          "waterType": "裂隙水"
+        },
+        {
+          "subId": "III-2",
+          "name": "张家口-宣化盆地孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "III-3",
+          "name": "蔚县-阳原盆地孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "III-4",
+          "name": "遵化-迁安山间盆地孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "III-5",
+          "name": "滦河冲洪积平原孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "III-6",
+          "name": "冀东山前冲洪积平原孔隙水亚区",
+          "waterType": "孔隙水"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hb-zone-4",
+    "category": "hydrogeo_zone",
+    "name": "冀西北山地水文地质区",
+    "value": "",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "IV",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "固定",
+    "reference": "",
+    "metadata": {
+      "zoneId": "IV",
+      "zoneName": "冀西北山地水文地质区",
+      "subZones": [
+        {
+          "subId": "IV-1",
+          "name": "桑干河洋河河谷平原孔隙水亚区",
+          "waterType": "孔隙水"
+        },
+        {
+          "subId": "IV-2",
+          "name": "冀西北中低山裂隙水亚区",
+          "waterType": "裂隙水"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hb-zone-5",
+    "category": "hydrogeo_zone",
+    "name": "平原深层水水文地质区",
+    "value": "",
+    "unit": "",
+    "lithology": "",
+    "aquifer_group": "",
+    "zone": "V",
+    "region": "河北省",
+    "source": "1999年河北省地下水",
+    "reliability": "固定",
+    "reference": "",
+    "metadata": {
+      "zoneId": "V",
+      "zoneName": "平原深层水水文地质区",
+      "subZones": [
+        {
+          "subId": "V-1",
+          "name": "沧州深层水亚区",
+          "waterType": "深层承压水"
+        },
+        {
+          "subId": "V-2",
+          "name": "衡水深层水亚区",
+          "waterType": "深层承压水"
+        },
+        {
+          "subId": "V-3",
+          "name": "邢台深层水亚区",
+          "waterType": "深层承压水"
+        }
+      ]
+    }
+  }
+]

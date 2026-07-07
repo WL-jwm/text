@@ -1,0 +1,30 @@
+{
+  "name": "河北地下水基础资料数据库",
+  "short_name": "地下水数据库",
+  "description": "河北省地下水资源基础资料数据库平台 — 23个数据模块 / 27个功能页面 / 含水层参数 / 供水 / 水质 / 地质 / 地热 / 岩溶 / 盐碱土等专业数据查询与可视化",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0a1628",
+  "background_color": "#060d1a",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["education", "utilities", "science", "geography"],
+  "icons": [
+    {
+      "src": "./pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

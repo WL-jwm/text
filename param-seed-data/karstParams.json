@@ -1,0 +1,90 @@
+[
+  {
+    "id": "hb-karst-1",
+    "category": "karst",
+    "name": "溶洞-管道 岩溶参数",
+    "value": "K=100~1000+, T=1000~50000+, μ=0.05~0.20",
+    "unit": "m/d",
+    "lithology": "溶洞-管道",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "太行山/燕山强岩溶带",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "大型水源地所在",
+    "metadata": {
+      "type": "溶洞-管道",
+      "K": "100~1000+",
+      "T": "1000~50000+",
+      "mu": "0.05~0.20",
+      "area": "太行山/燕山强岩溶带",
+      "note": "大型水源地所在"
+    }
+  },
+  {
+    "id": "hb-karst-2",
+    "category": "karst",
+    "name": "溶隙-溶孔 岩溶参数",
+    "value": "K=10~100, T=100~5000, μ=0.01~0.05",
+    "unit": "m/d",
+    "lithology": "溶隙-溶孔",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "中等岩溶化区",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "层状岩溶",
+    "metadata": {
+      "type": "溶隙-溶孔",
+      "K": "10~100",
+      "T": "100~5000",
+      "mu": "0.01~0.05",
+      "area": "中等岩溶化区",
+      "note": "层状岩溶"
+    }
+  },
+  {
+    "id": "hb-karst-3",
+    "category": "karst",
+    "name": "构造裂隙(灰岩) 岩溶参数",
+    "value": "K=1~20, T=10~500, μ=0.005~0.03",
+    "unit": "m/d",
+    "lithology": "构造裂隙(灰岩)",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "弱岩溶化区",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "type": "构造裂隙(灰岩)",
+      "K": "1~20",
+      "T": "10~500",
+      "mu": "0.005~0.03",
+      "area": "弱岩溶化区",
+      "note": ""
+    }
+  },
+  {
+    "id": "hb-karst-4",
+    "category": "karst",
+    "name": "风化裂隙(灰岩) 岩溶参数",
+    "value": "K=0.1~5, T=1~50, μ=0.005~0.02",
+    "unit": "m/d",
+    "lithology": "风化裂隙(灰岩)",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "表层风化带",
+    "source": "1999年河北省地下水",
+    "reliability": "典型值",
+    "reference": "",
+    "metadata": {
+      "type": "风化裂隙(灰岩)",
+      "K": "0.1~5",
+      "T": "1~50",
+      "mu": "0.005~0.02",
+      "area": "表层风化带",
+      "note": ""
+    }
+  }
+]

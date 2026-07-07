@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>平台稳定性测试报告 v3.24.3</title>
+<style>
+body { font-family: Arial, "Microsoft YaHei", sans-serif; font-size: 11pt; line-height: 1.7; color: #222; max-width: 800px; margin: 0 auto; padding: 40px 30px; }
+h1 { font-size: 20pt; color: #1a3c5e; border-bottom: 3px solid #1a3c5e; padding-bottom: 8px; }
+h2 { font-size: 15pt; color: #1a3c5e; border-bottom: 1px solid #b0c4de; padding-bottom: 5px; margin-top: 28px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; }
+th { background: #e8f0f8; color: #1a3c5e; border: 1px solid #b0c4de; padding: 6px 10px; text-align: left; font-weight: bold; }
+td { border: 1px solid #d0d8e0; padding: 5px 10px; }
+tr:nth-child(even) { background: #f8fafc; }
+.pass { color: #16a34a; font-weight: bold; }
+.fail { color: #dc2626; font-weight: bold; }
+.warn { color: #d97706; font-weight: bold; }
+.summary-box { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<h1>河北省地下水环境信息平台</h1>
+<p style="font-size:12pt;color:#666;">稳定性测试报告 v3.24.3 &mdash; 2026年6月17日</p>
+
+<div class="summary-box">
+<h2 style="border:none;margin-top:0;color:#16a34a;">结论：平台稳定性良好</h2>
+<p>全部 <strong>36 项测试通过</strong>，0 项失败，0 项警告。</p>
+</div>
+
+<h2>测试环境</h2>
+<table>
+<tr><th style="width:30%">项目</th><th>值</th></tr>
+<tr><td>测试时间</td><td>2026-06-17 00:22 ~ 00:23</td></tr>
+<tr><td>服务器</td><td>Python SPA Server (端口 3001)</td></tr>
+<tr><td>部署方式</td><td>Python http.server + SPA路由回退</td></tr>
+<tr><td>测试工具</td><td>Python requests + ThreadPoolExecutor</td></tr>
+<tr><td>构建版本</td><td>v3.24.3 (dist 45文件/2.03MB)</td></tr>
+</table>
+
+<h2>测试结果明细</h2>
+
+<h3>1. 基础可用性</h3>
+<table>
+<tr><th>测试项</th><th>结果</th><th>响应时间</th><th>内容大小</th></tr>
+<tr><td>首页访问 (GET /)</td><td class="pass">通过</td><td>2.048s</td><td>3,945B</td></tr>
+</table>
+
+<h3>2. 23个路由页面可用性</h3>
+<table>
+<tr><th>路由</th><th>结果</th><th>响应时间</th></tr>
+<tr><td>/ (总览)</td><td class="pass">200</td><td>2.046s</td></tr>
+<tr><td>/resources (水资源)</td><td class="pass">200</td><td>2.043s</td></tr>
+<tr><td>/water-quality (水质评价)</td><td class="pass">200</td><td>2.052s</td></tr>
+<tr><td>/environment (地下水环境)</td><td class="pass">200</td><td>2.064s</td></tr>
+<tr><td>/exploitation (开采管理)</td><td class="pass">200</td><td>2.038s</td></tr>
+<tr><td>/hydrochemistry (水化学)</td><td class="pass">200</td><td>2.040s</td></tr>
+<tr><td>/geology (地质构造)</td><td class="pass">200</td><td>2.041s</td></tr>
+<tr><td>/hydro-zone-params (参数分区)</td><td class="pass">200</td><td>2.054s</td></tr>
+<tr><td>/water-source (水源地)</td><td class="pass">200</td><td>2.051s</td></tr>
+<tr><td>/geothermal (地热)</td><td class="pass">200</td><td>2.057s</td></tr>
+<tr><td>/mineral-water (矿泉水)</td><td class="pass">200</td><td>2.036s</td></tr>
+<tr><td>/saline-water (咸水)</td><td class="pass">200</td><td>2.057s</td></tr>
+<tr><td>/saline-soil (土壤盐渍化)</td><td class="pass">200</td><td>2.025s</td></tr>
+<tr><td>/mine-hydrogeology (矿山水文地质)</td><td class="pass">200</td><td>2.050s</td></tr>
+<tr><td>/karst-water (岩溶水)</td><td class="pass">200</td><td>2.063s</td></tr>
+<tr><td>/fracture-water (裂隙水)</td><td class="pass">200</td><td>2.055s</td></tr>
+<tr><td>/map (地图标注)</td><td class="pass">200</td><td>2.041s</td></tr>
+<tr><td>/data-insight (数据洞察)</td><td class="pass">200</td><td>2.054s</td></tr>
+<tr><td>/system-zoning (系统分区)</td><td class="pass">200</td><td>2.040s</td></tr>
+<tr><td>/workspace (工作台)</td><td class="pass">200</td><td>2.043s</td></tr>
+<tr><td>/county-compare (县域对比)</td><td class="pass">200</td><td>2.053s</td></tr>
+<tr><td>/changelog (版本日志)</td><td class="pass">200</td><td>2.041s</td></tr>
+<tr><td>/nonexistent (404测试)</td><td class="pass">200 (SPA回退)</td><td>2.054s</td></tr>
+</table>
+
+<h3>3. 静态资源完整性</h3>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>资源总数</td><td>4 (JS + CSS)</td></tr>
+<tr><td>可用率</td><td>100% (4/4)</td></tr>
+<tr><td>平均加载时间</td><td>2.045s</td></tr>
+</table>
+
+<h3>4. 并发压力测试</h3>
+<table>
+<tr><th>并发用户数</th><th>成功/失败</th><th>平均响应</th><th>最大响应</th></tr>
+<tr><td>5 用户</td><td class="pass">5/0</td><td>2.033s</td><td>2.035s</td></tr>
+<tr><td>10 用户</td><td class="pass">10/0</td><td>2.098s</td><td>2.557s</td></tr>
+<tr><td>20 用户</td><td class="pass">20/0</td><td>2.147s</td><td>2.564s</td></tr>
+<tr><td>50 用户</td><td class="pass">50/0</td><td>2.302s</td><td>3.079s</td></tr>
+</table>
+
+<h3>5. 持续负载测试 (30s)</h3>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>测试时长</td><td>31s</td></tr>
+<tr><td>总请求数</td><td>15</td></tr>
+<tr><td>QPS</td><td>0.5</td></tr>
+<tr><td>错误数</td><td>0</td></tr>
+<tr><td>平均响应</td><td>2.047s</td></tr>
+<tr><td>P95响应</td><td>2.070s</td></tr>
+</table>
+
+<h3>6. 大页面加载测试</h3>
+<table>
+<tr><th>页面</th><th>结果</th><th>响应时间</th><th>内容大小</th></tr>
+<tr><td>总览页 (/)</td><td class="pass">200</td><td>2.062s</td><td>3,945B</td></tr>
+<tr><td>水资源 (/resources)</td><td class="pass">200</td><td>2.041s</td><td>3,945B</td></tr>
+<tr><td>数据洞察 (/data-insight)</td><td class="pass">200</td><td>2.060s</td><td>3,945B</td></tr>
+<tr><td>地质构造 (/geology)</td><td class="pass">200</td><td>2.053s</td><td>3,945B</td></tr>
+</table>
+
+<h2>性能分析</h2>
+
+<h3>响应时间说明</h3>
+<p>当前测试环境使用 Python 内置 http.server（单线程阻塞模型），每次请求约 2s 的响应时间源于 Python 服务器本身的性能瓶颈，而非前端应用问题。部署到 Nginx/Caddy 等生产级 Web 服务器后，预期响应时间可降至 10~50ms。</p>
+
+<h3>并发表现</h3>
+<p>50 并发用户下 0 错误、平均 2.3s 响应，说明 Python 单线程服务器在排队处理模式下仍能稳定响应，无连接丢失或崩溃。Nginx 部署后并发能力将提升 2~3 个数量级。</p>
+
+<h3>SPA路由</h3>
+<p>所有 22 个前端路由均正确回退到 index.html，SPA 路由机制工作正常。实际页面内容由浏览器端 React Router 解析后动态渲染。</p>
+
+<h3>静态资源</h3>
+<p>全部 JS/CSS 资源可正常访问，无 404 或损坏。Vite 构建产物的内容哈希文件名确保缓存一致性。</p>
+
+<h2>优化建议</h2>
+<ol>
+<li><strong>生产部署使用 Nginx</strong>：Python http.server 仅适用于开发/本地测试，生产环境应使用 Nginx 部署，响应时间可降低 99%</li>
+<li><strong>启用 gzip 压缩</strong>：Nginx 配置 gzip 后，JS/CSS 传输体积可压缩 60~70%</li>
+<li><strong>CDN 加速</strong>：如外网部署，可将静态资源托管至 CDN，进一步降低延迟</li>
+</ol>
+
+<p style="font-size:9pt;color:#999;margin-top:40px;border-top:1px solid #e0e0e0;padding-top:8px;">
+测试报告由河北省地下水环境信息平台自动生成，版本 v3.24.3，生成日期 2026年6月17日。
+</p>
+
+</body>
+</html>

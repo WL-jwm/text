@@ -1,0 +1,102 @@
+[
+  {
+    "id": "hb-alpha-1",
+    "category": "infiltration",
+    "name": "粘土 降水入渗系数",
+    "value": "8~15%",
+    "unit": "%",
+    "lithology": "粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "经验值",
+    "reference": "水位埋深大时入渗系数降低",
+    "metadata": {
+      "plain": "8~15%",
+      "basin": "8~12%",
+      "mountain": "3~8%",
+      "optDepth": "2~4"
+    }
+  },
+  {
+    "id": "hb-alpha-2",
+    "category": "infiltration",
+    "name": "亚粘土 降水入渗系数",
+    "value": "12~25%",
+    "unit": "%",
+    "lithology": "亚粘土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "经验值",
+    "reference": "表6-3",
+    "metadata": {
+      "plain": "12~25%",
+      "basin": "10~22%",
+      "mountain": "8~15%",
+      "optDepth": "2~4"
+    }
+  },
+  {
+    "id": "hb-alpha-3",
+    "category": "infiltration",
+    "name": "亚砂土 降水入渗系数",
+    "value": "20~35%",
+    "unit": "%",
+    "lithology": "亚砂土",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "经验值",
+    "reference": "表6-3",
+    "metadata": {
+      "plain": "20~35%",
+      "basin": "15~30%",
+      "mountain": "10~20%",
+      "optDepth": "2~4"
+    }
+  },
+  {
+    "id": "hb-alpha-4",
+    "category": "infiltration",
+    "name": "粉砂 降水入渗系数",
+    "value": "25~40%",
+    "unit": "%",
+    "lithology": "粉砂",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "经验值",
+    "reference": "表6-5",
+    "metadata": {
+      "plain": "25~40%",
+      "basin": "20~35%",
+      "mountain": "15~25%",
+      "optDepth": "2~5"
+    }
+  },
+  {
+    "id": "hb-alpha-5",
+    "category": "infiltration",
+    "name": "砂砾石 降水入渗系数",
+    "value": "35~50%",
+    "unit": "%",
+    "lithology": "砂砾石",
+    "aquifer_group": "",
+    "zone": "",
+    "region": "河北平原",
+    "source": "1999年河北省地下水",
+    "reliability": "经验值",
+    "reference": "冲洪积扇轴部",
+    "metadata": {
+      "plain": "35~50%",
+      "basin": "30~45%",
+      "mountain": "25~40%",
+      "optDepth": "3~8"
+    }
+  }
+]
