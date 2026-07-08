@@ -96,16 +96,6 @@ import { HistoricalEvolution } from '../components/overview/HistoricalEvolution'
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
 import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
 
-// ── 动画计数 Hook ──
-
-function _navigateTo(path: string) {
-
-  window.history.pushState(null, '', path);
-
-  window.dispatchEvent(new PopStateEvent('popstate'));
-
-}
-
 // ── Phase 3.2: 治理成效摘要卡片 ──
 function GovernanceSummaryCards() {
   const gwCities = ['石家庄', '保定', '邯郸', '邢台', '沧州', '衡水', '廊坊', '唐山', '秦皇岛', '张家口', '承德'];

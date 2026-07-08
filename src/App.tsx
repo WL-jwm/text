@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { GlobalSearchEnhanced } from './components/GlobalSearchEnhanced';
 import { PrintFooter, PrintButton } from './components/PrintFooter';
 import { useKeyboardShortcuts, ShortcutHelpPanel } from './components/KeyboardShortcuts';
@@ -160,7 +160,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="px-4 py-3 border-t border-gw-border/40 text-[10px] text-gw-muted/40 font-mono">
-        v4.4.0 | 26 Pages | 50 Rules | Map Multi-Layer | Time Series | PWA
+        v4.10.0 | 29 Pages | PWA
       </div>
     </>
   );
@@ -252,16 +252,6 @@ function MobileNavDrawer({ open, onClose }: { open: boolean; onClose: () => void
   );
 }
 
-// Exposes react-router navigate to window for GlobalSearch Enter key support
-function NavigateHelper() {
-  const navigate = useNavigate();
-  React.useEffect(() => {
-    (window as any).__navigate = navigate;
-    return () => { delete (window as any).__navigate; };
-  }, [navigate]);
-  return null;
-}
-
 
 // ── ScrollToTop: 路由切换时自动滚动到顶部 ──
 function ScrollToTop() {
@@ -319,8 +309,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ToastProvider>
-      <NavigateHelper />
-      <ScrollToTop />
+            <ScrollToTop />
       <ShortcutHelper />
       <PWAManager />
       <PreloadManager />
@@ -386,7 +375,7 @@ export default function App() {
 
           {!collapsed && (
             <div className="px-4 py-3 border-t border-gw-border/40 text-[10px] text-gw-muted/40 font-mono">
-              v4.4.0 | 26 Pages | 50 Rules | Map Multi-Layer | Time Series | PWA
+              v4.10.0 | 29 Pages | PWA
             </div>
           )}
         </aside>

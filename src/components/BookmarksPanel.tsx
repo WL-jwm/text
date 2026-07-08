@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bookmark, Trash2, MapPin, FolderOpen, ChevronRight } from 'lucide-react';
 import { TechCard } from './UI';
 import { useAppStore, DataBookmark } from '../store/useAppStore';
@@ -7,6 +8,7 @@ import { useToast } from './Toast';
 export function BookmarksPanel() {
   const { bookmarks, addBookmark, deleteBookmark } = useAppStore();
   const { success } = useToast();
+  const navigate = useNavigate();
 
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [currentQuery, ] = useState('');
@@ -82,11 +84,7 @@ export function BookmarksPanel() {
 
   // 跳转到书签
   const handleNavigate = (bookmark: DataBookmark) => {
-    if ((window as any).__navigate) {
-      (window as any).__navigate(bookmark.path);
-    } else {
-      window.location.href = bookmark.path;
-    }
+    navigate(bookmark.path);
   };
 
   return (

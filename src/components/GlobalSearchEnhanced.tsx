@@ -15,6 +15,7 @@ import {
   FlaskConical,  BarChart3, Briefcase,
   Clock, TrendingUp, RotateCcw, Trash2,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { SearchResult } from '../data/searchIndex';
 
 // ── 分类图标映射 ──
@@ -212,6 +213,7 @@ export function GlobalSearchEnhanced({ placeholder = '搜索参数、区域、�
   const [searchCount, setSearchCount] = useState(0);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const indexLoadedRef = useRef(false);
@@ -373,9 +375,7 @@ export function GlobalSearchEnhanced({ placeholder = '搜索参数、区域、�
       setSearchToHash(query);
     }
     if (onSelect) onSelect();
-    const nav = (window as unknown as Record<string, unknown>).__navigate as ((path: string) => void) | undefined;
-    if (nav) nav(r.path);
-    else window.location.hash = r.path;
+    navigate(r.path);
   };
 
   // ── 键盘事件 ──
@@ -530,7 +530,7 @@ export function GlobalSearchEnhanced({ placeholder = '搜索参数、区域、�
                   <button key={r.id} onClick={() => navigateTo(r)} className={`w-full px-3 py-2 text-left flex items-start gap-2 transition-colors ${i === activeIndex ? 'bg-gw-blue/10' : 'hover:bg-gw-surface/50'}`}>
                     <span className="mt-0.5 flex-shrink-0 opacity-50">{CATEGORY_ICONS[r.category] || <Database size={12} />}</span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gw-text truncate" dangerouslySetInnerHTML={{ __html: highlightText(r.title, query) }} />
+                      <p className="text-xs text-gw-text truncate">{highlightText(r.title, query)}</p>
                       <p className="text-[9px] text-gw-muted/50 truncate mt-0.5">{r.category} · {r.keywords?.split(',').slice(0, 2).join(', ')}</p>
                     </div>
                     <span className="text-[8px] text-gw-muted/30 flex-shrink-0 mt-0.5">

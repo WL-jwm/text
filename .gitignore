@@ -47,3 +47,4 @@ spa_server.py
 export_params.cjs
 server.cjs
 screenshot.png
+_fix_*.py

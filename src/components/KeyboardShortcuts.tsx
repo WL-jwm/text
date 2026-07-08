@@ -151,7 +151,7 @@ export function useKeyboardShortcuts() {
   }, []);
 
   const goHome = useCallback(() => {
-    (window as any).__navigate?.('/');
+    window.location.href = '/';
   }, []);
 
   const goBack = useCallback(() => {

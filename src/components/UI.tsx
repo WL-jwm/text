@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, ExternalLink, ChevronDown, Copy, Check, AlertTriangle, CornerDownLeft, Database } from 'lucide-react';
 import type { SearchResult } from '../data/searchIndex';
 
@@ -66,6 +67,7 @@ export function GlobalSearch({ placeholder = '搜索...', onSelect, onSearch }: 
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const doSearch = useCallback(async (q: string) => {
     setQuery(q);
@@ -130,10 +132,7 @@ export function GlobalSearch({ placeholder = '搜索...', onSelect, onSearch }: 
       setOpen(false);
       setQuery('');
       if (onSelect) onSelect();
-      // Navigate
-      const nav = (window as unknown as Record<string, unknown>).__navigate as ((path: string) => void) | undefined;
-      if (nav) nav(r.path);
-      else window.location.hash = r.path;
+      navigate(r.path);
     }
   };
 
