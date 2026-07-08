@@ -6,7 +6,7 @@ import { AlertTriangle, ArrowLeftRight, Droplets, MapPin } from 'lucide-react';
 import { TechCard, ChartTooltip, StatCard, DataSourceNote } from '../UI';
 import { CrossLinkPanel } from '../CrossLink';
 import { LazyChartCard } from '../LazyChartCard';
-import { ComparePanel } from '../ComparePanel';
+import { ComparePanel, type CompareColumn } from '../ComparePanel';
 import { cityWaterSupply2024, cityBulletin2024 } from '../../data/resources';
 import { salineDistribution } from '../../data/salineWater';
 import { landSubsidence, landSubsidence2024 } from '../../data/environment';
@@ -52,6 +52,18 @@ interface ScoreItem {
 }
 
 export function RegionalCompareTab({ regionalCompare, gwDepRank, regionalColumns, exportRegionalCompare }: RegionalCompareTabProps) {
+  const compareColumns: CompareColumn[] = useMemo(() =>
+    regionalColumns.map(col => ({
+      title: col.name,
+      items: [
+        { label: '总供水', value: col['总供水(亿m³)'], unit: '亿m³' },
+        { label: '地下水占比', value: col['地下水占比(%)'], unit: '%' },
+        { label: '地表水占比', value: col['地表水占比(%)'], unit: '%' },
+        { label: '水位变化', value: col['水位变化(m)'], unit: 'm' },
+      ],
+    })),
+    [regionalColumns]
+  );
   return (
     <>
       <div className="space-y-4">
@@ -68,7 +80,7 @@ export function RegionalCompareTab({ regionalCompare, gwDepRank, regionalColumns
           </button>
         </div>
 
-        <ComparePanel columns={regionalColumns as any} title="主要城市多维度对比" caption="供水结构 / 水位动态 / 咸水分布 / 地面沉降" />
+        <ComparePanel columns={compareColumns} title="主要城市多维度对比" caption="供水结构 / 水位动态 / 咸水分布 / 地面沉降" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <LazyChartCard title="各市水位变化对比" className="scan-line" height={280}>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 交叉数据校验模块 (C4)
  * 检验不同数据源中相同指标的一致性，发现数据矛盾

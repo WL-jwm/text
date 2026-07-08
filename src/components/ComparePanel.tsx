@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowLeftRight, ChevronDown, ChevronUp } from 'lucide-react';
 
-interface CompareColumn {
+export interface CompareColumn {
   title: string;
   items: { label: string; value: string | number; unit?: string; highlight?: boolean }[];
 }
