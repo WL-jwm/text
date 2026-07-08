@@ -201,7 +201,7 @@ describe('路由一致性测试', () => {
       expect(navItemPaths.length).toBe(routeDefinitions.length);
     });
 
-    it('导航总数应为28', () => {
+    it('导航总数应为28(nav)+2(hidden)=30总页面', () => {
       expect(navItemPaths.length).toBe(28);
       expect(routeDefinitions.length).toBe(28);
     });

@@ -17,6 +17,7 @@ import { ScrollProgress, BackToTop } from './components/ScrollProgress';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Database, Droplets, FlaskConical, AlertTriangle, Wrench, Waves, Mountain, Layers, History, Thermometer, Gem, MapPin, PanelLeftClose, PanelLeft, Clock, Menu, X, BarChart3, Briefcase, Ban, Scale, TrendingDown } from 'lucide-react';
+import { version as pkgVersion } from '../package.json';
 
 // ── Route lazy loading：19个页面组件按需加载 ──
 const Overview = React.lazy(() => import('./pages/Overview').then(m => ({ default: m.Overview })));
@@ -117,6 +118,9 @@ navGroups.forEach(g => g.items.forEach(i => {
   pageMeta[i.path] = { label: i.label, group: g.label };
 }));
 
+// navGroups 28 + saline-water(1) + NotFound(1) = 30 pages
+const TOTAL_PAGES = navGroups.reduce((n, g) => n + g.items.length, 0) + 2;
+
 // ── 侧栏导航内容（桌面+移动端复用） ──
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
@@ -160,7 +164,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="px-4 py-3 border-t border-gw-border/40 text-[10px] text-gw-muted/40 font-mono">
-        v4.10.0 | 29 Pages | PWA
+        {`v${pkgVersion} | ${TOTAL_PAGES} Pages | PWA`}
       </div>
     </>
   );
@@ -375,7 +379,7 @@ export default function App() {
 
           {!collapsed && (
             <div className="px-4 py-3 border-t border-gw-border/40 text-[10px] text-gw-muted/40 font-mono">
-              v4.10.0 | 29 Pages | PWA
+              {`v${pkgVersion} | ${TOTAL_PAGES} Pages | PWA`}
             </div>
           )}
         </aside>

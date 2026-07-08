@@ -6,6 +6,11 @@ export default defineConfig({
   base: './',
   build: {
     chunkSizeWarningLimit: 600,
+    minify: 'esbuild',
+    esbuild: {
+      pure: ['console.log', 'console.info', 'console.warn', 'console.debug'],
+      drop: ['debugger'],
+    },
     rollupOptions: {
       output: {
         // 页面路由chunk命名：使懒加载chunk名可读
