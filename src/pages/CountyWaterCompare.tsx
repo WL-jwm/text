@@ -96,10 +96,10 @@ export function CountyWaterCompare() {
         domesticRatio: (c.totalUse ?? 0) > 0 ? (((c.domestic ?? 0) / (c.totalUse ?? 0)) * 100) : 0,
         ecoRatio: (c.totalUse ?? 0) > 0 ? (((c.eco ?? 0) / (c.totalUse ?? 0)) * 100) : 0,
       }))
-      .sort((a: CountyDataItem, b: CountyDataItem) => {
-        const va = (a as any)[sortField] ?? 0;
-        const vb = (b as any)[sortField] ?? 0;
-        return sortDir === 'desc' ? (vb as number) - (va as number) : (va as number) - (vb as number);
+      .sort((a, b) => {
+        const va = (a as Record<string, number | string | null | undefined>)[sortField] ?? 0;
+        const vb = (b as Record<string, number | string | null | undefined>)[sortField] ?? 0;
+        return sortDir === 'desc' ? Number(vb) - Number(va) : Number(va) - Number(vb);
       });
   }, [currentCity, sortField, sortDir]);
 

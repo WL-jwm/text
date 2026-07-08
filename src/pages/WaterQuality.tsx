@@ -109,7 +109,7 @@ export function WaterQuality() {
         </div>
         <div className="flex items-center gap-3">
           <span className="px-2 py-1 rounded text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">2024年</span>
-          <button onClick={() => { exportDataCSV(shallowGroundwaterQuality2024 as any, 'shallow-water-quality-2024'); success('数据已导出'); }} className="text-xs text-gw-cyan/60 hover:text-gw-cyan transition-colors">
+          <button onClick={() => { exportDataCSV(shallowGroundwaterQuality2024, 'shallow-water-quality-2024'); success('数据已导出'); }} className="text-xs text-gw-cyan/60 hover:text-gw-cyan transition-colors">
             导出数据
           </button>
           <button onClick={() => setExportOpen(true)}

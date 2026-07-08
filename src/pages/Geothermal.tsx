@@ -95,7 +95,7 @@ export function Geothermal() {
         </div>
         <div className="flex items-center gap-3">
           <span className="px-2 py-1 rounded text-[10px] bg-red-500/15 text-red-400 border border-red-500/20">调查年限型</span>
-          <button onClick={() => { exportDataCSV(geothermalFields as any, 'geothermal-fields'); success('数据已导出'); }} className="text-xs text-gw-cyan/60 hover:text-gw-cyan transition-colors">
+          <button onClick={() => { exportDataCSV(geothermalFields, 'geothermal-fields'); success('数据已导出'); }} className="text-xs text-gw-cyan/60 hover:text-gw-cyan transition-colors">
             导出数据
           </button>
         </div>

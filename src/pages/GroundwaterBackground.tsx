@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import {
   groundwaterBackground, cityExceedanceFactors, waterQualityStandard,
+  type ZoneBackgroundData,
 } from '../data/backgroundValues';
 import { SectionTitle, TechCard, ChartTooltip, DataSourceNote } from '../components/UI';
 import { LazyChartCard } from '../components/LazyChartCard';
@@ -62,9 +63,10 @@ export function GroundwaterBackground() {
   const radarData = useMemo(() => {
     const zones = selectedLayer === 'shallow' ? groundwaterBackground.shallow : groundwaterBackground.deep;
     return RADAR_INDICATORS.map(ind => {
-      const point: Record<string, any> = { indicator: ind };
+      const point: Record<string, string | number> = { indicator: ind };
       zones.forEach(z => {
-        const val = (z as any)[ind === '总硬度' ? 'totalHardness' : ind];
+        const key = ind === '总硬度' ? 'totalHardness' : ind;
+        const val = z[key as keyof ZoneBackgroundData];
         point[ZONE_LABELS[z.zone] || z.zone] = parseRange(val || '0');
       });
       return point;
@@ -83,9 +85,9 @@ export function GroundwaterBackground() {
       { key: 'F', label: 'F⁻(mg/L)' },
     ];
     return indicators.map(ind => {
-      const point: Record<string, any> = { name: ind.label };
+      const point: Record<string, string | number> = { name: ind.label };
       zones.forEach(z => {
-        const val = (z as any)[ind.key];
+        const val = z[ind.key as keyof typeof z];
         point[z.zone] = parseRange(val || '0');
       });
       return point;
@@ -200,8 +202,8 @@ export function GroundwaterBackground() {
                     { label: 'F⁻(mg/L)', value: currentZoneData.F },
                     { label: 'Fe(mg/L)', value: currentZoneData.Fe },
                     { label: 'Mn(mg/L)', value: currentZoneData.Mn },
-                    { label: 'As(mg/L)', value: (currentZoneData as any).As || '-' },
-                    { label: 'Cr⁶⁺(mg/L)', value: (currentZoneData as any).Cr6 || '-' },
+                    { label: 'As(mg/L)', value: currentZoneData.As || '-' },
+                    { label: 'Cr⁶⁺(mg/L)', value: currentZoneData.Cr6 || '-' },
                   ].map((item, i) => (
                     <div key={i} className="p-2.5 rounded-lg border border-gw-border/30 bg-gw-surface/30">
                       <p className="text-[9px] text-gw-muted">{item.label}</p>

@@ -90,7 +90,7 @@ export function WaterSource() {
         </div>
         <div className="flex items-center gap-3">
           <span className="px-2 py-1 rounded text-[10px] bg-blue-500/15 text-blue-400 border border-blue-500/20">稳定型</span>
-          <button onClick={() => { exportDataCSV(importantWaterSources as any, 'important-water-sources'); success('数据已导出'); }} className="text-xs text-gw-cyan/60 hover:text-gw-cyan transition-colors">
+          <button onClick={() => { exportDataCSV(importantWaterSources, 'important-water-sources'); success('数据已导出'); }} className="text-xs text-gw-cyan/60 hover:text-gw-cyan transition-colors">
             导出数据
           </button>
         </div>

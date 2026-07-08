@@ -65,7 +65,7 @@ export function HydroZoneSpringsTab() {
             onTagChange={v => setSpringFilter(v === '全部' ? '' : v)}
           />
           <div className="flex-1" />
-          <ExportButton onClick={() => { exportDataCSV(historicalSprings.filter(s => !springFilter || s.region === springFilter) as any, 'historical-springs'); success('泉水数据已导出'); }} label="导出" />
+          <ExportButton onClick={() => { exportDataCSV(historicalSprings.filter(s => !springFilter || s.region === springFilter), 'historical-springs'); success('泉水数据已导出'); }} label="导出" />
         </div>
         <FilterableTechTable
           filterPlaceholder="搜索历史泉水..."

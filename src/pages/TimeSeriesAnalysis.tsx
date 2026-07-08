@@ -271,7 +271,7 @@ function ForecastPanel({ selected, baseline }: { selected: Set<string>; baseline
       {/* 分组汇总 */}
       <div className="grid grid-cols-4 gap-3">
         {groupSummary.map(g => (
-          <StatCard key={g.key} title={g.label} value={g.total2024.toFixed(1)} unit="亿m3" icon={Droplets as any} subtitle={`${baseline}年${g.totalBase.toFixed(1)} / ${g.change > 0 ? '+' : ''}${g.change}`} accent={g.color === '#14b8a6' ? 'cyan' : g.color === '#3b82f6' ? 'blue' : g.color === '#f59e0b' ? 'amber' : 'red'} />
+          <StatCard key={g.key} title={g.label} value={g.total2024.toFixed(1)} unit="亿m3" icon={Droplets} subtitle={`${baseline}年${g.totalBase.toFixed(1)} / ${g.change > 0 ? '+' : ''}${g.change}`} accent={g.color === '#14b8a6' ? 'cyan' : g.color === '#3b82f6' ? 'blue' : g.color === '#f59e0b' ? 'amber' : 'red'} />
         ))}
       </div>
 
@@ -308,8 +308,8 @@ function ForecastPanel({ selected, baseline }: { selected: Set<string>; baseline
               <YAxis dataKey="city" type="category" tick={{ fill: '#8b9dc3', fontSize: 10 }} width={55} />
               <Tooltip content={<ChartTooltip unit="%" title="变化率" />} />
               <Bar dataKey="变化率(%)" name="变化率(%)">
-                {baselineCompare.map((entry: any, i: number) => (
-                  <Cell key={i} fill={(entry as any)['变化率(%)'] < 0 ? '#22c55e' : '#ef4444'} />
+                {baselineCompare.map((entry, i) => (
+                  <Cell key={i} fill={Number(entry['变化率(%)']) < 0 ? '#22c55e' : '#ef4444'} />
                 ))}
               </Bar>
             </BarChart>
@@ -840,10 +840,10 @@ function SubsidenceTrendPanel({ selected }: { selected: Set<string> }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard title="全省均值(2024)" value={subsidenceYearlySummary[subsidenceYearlySummary.length - 1].avgRate.toFixed(1)} unit="mm/a" icon={TrendingDown as any} subtitle="较2014年降74%" accent="emerald" />
-        <StatCard title="最大沉降城市" value={subsidenceYearlySummary[subsidenceYearlySummary.length - 1].maxCity} unit="" icon={Layers as any} subtitle={`${subsidenceYearlySummary[subsidenceYearlySummary.length - 1].maxRate}mm/a`} accent="red" />
-        <StatCard title="10年降幅" value={((1 - subsidenceYearlySummary[subsidenceYearlySummary.length - 1].avgRate / subsidenceYearlySummary[0].avgRate) * 100).toFixed(0)} unit="%" icon={Activity as any} subtitle="沉降减缓显著" accent="cyan" />
-        <StatCard title="全部改善" value={subsidenceYearlySummary[subsidenceYearlySummary.length - 1].improvingCities} unit="市" icon={Droplets as any} subtitle="11市全部改善" accent="blue" />
+        <StatCard title="全省均值(2024)" value={subsidenceYearlySummary[subsidenceYearlySummary.length - 1].avgRate.toFixed(1)} unit="mm/a" icon={TrendingDown} subtitle="较2014年降74%" accent="emerald" />
+        <StatCard title="最大沉降城市" value={subsidenceYearlySummary[subsidenceYearlySummary.length - 1].maxCity} unit="" icon={Layers} subtitle={`${subsidenceYearlySummary[subsidenceYearlySummary.length - 1].maxRate}mm/a`} accent="red" />
+        <StatCard title="10年降幅" value={((1 - subsidenceYearlySummary[subsidenceYearlySummary.length - 1].avgRate / subsidenceYearlySummary[0].avgRate) * 100).toFixed(0)} unit="%" icon={Activity} subtitle="沉降减缓显著" accent="cyan" />
+        <StatCard title="全部改善" value={subsidenceYearlySummary[subsidenceYearlySummary.length - 1].improvingCities} unit="市" icon={Droplets} subtitle="11市全部改善" accent="blue" />
       </div>
 
       {/* 各市沉降速率折线 */}

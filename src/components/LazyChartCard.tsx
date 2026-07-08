@@ -37,7 +37,7 @@ export function LazyChartCard({
   icon?: React.ElementType;
 }) {
   return (
-    <TechCard title={title} badge={badge} className={className} icon={icon as any}>
+    <TechCard title={title} badge={badge} className={className} icon={icon}>
       <ChartLazy height={height} threshold={threshold}>
         {children}
       </ChartLazy>

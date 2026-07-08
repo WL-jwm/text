@@ -35,14 +35,14 @@ export function KarstWater() {
     exportDataCSV(karstSprings.map(s => ({
       泉域: s.name, 位置: s.location, 类型: s.type, 流量: s.discharge, 单位: s.unit,
       面积km2: s.area, 岩性: s.lithology, 特征: s.features, 补给面积: s.rechargeArea, 水位: s.waterLevel, 矿化度: s.tds
-    })) as any, '河北省岩溶泉域');
+    })), '河北省岩溶泉域');
     success('泉域数据已导出');
   };
   const handleExportZones = () => {
     exportDataCSV(karstSystemZones.map(z => ({
       分区: z.zone, 面积km2: z.area, 含水层: z.aquifer, 特征: z.feature,
       岩溶类型: z.karstType, 导水系数T: z.T, 平均出水量: z.avgYield, 降雨量: z.rainfall, 补给系数: z.rechargeCoeff
-    })) as any, '岩溶水系统分区');
+    })), '岩溶水系统分区');
     success('系统分区数据已导出');
   };
 

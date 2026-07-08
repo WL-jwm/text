@@ -48,11 +48,11 @@ export function GeothermalFieldsTab({ tempBarData, areaBarData, gradientDepthDat
     <div className="space-y-4">
       {/* ── 5格统计卡片 ── */}
       <div className="grid grid-cols-5 gap-3">
-        <StatCard title="地热田数" value={geothermalFields.length} unit="处" icon={Flame as any} subtitle="全省主要" accent="red" />
-        <StatCard title="总面积" value={totalArea} unit="km2" icon={MapPin as any} subtitle="探明范围" accent="blue" />
-        <StatCard title="大规模开发" value={largeScale} unit="处" icon={CheckCircle2 as any} subtitle="雄县/牛驼镇" accent="emerald" />
-        <StatCard title="规模开发" value={scaleDev} unit="处" icon={TrendingUp as any} subtitle="新河/宁晋/蠡县/平山" accent="amber" />
-        <StatCard title="初期开发" value={initial} unit="处" icon={AlertTriangle as any} subtitle="阳原/赤城" accent="orange" />
+        <StatCard title="地热田数" value={geothermalFields.length} unit="处" icon={Flame} subtitle="全省主要" accent="red" />
+        <StatCard title="总面积" value={totalArea} unit="km2" icon={MapPin} subtitle="探明范围" accent="blue" />
+        <StatCard title="大规模开发" value={largeScale} unit="处" icon={CheckCircle2} subtitle="雄县/牛驼镇" accent="emerald" />
+        <StatCard title="规模开发" value={scaleDev} unit="处" icon={TrendingUp} subtitle="新河/宁晋/蠡县/平山" accent="amber" />
+        <StatCard title="初期开发" value={initial} unit="处" icon={AlertTriangle} subtitle="阳原/赤城" accent="orange" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

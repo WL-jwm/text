@@ -4,6 +4,7 @@ import { TechCard } from './UI';
 import { useAppStore, CustomAnnotation } from '../store/useAppStore';
 import { useToast } from './Toast';
 
+type AnnotationCategory = 'note' | 'correction' | 'reference' | 'question';
 const CATEGORY_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   note: { label: '笔记', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
   correction: { label: '勘误', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
@@ -95,7 +96,7 @@ export function AnnotationsPanel() {
                   {(Object.entries(CATEGORY_CONFIG) as [string, typeof CATEGORY_CONFIG[string]][]).map(([key, cfg]) => (
                     <button
                       key={key}
-                      onClick={() => setFormCategory(key as any)}
+                      onClick={() => setFormCategory(key as AnnotationCategory)}
                       className={`px-2 py-1 text-[10px] rounded border transition-all ${
                         formCategory === key
                           ? `${cfg.bg} ${cfg.color}`

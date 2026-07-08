@@ -26,7 +26,7 @@ export function exportJSON(data: unknown[], filename: string) {
   downloadBlob(blob, `${filename}.json`);
 }
 
-export function exportDataCSV<T extends Record<string, unknown>>(
+export function exportDataCSV<T extends object>(
   data: T[],
   filename: string,
   options?: { columns?: (keyof T)[]; columnLabels?: Record<string, string> }

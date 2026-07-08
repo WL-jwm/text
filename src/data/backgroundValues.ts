@@ -4,8 +4,48 @@
 // 版本: v1.0 | 更新频率: 随新监测数据更新
 // 说明: 背景值按水文地质单元分区，反映天然状态下地下水化学组分的统计分布
 
+/** 水文地质分区的背景值数据 */
+export interface ZoneBackgroundData {
+  zone: string;
+  cities: string;
+  pH: string;
+  TDS: string;
+  totalHardness: string;
+  Cl: string;
+  SO4: string;
+  HCO3: string;
+  Na: string;
+  Ca: string;
+  Mg: string;
+  NO3: string;
+  NO2: string;
+  NH4: string;
+  F: string;
+  Fe: string;
+  Mn: string;
+  As?: string;
+  Cr6?: string;
+  waterType: string;
+  note: string;
+  [key: string]: string | undefined;  // 允许动态属性访问
+}
+
+/** 城市超标因子数据 */
+export interface CityExceedanceItem {
+  city: string;
+  shallow: string;
+  deep: string;
+  note: string;
+}
+
 /** 河北平原地下水化学背景值（按水文地质分区） */
-export const groundwaterBackground = {
+export const groundwaterBackground: {
+  summary: string;
+  dataSource: string;
+  updateDate: string;
+  shallow: ZoneBackgroundData[];
+  deep: ZoneBackgroundData[];
+} = {
   summary: '河北平原地下水化学背景值按山前平原、中部平原、滨海平原三个水文地质分区统计，数据综合多年监测成果。背景值以P5-P95区间表示，反映天然状态下各指标含量范围。',
   dataSource: '河北省地质环境监测院 + 文献综合',
   updateDate: '2024',

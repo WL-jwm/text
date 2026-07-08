@@ -34,7 +34,7 @@ export function MineralWater() {
       名称: s.name, 位置: s.location, 类型: s.type, 水温: s.temperature,
       日产量: s.dailyYield, 批准文号: s.approvalNo, 状态: s.status,
       矿化度: s.mineralization, SiO2: s.siO2, 锶: s.strontium, pH: s.ph
-    })) as any, '河北省矿泉水产地');
+    })), '河北省矿泉水产地');
     success('矿泉水数据已导出');
   };
 

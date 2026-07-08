@@ -47,7 +47,7 @@ registerReportGenerator('overview', (data) => {
   // ── 第3章：各市地下水位动态 ──
   if (cityWaterLevel.length > 0) {
     const sorted = [...cityWaterLevel].sort((a, b) =>
-      Number((b as any).浅层水位变化 || 0) - Number((a as any).浅层水位变化 || 0)
+      Number((b as Record<string, unknown>).浅层水位变化 || 0) - Number((a as Record<string, unknown>).浅层水位变化 || 0)
     );
 
     sections.push({
