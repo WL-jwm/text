@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  MapPin, Layers, Eye, EyeOff, Search,
+  Layers,
   Maximize2, Navigation,
-  Droplets, Flame, Waves, GlassWater, HardHat, Database,
-  AlertTriangle, BarChart3, X
+
+ X
 } from 'lucide-react';
 import { TechCard, DataSourceNote, ExportButton } from '../components/UI';
 import { cityBulletin2024 } from '../data/resources';
 import { exportExcel } from '../utils/exportUtils';
 import { CrossLinkPanel } from '../components/CrossLink';
 import {
-  mapLayerConfigs, mapZones, springMarkers, geothermalMarkers,
+ mapZones, springMarkers, geothermalMarkers,
   salineMarkers, waterSourceMarkers, mineMarkers,
   allMarkers, hebeiBoundary, cityCenters, getVisibleMarkers,
   type MapMarker, type MapLayerConfig as _MapLayerConfig } from '../data/mapData';
@@ -28,126 +28,10 @@ import { useReportData } from '../hooks/useReportData';
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
 import { contourDatasets, getContourDataset } from '../data/contourData';
 import { idwInterpolate, gridToCanvas, COLOR_SCHEMES } from '../utils/idwInterpolation';
-const TIAN_DI_TOKEN = '174705aebfe31b79b3587279e211cb9a';
-
-// ═══════════════════════════════════════════════════════════
-// v4.3.0: 可叠加图层系统（替代Tab单选模式）
-// ═══════════════════════════════════════════════════════════
-
-/** 图层定义 */
-const LAYER_DEFS = [
-  { key: 'markers', label: '标注分布', icon: MapPin, desc: '泉域/地热/咸水/水源/矿区', color: '#06b6d4' },
-  { key: 'resource', label: '资源量分级', icon: Droplets, desc: '地下水资源量分级着色', color: '#3b82f6' },
-  { key: 'overdraft', label: '超采区划', icon: AlertTriangle, desc: '浅层/深层超采区范围', color: '#ef4444' },
-  { key: 'waterSourcePOI', label: '重要水源地', icon: GlassWater, desc: '城市集中供水水源地', color: '#22d3ee' },
-  { key: 'karstSpringPOI', label: '岩溶大泉', icon: Waves, desc: '岩溶泉域分布与特征', color: '#10b981' },
-  { key: 'contour', label: '等值线', icon: BarChart3, desc: '水位埋深/水质/地温梯度IDW插值', color: '#8b5cf6' },
-] as const;
-
-/** 图层icon映射 */
-const LAYER_ICONS: Record<string, React.ElementType> = {
-  Layers, Droplets, Flame, Waves, GlassWater, HardHat,
-};
-
-/** 标注颜色映射 */
-const CATEGORY_COLORS: Record<string, string> = {
-  spring: '#10b981',
-  geothermal: '#ef4444',
-  saline: '#f59e0b',
-  waterSource: '#06b6d4',
-  mine: '#8b5cf6',
-};
-
-/** 创建圆形标注图标HTML */
-function createCircleIcon(color: string, size = 12): string {
-  return '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + color + ';border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 6px ' + color + '80;cursor:pointer;"></div>';
-}
-
-/** 创建脉冲标注图标HTML */
-function createPulseIcon(color: string): string {
-  return '<div style="position:relative;">' +
-    '<div style="width:14px;height:14px;border-radius:50%;background:' + color + ';border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 8px ' + color + ';"></div>' +
-    '<div style="position:absolute;top:-4px;left:-4px;width:22px;height:22px;border-radius:50%;background:' + color + '30;animation:pulse 2s infinite;"></div>' +
-    '</div>' +
-    '<style>@keyframes pulse{0%{transform:scale(1);opacity:0.7}100%{transform:scale(2);opacity:0}}</style>';
-}
-
-/** 创建菱形水源地标注图标 */
-function createWaterSourceIcon(): string {
-  return '<div style="width:16px;height:16px;background:#22d3ee;border:2px solid rgba(255,255,255,0.95);transform:rotate(45deg);box-shadow:0 0 6px #22d3ee80;cursor:pointer;"></div>';
-}
-
-/** 创建星形岩溶泉标注图标 */
-function createKarstSpringIcon(): string {
-  return '<div style="font-size:18px;line-height:1;filter:drop-shadow(0 0 4px #10b98180);cursor:pointer;">&#9733;</div>';
-}
-
-/** 创建资源量分级气泡 */
-function createGradeBubble(grade: number, city: string, value: number): string {
-  const color = gradeColors[grade] || '#3b82f6';
-  const size = 18 + (5 - grade) * 4;
-  return '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + color + ';border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 10px ' + color + '60;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);cursor:pointer;">' + value.toFixed(1) + '</div>';
-}
-
-/** 构建城市聚合数据弹窗HTML */
-function _buildCityPopupHtml(info: ReturnType<typeof getCityAggregatedInfo>): string {
-  if (!info) return '';
-  const overdraftColor = function(t: string) {
-    if (t === '严重超采区') return '#ef4444';
-    if (t === '一般超采区') return '#f59e0b';
-    return '#6b7280';
-  };
-  return '<div style="background:linear-gradient(135deg,#1e293b,#0f172a);color:#e5e7eb;font-family:system-ui;padding:12px;border-radius:10px;min-width:260px;border:1px solid rgba(255,255,255,0.08);">' +
-    '<div style="font-size:15px;font-weight:700;margin-bottom:8px;color:#fff;display:flex;align-items:center;gap:6px;">' +
-    '<div style="width:8px;height:8px;border-radius:50%;background:#06b6d4;"></div>' +
-    info.city + '市 · 地下水概览</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">' +
-    '<div style="padding:6px 8px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:6px;">' +
-    '<div style="font-size:10px;color:#9ca3af;">地下水资源量</div>' +
-    '<div style="font-size:13px;font-weight:700;color:#06b6d4;">' + info.groundResource.toFixed(2) + ' <span style="font-size:10px;font-weight:400;color:#9ca3af;">亿m³</span></div></div>' +
-    '<div style="padding:6px 8px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:6px;">' +
-    '<div style="font-size:10px;color:#9ca3af;">地下水供水量</div>' +
-    '<div style="font-size:13px;font-weight:700;color:#3b82f6;">' + info.gwSupply.toFixed(2) + ' <span style="font-size:10px;font-weight:400;color:#9ca3af;">亿m³</span></div></div>' +
-    '<div style="padding:6px 8px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);border-radius:6px;">' +
-    '<div style="font-size:10px;color:#9ca3af;">供水占比</div>' +
-    '<div style="font-size:13px;font-weight:700;color:#8b5cf6;">' + info.gwRatio.toFixed(1) + '%</div></div>' +
-    '<div style="padding:6px 8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:6px;">' +
-    '<div style="font-size:10px;color:#9ca3af;">降水量</div>' +
-    '<div style="font-size:13px;font-weight:700;color:#10b981;">' + (info.precipitation > 0 ? info.precipitation.toFixed(0) + ' mm' : '-') + '</div></div></div>' +
-    '<div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:6px;">' +
-    '<div style="font-size:11px;margin-bottom:4px;color:#9ca3af;">超采区类型</div>' +
-    '<div style="display:flex;gap:6px;">' +
-    '<span style="padding:2px 8px;border-radius:4px;font-size:10px;background:' + overdraftColor(info.shallowType) + '20;color:' + overdraftColor(info.shallowType) + ';font-weight:600;">浅层: ' + info.shallowType + '</span>' +
-    '<span style="padding:2px 8px;border-radius:4px;font-size:10px;background:' + overdraftColor(info.deepType) + '20;color:' + overdraftColor(info.deepType) + ';font-weight:600;">深层: ' + info.deepType + '</span></div>' +
-    (info.hasCone ? '<div style="font-size:10px;color:#9ca3af;margin-top:4px;">漏斗: ' + info.coneInfo + '</div>' : '') +
-    '</div></div>';
-}
-
-/** 水源地名称到坐标的映射 */
-const WATER_SOURCE_COORDS: Record<string, [number, number]> = {
-  '石家庄水源地': [38.04, 114.51],
-  '保定水源地': [38.87, 115.46],
-  '唐山水源地': [39.63, 118.18],
-  '邯郸水源地': [36.56, 114.47],
-  '邢台水源地': [37.05, 114.50],
-  '张家口水源地': [40.78, 114.88],
-  '承德水源地': [40.95, 117.97],
-  '沧州水源地': [38.30, 116.85],
-};
-
-/** 岩溶泉名称到坐标的映射 */
-const KARST_SPRING_COORDS: Record<string, [number, number]> = {
-  '黑龙洞泉群': [36.55, 114.20],
-  '邢台百泉': [37.05, 114.50],
-  '威州泉': [38.35, 114.05],
-  '东风湖泉': [36.15, 114.05],
-  '涞源泉': [39.38, 114.68],
-  '水磨槽泉群': [38.55, 114.60],
-  '十股泉': [37.30, 114.55],
-  '白鹿泉': [38.15, 114.30],
-  '南焦泉': [37.80, 114.25],
-  '龙潭泉': [40.63, 115.50],
-};
+import {
+  TIAN_DI_TOKEN, LAYER_DEFS, CATEGORY_COLORS,
+} from './mapConstants';
+import { MapSidebar } from './MapSidebar';
 
 export function MapView() {
   const { success } = useToast();
@@ -1288,276 +1172,34 @@ export function MapView() {
           })()}
         </TechCard>
 
-        {/* 侧边栏 */}
         {sidebarOpen && (
-          <div className="space-y-3">
-            {/* 搜索 */}
-            <TechCard title="标注搜索">
-              <div className="relative">
-                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gw-muted" />
-                <input
-                  type="text"
-                  value={searchText}
-                  onChange={e => setSearchText(e.target.value)}
-                  placeholder="搜索泉域、地热田、水源地..."
-                  className="w-full pl-8 pr-3 py-2 rounded-lg text-xs bg-gw-bg border border-gw-border/40 text-gw-text placeholder-gw-muted focus:outline-none focus:border-gw-blue/50"
-                />
-              </div>
-              {searchText.length > 0 && (
-                <div className="mt-2 max-h-40 overflow-y-auto space-y-1 scrollbar-none">
-                  {filteredMarkers.slice(0, 15).map(m => (
-                    <button key={m.id} onClick={() => flyToMarker(m)}
-                      className="w-full text-left px-2 py-1.5 rounded text-xs hover:bg-gw-surface/50 transition-colors flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: CATEGORY_COLORS[m.category] }} />
-                      <div className="truncate">
-                        <span className="text-gw-text">{m.name}</span>
-                        <span className="text-gw-muted ml-1">{m.type}</span>
-                      </div>
-                    </button>
-                  ))}
-                  {filteredMarkers.length === 0 && (
-                    <div className="text-[10px] text-gw-muted text-center py-2">未找到匹配结果</div>
-                  )}
-                </div>
-              )}
-            </TechCard>
-
-            {/* ═══════ v4.3.0: 统一图层控制面板 ═══════ */}
-            <TechCard title="图层控制">
-              <div className="space-y-1.5">
-                {/* 标注子图层 */}
-                {activeLayers.has('markers') && (
-                  <>
-                    {mapLayerConfigs.map(layer => {
-                      const IconComp = LAYER_ICONS[layer.icon] || Layers;
-                      const isVisible = visibleLayers.has(layer.categories[0]);
-                      return (
-                        <button key={layer.key} onClick={() => toggleMarkerCategory(layer.categories[0])}
-                          className={'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all border ' +
-                            (isVisible ? 'border-opacity-30 bg-opacity-10' : 'border-gw-border/30 text-gw-muted hover:text-gw-text')
-                          }
-                          style={isVisible ? {
-                            borderColor: layer.color + '30',
-                            backgroundColor: layer.color + '10',
-                            color: '#e5e7eb',
-                          } : {}}
-                        >
-                          <span className="flex items-center gap-2">
-                            <IconComp size={13} style={isVisible ? { color: layer.color } : {}} />
-                            {layer.label}
-                          </span>
-                          {isVisible ? <Eye size={13} style={{ color: layer.color }} /> : <EyeOff size={13} />}
-                        </button>
-                      );
-                    })}
-                    <div className="border-t border-gw-border/30 pt-1.5 mt-1.5 space-y-1.5">
-                      <button onClick={() => setShowZones(!showZones)}
-                        className={'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all border ' +
-                          (showZones ? 'border-blue-500/30 bg-blue-500/10 text-gw-text' : 'border-gw-border/30 text-gw-muted hover:text-gw-text')
-                        }>
-                        <span className="flex items-center gap-2">
-                          <Layers size={13} style={showZones ? { color: '#3b82f6' } : {}} />
-                          系统区划面
-                        </span>
-                        {showZones ? <Eye size={13} className="text-blue-400" /> : <EyeOff size={13} />}
-                      </button>
-                      <button onClick={() => setShowCountyCoverage(!showCountyCoverage)}
-                        className={'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all border ' +
-                          (showCountyCoverage ? 'border-emerald-500/30 bg-emerald-500/10 text-gw-text' : 'border-gw-border/30 text-gw-muted hover:text-gw-text')
-                        }>
-                        <span className="flex items-center gap-2">
-                          <Database size={13} style={showCountyCoverage ? { color: '#10b981' } : {}} />
-                          县级数据覆盖
-                        </span>
-                        {showCountyCoverage ? <Eye size={13} className="text-emerald-400" /> : <EyeOff size={13} />}
-                      </button>
-                    </div>
-                  </>
-                )}
-
-                {/* 资源量子图层 */}
-                {activeLayers.has('resource') && (
-                  <div className={activeLayers.has('markers') ? 'border-t border-gw-border/30 pt-1.5 mt-1.5' : ''}>
-                    <button onClick={() => setShowCityBoundary(!showCityBoundary)}
-                      className={'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all border ' +
-                        (showCityBoundary ? 'border-cyan-500/30 bg-cyan-500/10 text-gw-text' : 'border-gw-border/30 text-gw-muted hover:text-gw-text')
-                      }>
-                      <span className="flex items-center gap-2">
-                        <Droplets size={13} style={showCityBoundary ? { color: '#06b6d4' } : {}} />
-                        市界分级着色
-                      </span>
-                      {showCityBoundary ? <Eye size={13} className="text-cyan-400" /> : <EyeOff size={13} />}
-                    </button>
-                  </div>
-                )}
-
-                {/* 超采区子图层 */}
-                {activeLayers.has('overdraft') && (
-                  <div className={(activeLayers.has('markers') || activeLayers.has('resource')) ? 'border-t border-gw-border/30 pt-1.5 mt-1.5' : ''}>
-                    <button onClick={() => setShowOverdraft(!showOverdraft)}
-                      className={'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all border mb-1.5 ' +
-                        (showOverdraft ? 'border-red-500/30 bg-red-500/10 text-gw-text' : 'border-gw-border/30 text-gw-muted hover:text-gw-text')
-                      }>
-                      <span className="flex items-center gap-2">
-                        <AlertTriangle size={13} style={showOverdraft ? { color: '#ef4444' } : {}} />
-                        超采区范围
-                      </span>
-                      {showOverdraft ? <Eye size={13} className="text-red-400" /> : <EyeOff size={13} />}
-                    </button>
-                    {overdraftLegend.map(item => (
-                      <button key={item.type} onClick={() => toggleOverdraftType(item.type)}
-                        className={'w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all border mb-1 ' +
-                          (overdraftFilter.has(item.type) ? 'opacity-100' : 'opacity-40 border-gw-border/30')
-                        }
-                        style={overdraftFilter.has(item.type) ? { borderColor: item.color + '30', backgroundColor: item.fill } : {}}>
-                        <span className="flex items-center gap-2 text-gw-text">
-                          <div className="w-2.5 h-2.5 rounded-sm" style={{ background: item.color }} />
-                          {item.label}
-                        </span>
-                        {overdraftFilter.has(item.type) ? <Eye size={13} style={{ color: item.color }} /> : <EyeOff size={13} />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* 省界边界 — 始终可用 */}
-                <div className={activeLayers.size > 0 ? 'border-t border-gw-border/30 pt-1.5 mt-1.5' : ''}>
-                  <button onClick={() => setShowBoundary(!showBoundary)}
-                    className={'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs transition-all border ' +
-                      (showBoundary ? 'border-blue-500/30 bg-blue-500/10 text-gw-text' : 'border-gw-border/30 text-gw-muted hover:text-gw-text')
-                    }>
-                    <span className="flex items-center gap-2">
-                      <MapPin size={13} style={showBoundary ? { color: '#3b82f6' } : {}} />
-                      省界边界
-                    </span>
-                    {showBoundary ? <Eye size={13} className="text-blue-400" /> : <EyeOff size={13} />}
-                  </button>
-                </div>
-              </div>
-            </TechCard>
-
-            {/* 城市定位 */}
-            <TechCard title="城市定位">
-              <div className="space-y-0.5 max-h-48 overflow-y-auto scrollbar-none">
-                {cityCenters.filter(c => c.name !== '全省').map(c => {
-                  const isSelected = cityDetailPanel === c.name;
-                  return (
-                    <button key={c.name} onClick={() => flyToCity(c.name)}
-                      className={'w-full text-left px-2.5 py-1.5 rounded text-xs transition-all flex items-center gap-2 ' +
-                        (isSelected ? 'bg-gw-blue/20 text-gw-highlight' : 'text-gw-muted hover:text-gw-text hover:bg-gw-surface/50')
-                      }>
-                      <MapPin size={12} />
-                      {c.name}
-                      {activeLayers.has('resource') && (() => {
-                        const g = cityGrades.find(gr => gr.city === c.name);
-                        if (!g) return null;
-                        return (
-                          <span className="ml-auto text-[10px] font-mono" style={{ color: gradeColors[g.grade] }}>
-                            {g.groundResource.toFixed(1)}
-                          </span>
-                        );
-                      })()}
-                    </button>
-                  );
-                })}
-              </div>
-            </TechCard>
-
-            {/* 快速定位 */}
-            <TechCard title="快速定位">
-              <div className="space-y-0.5 max-h-48 overflow-y-auto scrollbar-none">
-                {cityCenters.map(c => (
-                  <button key={c.name} onClick={() => setActiveCenter(c)}
-                    className={'w-full text-left px-2.5 py-1.5 rounded text-xs transition-all flex items-center gap-2 ' +
-                      (activeCenter.name === c.name ? 'bg-gw-blue/20 text-gw-highlight' : 'text-gw-muted hover:text-gw-text hover:bg-gw-surface/50')
-                    }>
-                    <MapPin size={12} />
-                    {c.name}
-                  </button>
-                ))}
-              </div>
-            </TechCard>
-
-            {/* 选中城市水文概况摘要 */}
-            {activeCenter && (() => {
-              const bulletin = cityBulletin2024.find(function(b) { return b.city === activeCenter.name + '市' || b.city === activeCenter.name; });
-              if (!bulletin) return null;
-              const bulletinCounties = bulletin.counties as CountyDataItem[] | undefined;
-              const hasCounties = !!bulletinCounties && bulletinCounties.length > 0;
-              const dataCounties = hasCounties ? bulletinCounties!.filter(function(c: CountyDataItem) { return c.precip != null; }).length : 0;
-              return (
-                <TechCard title={bulletin.city + ' 水文概况'} badge="2024年公报">
-                  <div className="space-y-2 text-[10px]">
-                    <div className="grid grid-cols-2 gap-1.5">
-                      <div className="p-1.5 rounded bg-blue-500/5 border border-blue-500/10">
-                        <p className="text-gw-muted">降水量</p>
-                        <p className="font-mono text-blue-400 text-xs font-bold">{bulletin.precipTotal ?? '-'}</p>
-                      </div>
-                      <div className="p-1.5 rounded bg-emerald-500/5 border border-emerald-500/10">
-                        <p className="text-gw-muted">水资源总量</p>
-                        <p className="font-mono text-emerald-400 text-xs font-bold">{bulletin.totalWater?.toFixed(2) ?? '-'} <span className="text-gw-muted font-normal">亿m³</span></p>
-                      </div>
-                      <div className="p-1.5 rounded bg-cyan-500/5 border border-cyan-500/10">
-                        <p className="text-gw-muted">总供水量</p>
-                        <p className="font-mono text-cyan-400 text-xs font-bold">{bulletin.totalSupply?.toFixed(2) ?? '-'}</p>
-                      </div>
-                      <div className="p-1.5 rounded bg-purple-500/5 border border-purple-500/10">
-                        <p className="text-gw-muted">地下水占比</p>
-                        <p className="font-mono text-purple-400 text-xs font-bold">{bulletin.totalSupply > 0 ? (bulletin.groundSupply / bulletin.totalSupply * 100).toFixed(1) + '%' : '-'}</p>
-                      </div>
-                    </div>
-                    {hasCounties && (
-                      <div className="pt-1 border-t border-gw-border/20">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gw-muted">县级数据覆盖</span>
-                          <span className="text-gw-text">{dataCounties}/{bulletinCounties!.length}</span>
-                        </div>
-                        <div className="w-full h-1.5 mt-1 rounded-full bg-gw-bg/80 overflow-hidden">
-                          <div className="h-full rounded-full" style={{
-                            width: (bulletinCounties!.length > 0 ? Math.round(dataCounties / bulletinCounties!.length * 100) : 0) + '%',
-                            backgroundColor: dataCounties === bulletinCounties!.length ? '#10b981' : dataCounties > 0 ? '#f59e0b' : '#6b7280'
-                          }} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </TechCard>
-              );
-            })()}
-
-            {/* 选中标注详情 */}
-            {selectedMarker && (
-              <TechCard title="标注详情" badge={selectedMarker.type}>
-                <div className="space-y-2">
-                  <div>
-                    <h3 className="text-sm font-medium text-gw-text">{selectedMarker.name}</h3>
-                    <p className="text-[10px] text-gw-muted mt-0.5">{selectedMarker.description}</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-[10px] text-gw-muted">
-                    <span className="px-1.5 py-0.5 rounded" style={{
-                      backgroundColor: (CATEGORY_COLORS[selectedMarker.category] || '#3b82f6') + '20',
-                      color: CATEGORY_COLORS[selectedMarker.category] || '#3b82f6',
-                    }}>
-                      {selectedMarker.category}
-                    </span>
-                    <span>{selectedMarker.lat.toFixed(2)}°N, {selectedMarker.lng.toFixed(2)}°E</span>
-                  </div>
-                  {selectedMarker.detail && Object.keys(selectedMarker.detail).length > 0 && (
-                    <div className="space-y-1 pt-1 border-t border-gw-border/30">
-                      {Object.entries(selectedMarker.detail).map(function(entry) {
-                        return (
-                          <div key={entry[0]} className="flex justify-between text-[10px]">
-                            <span className="text-gw-muted">{entry[0]}</span>
-                            <span className="text-gw-text">{entry[1]}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </TechCard>
-            )}
-          </div>
+          <MapSidebar
+            searchText={searchText}
+            onSearchTextChange={setSearchText}
+            filteredMarkers={filteredMarkers}
+            onFlyToMarker={flyToMarker}
+            activeLayers={activeLayers}
+            visibleLayers={visibleLayers}
+            onToggleMarkerCategory={toggleMarkerCategory}
+            showZones={showZones}
+            onToggleZones={() => setShowZones(!showZones)}
+            showCountyCoverage={showCountyCoverage}
+            onToggleCountyCoverage={() => setShowCountyCoverage(!showCountyCoverage)}
+            showBoundary={showBoundary}
+            onToggleBoundary={() => setShowBoundary(!showBoundary)}
+            showCityBoundary={showCityBoundary}
+            onToggleCityBoundary={() => setShowCityBoundary(!showCityBoundary)}
+            showOverdraft={showOverdraft}
+            onToggleOverdraft={() => setShowOverdraft(!showOverdraft)}
+            overdraftFilter={overdraftFilter}
+            onToggleOverdraftType={toggleOverdraftType}
+            activeCenter={activeCenter}
+            onSetActiveCenter={setActiveCenter}
+            cityDetailPanel={cityDetailPanel}
+            onFlyToCity={flyToCity}
+            cityGrades={cityGrades}
+            selectedMarker={selectedMarker}
+          />
         )}
       </div>
 
