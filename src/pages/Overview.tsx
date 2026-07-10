@@ -1,20 +1,15 @@
 import React, { useMemo } from 'react';
 
-
 import {
-
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ScatterChart, Scatter, ZAxis, } from 'recharts';
-
-import {
-
-  TrendingUp, TrendingDown, Droplets, CheckCircle2, Database, MapPin, Trophy, Shield, HardHat, Gem, Snowflake, Flame, MountainSnow, Bug, ArrowLeftRight } from 'lucide-react';
-
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area,
+  PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  ScatterChart, Scatter, ZAxis, Radar,
+} from 'recharts';
+import { Activity, TrendingUp, TrendingDown, Droplets, CheckCircle2, Trophy, Shield, HardHat } from 'lucide-react';
 
 import { historicalComparison, cityWaterSupply2024, groundwaterDynamic2024, resourceTimeSeries, overExploitControl2024, cityGroundwaterDynamic2024, cityBulletin2024 } from '../data/resources';
 
-import { shallowTotal2024, deepTotal2024, landSubsidence } from '../data/environment';
-
-import { pollutionDegree1990s, shallowGroundwaterQuality2024 } from '../data/waterQuality';
+import { shallowTotal2024, deepTotal2024 } from '../data/environment';
 
 import { dbMeta } from '../data/changelog';
 import type { CityBulletinBrief } from '../types/county';
@@ -22,32 +17,14 @@ import type { CountyDataItem } from '../types/county';
 
 import { systemZones } from '../data/systemZoning';
 
-import { karstSprings, karstProtectionZones } from '../data/karstWater';
-
-import { storageStructureSummary, importantWaterSources, mountainFrontRichZones, waterSourceClassification, alluvialFanStructures } from '../data/waterSource';
-
-import { geothermalFields, geothermalUtilization } from '../data/geothermal';
-
-import { mineralWaterSites, mineralWaterTypes } from '../data/mineralWater';
-
-import { salineDistribution } from '../data/salineWater';
 
 import { salineSoilDistribution } from '../data/salineSoil';
 
-import { fractureWaterTypes } from '../data/fractureWater';
+import { mineWaterUtilization } from '../data/mineHydrogeology';
 
-import { mineHydrogeologyData, mineWaterUtilization } from '../data/mineHydrogeology';
+import { cityOverExploitDetail } from '../data/exploitation';
 
-import { exploitation1990s, cityOverExploitDetail, waterSubstitutionProjects, overExploitMilestones } from '../data/exploitation';
-import { cityExploitationYearly } from '../data/exploitation';
-import { cityWaterLevelYearly, citySubsidenceYearly, cityQualityYearly } from '../data/historicalTimeSeries';
-
-import { hydrochemicalZoning } from '../data/hydrochemistry';
-
-
-import { quaternaryAquiferGroups } from '../data/geology';
-
-import { TechCard, StatCard, ChartTooltip, CHART_COLORS } from '../components/UI';
+import { TechCard, ChartTooltip } from '../components/UI';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
@@ -64,38 +41,7 @@ import { HydrogeologyReferenceLibrary } from '../components/overview/Hydrogeolog
 import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
 import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
-
-// ── Phase 3.2: 治理成效摘要卡片 ──
-function GovernanceSummaryCards() {
-  const gwCities = ['石家庄', '保定', '邯郸', '邢台', '沧州', '衡水', '廊坊', '唐山', '秦皇岛', '张家口', '承德'];
-  const totalExp14 = gwCities.reduce((s, c) => s + (cityExploitationYearly[c]?.[2014] ?? 0), 0);
-  const totalExp24 = gwCities.reduce((s, c) => s + (cityExploitationYearly[c]?.[2024] ?? 0), 0);
-  const expReduction = totalExp14 > 0 ? ((totalExp14 - totalExp24) / totalExp14 * 100).toFixed(1) : '0';
-  const avgWl14 = gwCities.reduce((s, c) => s + (cityWaterLevelYearly[c]?.[2014] ?? 0), 0) / gwCities.length;
-  const avgWl24 = gwCities.reduce((s, c) => s + (cityWaterLevelYearly[c]?.[2024] ?? 0), 0) / gwCities.length;
-  const wlRecovery = (avgWl14 - avgWl24).toFixed(1);
-  const avgQ14 = gwCities.reduce((s, c) => s + (cityQualityYearly[c]?.[2014] ?? 0), 0) / gwCities.length;
-  const avgQ24 = gwCities.reduce((s, c) => s + (cityQualityYearly[c]?.[2024] ?? 0), 0) / gwCities.length;
-  const qImprove = (avgQ24 - avgQ14).toFixed(1);
-  const avgSub14 = gwCities.reduce((s, c) => s + (citySubsidenceYearly[c]?.[2014] ?? 0), 0) / gwCities.length;
-  const avgSub24 = gwCities.reduce((s, c) => s + (citySubsidenceYearly[c]?.[2024] ?? 0), 0) / gwCities.length;
-  const subSlowdown = avgSub14 > 0 ? ((avgSub14 - avgSub24) / avgSub14 * 100).toFixed(1) : '0';
-
-  const bestRecoveryCity = gwCities.reduce((a, c) => {
-    const r = (cityWaterLevelYearly[c]?.[2014] ?? 0) - (cityWaterLevelYearly[c]?.[2024] ?? 0);
-    return r > a.val ? { city: c, val: r } : a;
-  }, { city: '', val: 0 });
-
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-      <StatCard title="十年开采降幅" value={expReduction} unit="%" accent="blue" subtitle={`${totalExp14}→${totalExp24}亿m3`} />
-      <StatCard title="十年水位回升" value={wlRecovery} unit="m" accent="cyan" subtitle={`埋深${avgWl14.toFixed(1)}→${avgWl24.toFixed(1)}m`} />
-      <StatCard title="十年水质改善" value={qImprove} unit="pp" accent="emerald" subtitle={`达标率${avgQ14.toFixed(1)}%→${avgQ24.toFixed(1)}%`} />
-      <StatCard title="十年沉降减缓" value={subSlowdown} unit="%" accent="amber" subtitle={`速率${avgSub14.toFixed(1)}→${avgSub24.toFixed(1)}mm/a`} />
-      <StatCard title="水位回升最大" value={bestRecoveryCity.city} unit={`${bestRecoveryCity.val.toFixed(1)}m`} accent="green" subtitle="2014→2024" />
-    </div>
-  );
-}
+import { GovernanceSummaryCards } from '../components/overview/GovernanceSummaryCards';
 
 export function Overview() {
 
@@ -111,8 +57,6 @@ export function Overview() {
     }),
   });
 
-  
-
   const d = groundwaterDynamic2024;
 
   const oe = overExploitControl2024;
@@ -123,17 +67,11 @@ export function Overview() {
 
   // 统计
 
-  const _totalArea = systemZones.filter(z => z.area > 0).reduce((s, z) => s + z.area, 0);
-
-  const salineArea = salineDistribution.reduce((s, d) => s + d.salineArea, 0);
-
   const totalMineDrainage = mineWaterUtilization.reduce((s, m) => s + parseFloat(m.annualDrainage), 0);
 
   const avgMineUtilization = Math.round(mineWaterUtilization.reduce((s, m) => s + parseFloat(m.utilizationRate), 0) / mineWaterUtilization.length);
 
   const salineSoilTotal = salineSoilDistribution.reduce((s, d) => s + d.totalSalineAlkali, 0);
-
-  const totalMineData = mineHydrogeologyData.length;
 
   // 动画数值
 
@@ -151,17 +89,11 @@ export function Overview() {
 
   const animStorageChange = useCountUp(33.33, 1200, 2);
 
-  const _animDecline = useCountUp(52.7, 1200, 1);
-
   const animRivers = useCountUp(90, 1000, 0);
 
   const animEcoVolume = useCountUp(52, 1000, 0);
 
   const animSpringCount = useCountUp(3, 800, 0);
-
-  const animPermitCount = useCountUp(72334, 1600, 0);
-
-  const _animSalineSoilArea = useCountUp(622.8, 1200, 1);
 
   // 各市水位回升数据
 
@@ -262,111 +194,9 @@ export function Overview() {
 
   // 含水层组雷达图数据
 
-  const _aquiferRadarData = useMemo(() => quaternaryAquiferGroups.map(g => ({
-
-    name: g.group.replace('第', '').replace('含水组', ''),
-
-    K: parseFloat(g.K) || 5,
-
-    yield: parseFloat(g.yield) || 10,
-
-    depth: parseFloat(g.depth.split('~')[1]) || 50,
-
-  })), []);
-
-  // 水源地类型分布
-
-  const _wsTypeDistribution = useMemo(() => {
-
-    const typeMap: Record<string, number> = {};
-
-    waterSourceClassification.forEach(wc => {
-
-      const _baseType = wc.name.split('-')[0] || wc.code;
-
-      typeMap[wc.name] = (typeMap[wc.name] || 0) + 1;
-
-    });
-
-    return Object.entries(typeMap).slice(0, 8).map(([name, count], i) => ({
-
-      name: name.length > 8 ? name.slice(0, 8) + '...' : name,
-
-      value: count,
-
-      color: CHART_COLORS[i % CHART_COLORS.length],
-
-    }));
-
-  }, []);
-
   // 矿坑水利用饼图
 
-  const _mineUtilPie = useMemo(() => mineWaterUtilization.map(m => ({
-
-    name: m.mine,
-
-    value: parseFloat(m.utilizationRate),
-
-    utilization: m.utilizationAmount,
-
-  })), []);
-
-  // 系统分区面积TOP5
-
-  const _topZones = useMemo(() =>
-
-    systemZones.filter(z => z.area > 0).sort((a, b) => b.area - a.area).slice(0, 5),
-
-  []);
-
-  // 地热利用饼图
-
-  const _geothermalPie = useMemo(() => geothermalUtilization.map(g => ({
-
-    name: g.use,
-
-    value: parseFloat(g.proportion),
-
-    scale: g.scale,
-
-  })), []);
-
-  // 矿泉水类型分布
-
-  const _mwTypePie = useMemo(() => mineralWaterTypes.map(t => ({
-
-    name: t.type.length > 10 ? t.type.slice(0, 10) : t.type,
-
-    value: t.count || 1,
-
-  })), []);
-
   // 咸水面积分布
-
-  const _salinePie = useMemo(() => salineDistribution.slice(0, 6).map(s => ({
-
-    name: s.region,
-
-    value: s.salineArea,
-
-    freshRatio: s.freshArea ? `${((1 - s.salineArea / (s.freshArea + s.salineArea)) * 100).toFixed(0)}%` : '-',
-
-  })), []);
-
-  // 裂隙水类型对比
-
-  const _fractureBarData = useMemo(() => fractureWaterTypes.map(f => ({
-
-    name: f.type.length > 6 ? f.type.slice(0, 6) : f.type,
-
-    yield: parseFloat(f.yield) || 0,
-
-    proportion: parseFloat(f.proportion) || 0,
-
-    richness: f.richness,
-
-  })), []);
 
   // ── 县级水资源公报数据统计 ──
 
@@ -420,77 +250,7 @@ export function Overview() {
 
   // 模块快速入口（扩展到16个，覆盖全部模块）
 
-  const _quickLinks = [
-
-    { label: '水资源公报', count: '2024', icon: Droplets, path: '/resources', accent: 'blue' as const },
-
-    { label: '水质评价', count: '达标100%', icon: FlaskConical, path: '/water-quality', accent: 'green' as const },
-
-    { label: '水化学', count: `${hydrochemicalZoning.length}分区`, icon: Activity, path: '/hydrochemistry', accent: 'cyan' as const },
-
-    { label: '系统区划', count: `${systemZones.length}区`, icon: Grid3X3, path: '/system-zoning', accent: 'blue' as const },
-
-    { label: '基础地质', count: `${quaternaryAquiferGroups.length}组`, icon: Mountain, path: '/geology', accent: 'amber' as const },
-
-    { label: '水文参数', count: 'K/μ/ne/αL', icon: Database, path: '/hydro-zone-params', accent: 'green' as const },
-
-    { label: '水源地', count: `${importantWaterSources.length}个`, icon: MapPin, path: '/water-source', accent: 'cyan' as const },
-
-    { label: '开采管理', count: `${animPermitCount}证`, icon: Target, path: '/exploitation', accent: 'purple' as const },
-
-    { label: '岩溶水', count: `${karstSprings.length}泉`, icon: Waves, path: '/karst-water', accent: 'blue' as const },
-
-    { label: '裂隙水', count: `${fractureWaterTypes.length}类`, icon: Grid3X3, path: '/fracture-water', accent: 'green' as const },
-
-    { label: '地热资源', count: `${geothermalFields.length}田`, icon: Flame, path: '/geothermal', accent: 'amber' as const },
-
-    { label: '矿泉水', count: `${mineralWaterSites.length}处`, icon: Gem, path: '/mineral-water', accent: 'purple' as const },
-
-    { label: '咸水分布', count: `${salineArea.toLocaleString()}km²`, icon: Snowflake, path: '/saline-water', accent: 'red' as const },
-
-    { label: '盐碱土', count: `${salineSoilTotal.toFixed(0)}万亩`, icon: MountainSnow, path: '/saline-soil', accent: 'amber' as const },
-
-    { label: '矿山地质', count: `${totalMineData}矿区`, icon: HardHat, path: '/mine-hydrogeology', accent: 'red' as const },
-
-    { label: '环境问题', count: `${landSubsidence.length}市`, icon: Bug, path: '/environment', accent: 'red' as const },
-
-    { label: '县级对比', count: `${countyDataStats.dataCounties}县`, icon: ArrowLeftRight, path: '/county-compare', accent: 'cyan' as const },
-
-    { label: '数据洞察', count: '8维度', icon: TrendingUp, path: '/data-insight', accent: 'purple' as const },
-
-  ];
-
   // 数据库统计（动态计算）
-
-  const _dbStats = useMemo(() => [
-
-    { label: '系统分区', value: systemZones.length, sub: '区', accent: 'blue' },
-
-    { label: '蓄水构造', value: storageStructureSummary.reduce((s, t) => s + t.count, 0), sub: '个', accent: 'cyan' },
-
-    { label: '岩溶泉域', value: karstSprings.length, sub: '个', accent: 'blue' },
-
-    { label: '含水层组', value: quaternaryAquiferGroups.length, sub: '组', accent: 'green' },
-
-    { label: '地热田', value: geothermalFields.length, sub: '个', accent: 'amber' },
-
-    { label: '矿泉水', value: mineralWaterSites.length, sub: '处', accent: 'purple' },
-
-    { label: '水源地', value: importantWaterSources.length, sub: '个', accent: 'cyan' },
-
-    { label: '裂隙水类', value: fractureWaterTypes.length, sub: '类', accent: 'green' },
-
-    { label: '开采许可证', value: '7.2万', sub: '个', accent: 'purple' },
-
-    { label: '补给回灌', value: `${geothermalUtilization.length}类`, sub: '利用', accent: 'amber' },
-
-    { label: '保护分区', value: karstProtectionZones.length, sub: '泉域', accent: 'blue' },
-
-    { label: '盐碱土', value: salineSoilTotal.toFixed(0), sub: '万亩', accent: 'amber' },
-
-  ], []);
-
-  // 报告数据预采集
 
   // ── 导出数据集 ──
 
@@ -571,118 +331,6 @@ export function Overview() {
   ];
 
   // 超采治理里程碑数据
-
-  const _milestoneData = overExploitMilestones.map(m => ({
-
-    name: String(m.year),
-
-    value: m.year - 2013,
-
-    event: m.event,
-
-    detail: m.detail,
-
-  }));
-
-  // 山前富水区数据
-
-  const _richZoneData = mountainFrontRichZones.map((z: { zone: string; yield: string; area?: string; K?: string; k?: string }) => ({
-    name: z.zone.length > 8 ? z.zone.slice(0, 8) : z.zone,
-    yield: parseFloat(z.yield || '0'),
-
-    area: parseFloat(String(z.area || '0')),
-
-    k: parseFloat(String(z.K || z.k || '0')),
-
-  }));
-
-  // 引调水工程数据
-
-  const _substitutionData = waterSubstitutionProjects.slice(0, 6).map(p => ({
-
-    name: (p.name || '').length > 10 ? (p.name || '').slice(0, 10) + '...' : (p.name || ''),
-
-    volume: parseFloat(String(p.substitutionVolume || p.scale || '0')),
-
-    status: p.status || '',
-
-  }));
-
-  // 1990s污染程度数据（堆叠面积图）
-
-  const _pollution1990Data = pollutionDegree1990s.map(p => ({
-
-    name: p.city,
-
-    未污染: p.unpolluted,
-
-    轻度: p.light,
-
-    中度: p.moderate,
-
-    重度: p.heavy,
-
-    严重: p.severe,
-
-  }));
-
-  // 2024年浅层水质数据（堆叠柱图）
-
-  const _quality2024Data = shallowGroundwaterQuality2024.slice(0, 8).map(q => ({
-
-    name: q.region,
-
-    'III类及以上': +(q.I + q.II + q.III).toFixed(1),
-
-    IV类: q.IV,
-
-    V类: q.V,
-
-  }));
-
-  // 冲洪积扇蓄水构造数据
-
-  const _fanData = alluvialFanStructures.slice(0, 6).map(f => ({
-
-    name: f.name.length > 10 ? f.name.slice(0, 10) + '...' : f.name,
-
-    面积: parseFloat(String(f.area || '0')),
-
-    深度: f.depth || '-',
-
-    岩性: (f.lithology || '').slice(0, 15),
-
-  }));
-
-  // 重点水源地数据
-
-  const _wsSourceData = importantWaterSources.map(w => ({
-
-    name: w.name.replace('水源地', ''),
-
-    供水量: parseFloat(String(w.supply || '0')),
-
-    类型: w.type || '',
-
-    状态: w.status || '',
-
-  }));
-
-  // 1990s各市开采量数据
-
-  const _exploit1990Data = exploitation1990s.map(e => ({
-
-    name: e.city,
-
-    浅层: e.shallow,
-
-    深层: e.deep,
-
-    合计: e.shallow + e.deep,
-
-  })).sort((a: { 合计: number }, b: { 合计: number }) => b.合计 - a.合计).slice(0, 8);
-
-  // 各市超采治理详情
 
   const overExploitCityData = cityOverExploitDetail.map(c => ({
 

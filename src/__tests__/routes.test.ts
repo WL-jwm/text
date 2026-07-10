@@ -139,7 +139,7 @@ describe('路由一致性测试', () => {
       // NotFound 页面也有路由（'*'），但不在 routeDefinitions 中
       const extraPages = pages
         .map(f => basename(f, '.tsx'))
-        .filter(name => !routeComponents.has(name) && !['NotFound', 'DataInsightInner', 'OverviewHelpers', 'timeSeriesUtils', 'timeSeriesSelectors', 'ForecastPanels', 'ExploitationTrendPanel', 'WaterLevelPanel', 'SubsidenceTrendPanel', 'QualityTrendPanel', 'SupplyStructurePanel', 'RadarComparePanel', 'CorrelationPanel', 'GovernancePanel', 'mapConstants', 'MapSidebar', 'MapStatCards', 'analyze_mapview', 'replace_sidebar', 'split_mapview', 'OverviewWaterPressure', 'OverviewNavigation', 'fix_overview_imports', 'fix_nav', 'fix_final', 'replace_overview'].includes(name));
+        .filter(name => !routeComponents.has(name) && !['NotFound', 'DataInsightInner', 'OverviewHelpers', 'timeSeriesUtils', 'timeSeriesSelectors', 'ForecastPanels', 'ExploitationTrendPanel', 'WaterLevelPanel', 'SubsidenceTrendPanel', 'QualityTrendPanel', 'SupplyStructurePanel', 'RadarComparePanel', 'CorrelationPanel', 'GovernancePanel', 'mapConstants', 'MapSidebar', 'MapStatCards', 'analyze_mapview', 'replace_sidebar', 'split_mapview', 'OverviewWaterPressure', 'OverviewNavigation', 'fix_overview_imports', 'fix_nav', 'fix_final', 'replace_overview', 'GovernanceSummaryCards', 'split_overview', 'fix_overview', 'check_usage', 'analyze_overview'].includes(name));
 
       expect(extraPages).toHaveLength(0);
     });
