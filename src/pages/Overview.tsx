@@ -1,46 +1,14 @@
 import React, { useMemo } from 'react';
 
-import { useNavigate } from 'react-router-dom';
 
 import {
 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-
-  AreaChart, Area, PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,   ScatterChart, Scatter, ZAxis,
-
-} from 'recharts';
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ScatterChart, Scatter, ZAxis, } from 'recharts';
 
 import {
 
-  TrendingUp, TrendingDown, Droplets, Activity,  CheckCircle2, 
+  TrendingUp, TrendingDown, Droplets, CheckCircle2, Database, MapPin, Trophy, Shield, HardHat, Gem, Snowflake, Flame, MountainSnow, Bug, ArrowLeftRight } from 'lucide-react';
 
-  Database, MapPin,  Waves, Mountain, Layers, 
-
-  Trophy, Target,  Shield,  HardHat,  FlaskConical, Gem, Snowflake, Flame, Grid3X3, MountainSnow, Bug,  ArrowLeftRight,  PieChart as GitCompare,
-
-  Atom,
-
-  Sliders,
-
-  Satellite,
-
-  Beaker,
-
-  LayoutGrid,
-
-  GlassWater,
-
-  Sprout,
-
-  GitFork,
-
-  Drill,
-
-  Building2
-,
-  MapIcon,
-  Briefcase
-} from 'lucide-react';
 
 import { historicalComparison, cityWaterSupply2024, groundwaterDynamic2024, resourceTimeSeries, overExploitControl2024, cityGroundwaterDynamic2024, cityBulletin2024 } from '../data/resources';
 
@@ -76,11 +44,10 @@ import { cityWaterLevelYearly, citySubsidenceYearly, cityQualityYearly } from '.
 
 import { hydrochemicalZoning } from '../data/hydrochemistry';
 
-import { springDatabase } from '../data/hydrogeologyReference';
 
 import { quaternaryAquiferGroups } from '../data/geology';
 
-import { SectionTitle, TechCard, StatCard, ChartTooltip, CHART_COLORS } from '../components/UI';
+import { TechCard, StatCard, ChartTooltip, CHART_COLORS } from '../components/UI';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
@@ -91,6 +58,8 @@ import { StaggerContainer } from '../components/AnimatedCounter';
 import { ChartExport } from '../components/ChartExport';
 import { useCountUp, KPICard, GaugeCard } from './OverviewHelpers';
 import { OverExploitMilestones } from '../components/overview/OverExploitMilestones';
+import { OverviewWaterPressure } from './OverviewWaterPressure';
+import { OverviewNavigation } from './OverviewNavigation';
 import { HydrogeologyReferenceLibrary } from '../components/overview/HydrogeologyReferenceLibrary';
 import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
@@ -143,7 +112,6 @@ export function Overview() {
   });
 
   
-  const navigate = useNavigate();
 
   const d = groundwaterDynamic2024;
 
@@ -799,167 +767,7 @@ export function Overview() {
         <GovernanceSummaryCards />
       </TechCard>
 
-      {/* B-14: 水资源丰缺综合评估面板 */}
-
-      {countyDataStats.dataCounties > 10 && (() => {
-
-        const cities = cityBulletin2024.filter((c) => c.counties && (c.counties as CountyDataItem[]).some((ct: CountyDataItem) => ct.precip != null && (ct.totalUse ?? 0) > 0));
-
-        const cityPressure = cities.map((c) => {
-
-          const counties = (c.counties as CountyDataItem[]).filter((ct: CountyDataItem) => ct.precip != null && (ct.totalUse ?? 0) > 0);
-
-          const avgPrecip = counties.reduce((s: number, ct: CountyDataItem) => s + (ct.precip ?? 0), 0) / counties.length;
-
-          const totalUse = counties.reduce((s: number, ct: CountyDataItem) => s + (ct.totalUse ?? 0), 0);
-
-          const _totalPop = counties.length * 50; // 粗略人均
-
-          const pressureIndex = avgPrecip > 0 ? Math.round(totalUse / avgPrecip * 1000) / 10 : 0; // 用水/降水 比值指数
-
-          const pressureLevel = pressureIndex > 15 ? '极缺水' : pressureIndex > 10 ? '缺水' : pressureIndex > 6 ? '一般' : '丰水';
-
-          const pressureColor = pressureIndex > 15 ? '#ef4444' : pressureIndex > 10 ? '#f59e0b' : pressureIndex > 6 ? '#3b82f6' : '#10b981';
-
-          return { name: c.city, pressureIndex, avgPrecip: Math.round(avgPrecip), totalUse: Math.round(totalUse * 10000) / 10000, countyCount: counties.length, pressureLevel, pressureColor };
-
-        }).sort((a, b) => b.pressureIndex - a.pressureIndex);
-
-        const avgPressure = cityPressure.length > 0 ? Math.round(cityPressure.reduce((s: number, c) => s + c.pressureIndex, 0) / cityPressure.length * 10) / 10 : 0;
-
-        const avgPressureLevel = avgPressure > 15 ? '极缺水' : avgPressure > 10 ? '缺水' : avgPressure > 6 ? '一般' : '丰水';
-
-        return (
-
-          <TechCard title="各市水资源丰缺评估" badge={`${cityPressure.length}市 · 用水/降水压力指数`} className="scan-line">
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-              <div className="lg:col-span-2">
-
-                <div className="overflow-x-auto">
-
-                  <table className="w-full text-xs">
-
-                    <thead>
-
-                      <tr className="border-b border-gw-border/50">
-
-                        <th className="text-left py-1.5 px-2 text-gw-muted">排名</th>
-
-                        <th className="text-left py-1.5 px-2 text-gw-muted">城市</th>
-
-                        <th className="text-center py-1.5 px-2 text-gw-muted">压力指数</th>
-
-                        <th className="text-center py-1.5 px-2 text-gw-muted">平均降水</th>
-
-                        <th className="text-center py-1.5 px-2 text-gw-muted">总用水</th>
-
-                        <th className="text-center py-1.5 px-2 text-gw-muted">县数</th>
-
-                        <th className="text-center py-1.5 px-2 text-gw-muted">评估</th>
-
-                      </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                      {cityPressure.map((c, i: number) => (
-
-                        <tr key={c.name} className="border-b border-gw-border/15 hover:bg-gw-surface/30 transition-colors">
-
-                          <td className="py-1.5 px-2 text-gw-muted">{i + 1}</td>
-
-                          <td className="py-1.5 px-2 text-gw-text font-medium">{c.name}</td>
-
-                          <td className="py-1.5 px-2 text-center">
-
-                            <div className="flex items-center justify-center gap-1.5">
-
-                              <div className="w-10 h-1.5 rounded-full bg-gw-bg/80 overflow-hidden">
-
-                                <div className="h-full rounded-full" style={{width: `${Math.min(100, c.pressureIndex * 5)}%`, backgroundColor: c.pressureColor}} />
-
-                              </div>
-
-                              <span className="font-mono text-[10px]" style={{color: c.pressureColor}}>{c.pressureIndex}</span>
-
-                            </div>
-
-                          </td>
-
-                          <td className="py-1.5 px-2 text-center text-blue-400">{c.avgPrecip}</td>
-
-                          <td className="py-1.5 px-2 text-center text-cyan-400">{c.totalUse}</td>
-
-                          <td className="py-1.5 px-2 text-center text-gw-muted">{c.countyCount}</td>
-
-                          <td className="py-1.5 px-2 text-center">
-
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-medium" style={{backgroundColor: c.pressureColor + '15', color: c.pressureColor}}>
-
-                              {c.pressureLevel}
-
-                            </span>
-
-                          </td>
-
-                        </tr>
-
-                      ))}
-
-                    </tbody>
-
-                  </table>
-
-                </div>
-
-              </div>
-
-              <div className="space-y-3">
-
-                <div className="p-4 rounded-lg bg-gw-bg/50 border border-gw-border/20 text-center">
-
-                  <p className="text-[10px] text-gw-muted mb-1">全省平均压力指数</p>
-
-                  <p className="text-3xl font-mono font-bold" style={{color: avgPressure > 15 ? '#ef4444' : avgPressure > 10 ? '#f59e0b' : avgPressure > 6 ? '#3b82f6' : '#10b981'}}>
-
-                    {avgPressure}
-
-                  </p>
-
-                  <p className="text-sm text-gw-muted mt-1">{avgPressureLevel}</p>
-
-                  <p className="text-[9px] text-gw-muted/50 mt-2">压力指数 = 用水总量 / 平均降水 × 调整系数</p>
-
-                </div>
-
-                <div className="p-3 rounded-lg space-y-1.5 text-[10px]">
-
-                  <p className="text-gw-muted font-medium mb-1">评估标准</p>
-
-                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500"></span><span className="text-gw-muted">{'< 6.0  丰水'}</span></div>
-
-                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500"></span><span className="text-gw-muted">6.0~10.0  一般</span></div>
-
-                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-500"></span><span className="text-gw-muted">10.0~15.0  缺水</span></div>
-
-                  <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500"></span><span className="text-gw-muted">{'> 15.0  极缺水'}</span></div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </TechCard>
-
-        );
-
-      })()}
-
-      {/* ═══════════════════ 地下水动态仪表盘 ═══════════════════ */}
+      <OverviewWaterPressure dataCounties={countyDataStats.dataCounties} />{/* ═══════════════════ 地下水动态仪表盘 ═══════════════════ */}
 
       <TechCard title="2024年地下水动态" icon={Activity} className="hud-corners">
 
@@ -1333,122 +1141,7 @@ export function Overview() {
 
       <PollutionQualityComparison />
 
-      {/* ═══════════════════ 全模块入口 ═══════════════════ */}
-
-      <SectionTitle icon={Grid3X3} badge="快速导航">全模块入口</SectionTitle>
-
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-
-        {[
-
-          { label: '工作台', path: '/workspace', icon: Briefcase, accent: 'indigo', count: 0 },
-          { label: '泉水', path: '/karst-water', icon: Droplets, accent: 'cyan', count: springDatabase?.length || 0 },
-
-          { label: '地质', path: '/geology', icon: Layers, accent: 'blue', count: 0 },
-
-          { label: '资源', path: '/resources', icon: Database, accent: 'emerald', count: 0 },
-
-          { label: '水质', path: '/water-quality', icon: FlaskConical, accent: 'purple', count: 0 },
-
-          { label: '水源地', path: '/water-source', icon: MapPin, accent: 'amber', count: 0 },
-
-          { label: '地热', path: '/geothermal', icon: Flame, accent: 'orange', count: 0 },
-
-          { label: '开采', path: '/exploitation', icon: Drill, accent: 'red', count: 0 },
-
-          { label: '咸水', path: '/saline-water', icon: Waves, accent: 'slate', count: 0 },
-
-          { label: '裂隙水', path: '/fracture-water', icon: GitFork, accent: 'teal', count: 0 },
-
-          { label: '矿山', path: '/mine-hydrogeology', icon: HardHat, accent: 'yellow', count: 0 },
-
-          { label: '岩溶', path: '/karst-water', icon: Mountain, accent: 'indigo', count: 0 },
-
-          { label: '盐碱土', path: '/saline-soil', icon: Sprout, accent: 'lime', count: 0 },
-
-          { label: '矿泉水', path: '/mineral-water', icon: GlassWater, accent: 'sky', count: 0 },
-
-          { label: '系统分区', path: '/system-zoning', icon: LayoutGrid, accent: 'violet', count: 0 },
-
-          { label: '环境', path: '/environment', icon: Shield, accent: 'rose', count: 0 },
-
-          { label: '水化学', path: '/hydrochemistry', icon: Beaker, accent: 'cyan', count: 0 },
-
-        ].map((item, i) => (
-
-          <button key={i} onClick={() => navigate(item.path)}
-
-            className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-gw-card/60 border border-gw-border/40 hover:border-gw-cyan/40 hover:shadow-glow-cyan transition-all cursor-pointer">
-
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
-
-              {React.createElement(item.icon as React.ElementType, { size: 16, className: "text-cyan-400" })}
-
-            </div>
-
-            <div className="text-center">
-
-              <p className="text-[11px] text-gw-text font-medium">{item.label}</p>
-
-              {item.count > 0 && <p className="text-[10px] text-gw-muted font-mono">{item.count}</p>}
-
-            </div>
-
-          </button>
-
-        ))}
-
-      </div>
-
-      {/* ═══════════════════ 专业分析工具箱 ═══════════════════ */}
-
-      <SectionTitle icon={TrendingUp} badge="深度分析">专业分析工具箱</SectionTitle>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 mt-1">
-
-        {[
-
-          { label: '市级达标率', desc: '11市水质三色分级+达标率趋势', path: '/water-quality', tab: '市级达标率', icon: Target, color: 'emerald' },
-
-          { label: 'InSAR沉降监测', desc: '2024年11市地面沉降速率+开采关联', path: '/environment', tab: '地面沉降', icon: Satellite, color: 'red' },
-
-          { label: '参数速查', desc: 'K值量级/释水系数/入渗系数速查', path: '/hydro-params', tab: '参数总览', icon: Sliders, color: 'blue' },
-
-          { label: '同位素分析', desc: 'δD-δ18O散点+径向路径+14C年龄', path: '/hydrochemistry', tab: '同位素分析', icon: Atom, color: 'purple' },
-
-          { label: '数据质量雷达', desc: '6维度资源覆盖度+12模块年份矩阵', path: '/data-insight', tab: '资源概览', icon: Radar, color: 'cyan' },
-
-          { label: '三轴耦合分析', desc: '供水-水质-沉降三轴联动+综合评分', path: '/data-insight', tab: '区域对比', icon: GitCompare, color: 'amber' },
-
-          { label: '四维联动验证', desc: '2020-2024开采量-达标率-水位回升', path: '/data-insight', tab: '总览', icon: Activity, color: 'indigo' },
-
-          { label: '县级资源分析', desc: '5市85县用水结构+依赖度+农业占比', path: '/data-insight', tab: '县级资源分析', icon: Building2, color: 'teal' },
-
-          { label: '县级数据覆盖', desc: '14市数据状态色标+弹窗统计', path: '/data-insight', tab: '县级覆盖', icon: MapIcon, color: 'slate' },
-
-        ].map((item, i) => (
-
-          <button key={i} onClick={() => navigate(item.path, { state: { tab: item.tab } })}
-
-            className="group relative flex flex-col gap-1 p-2.5 rounded-lg bg-gw-card/60 border border-gw-border/40 hover:border-emerald-500/50 transition-all text-left">
-
-            <div className="flex items-center gap-1.5">
-
-              {React.createElement(item.icon as React.ElementType, { size: 12, className: "text-emerald-400" })}
-
-              <span className="text-[11px] font-medium text-gw-text">{item.label}</span>
-
-            </div>
-
-            <p className="text-[9px] text-gw-muted leading-tight">{item.desc}</p>
-
-          </button>
-
-        ))}
-
-      </div>
-
-      {/* 导出报告按钮 */}
+      <OverviewNavigation />{/* 导出报告按钮 */}
       <div className="flex items-center justify-end mb-2">
         <button onClick={() => setExportOpen(true)} className="px-3 py-1.5 rounded-lg text-xs bg-gw-blue/15 text-gw-highlight border border-gw-blue/30 hover:bg-gw-blue/25 transition-all">
           导出总览报告
