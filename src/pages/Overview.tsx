@@ -41,6 +41,8 @@ import { HydrogeologyReferenceLibrary } from '../components/overview/Hydrogeolog
 import { ExploitationControlComparison } from '../components/overview/ExploitationControlComparison';
 import { ExploitationManagement } from '../components/overview/ExploitationManagement';
 import { AlluvialFansWaterSources } from '../components/overview/AlluvialFansWaterSources';
+import { StandardsReferencePanel } from '../components/overview/StandardsReferencePanel';
+import { HydroParamsReferencePanel } from '../components/overview/HydroParamsReferencePanel';
 import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
 import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
@@ -793,7 +795,12 @@ export function Overview() {
       <ExploitationManagement />
 
 
-      <AlluvialFansWaterSources />
+            <AlluvialFansWaterSources />
+
+      <StandardsReferencePanel />
+
+      <HydroParamsReferencePanel />
+
       <HistoricalEvolution />
 
       <PollutionQualityComparison />
