@@ -38,6 +38,9 @@ import { OverExploitMilestones } from '../components/overview/OverExploitMilesto
 import { OverviewWaterPressure } from './OverviewWaterPressure';
 import { OverviewNavigation } from './OverviewNavigation';
 import { HydrogeologyReferenceLibrary } from '../components/overview/HydrogeologyReferenceLibrary';
+import { ExploitationControlComparison } from '../components/overview/ExploitationControlComparison';
+import { ExploitationManagement } from '../components/overview/ExploitationManagement';
+import { AlluvialFansWaterSources } from '../components/overview/AlluvialFansWaterSources';
 import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
 import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
@@ -785,6 +788,12 @@ export function Overview() {
 
       <HydrogeologyReferenceLibrary />
 
+      <ExploitationControlComparison />
+
+      <ExploitationManagement />
+
+
+      <AlluvialFansWaterSources />
       <HistoricalEvolution />
 
       <PollutionQualityComparison />
