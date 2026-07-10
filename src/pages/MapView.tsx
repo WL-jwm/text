@@ -30,6 +30,9 @@ import { contourDatasets, getContourDataset } from '../data/contourData';
 import { idwInterpolate, gridToCanvas, COLOR_SCHEMES } from '../utils/idwInterpolation';
 import {
   TIAN_DI_TOKEN, LAYER_DEFS, CATEGORY_COLORS,
+  createCircleIcon, createPulseIcon, createGradeBubble,
+  WATER_SOURCE_COORDS, KARST_SPRING_COORDS,
+  createWaterSourceIcon, createKarstSpringIcon,
 } from './mapConstants';
 import { MapSidebar } from './MapSidebar';
 
