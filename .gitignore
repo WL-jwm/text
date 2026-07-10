@@ -48,3 +48,19 @@ export_params.cjs
 server.cjs
 screenshot.png
 _fix_*.py
+fix_overview*.py
+fix_nav.py
+fix_final.py
+fix_overview_imports.py
+replace_*.py
+split_*.py
+analyze_*.py
+check_usage.py
+list_exports.py
+analyze_any.py
+eslint-any.err
+eslint-any*.json
+geology_full.txt
+# strays in src/
+src/pages/_fix_header.txt
+src/pages/MapStatCards.tsx
