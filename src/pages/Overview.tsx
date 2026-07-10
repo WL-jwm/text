@@ -43,6 +43,7 @@ import { ExploitationManagement } from '../components/overview/ExploitationManag
 import { AlluvialFansWaterSources } from '../components/overview/AlluvialFansWaterSources';
 import { StandardsReferencePanel } from '../components/overview/StandardsReferencePanel';
 import { HydroParamsReferencePanel } from '../components/overview/HydroParamsReferencePanel';
+import { ZoneParamsPanel } from '../components/overview/ZoneParamsPanel';
 import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
 import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
@@ -800,6 +801,8 @@ export function Overview() {
       <StandardsReferencePanel />
 
       <HydroParamsReferencePanel />
+
+      <ZoneParamsPanel />
 
       <HistoricalEvolution />
 
