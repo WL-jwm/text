@@ -353,7 +353,7 @@ function AnomalyTab() {
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie data={zoneAnomaly} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" label={({ name, value }) => `${name} ${value}市`}>
-                {zoneAnomaly.map((entry: any, i: number) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+                {zoneAnomaly.map((entry, i: number) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
               </Pie>
               <Tooltip content={<ChartTooltip title="分区异常" />} />
             </PieChart>

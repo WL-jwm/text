@@ -118,7 +118,8 @@ export function CountySingleView({ currentCity, selectedCity, countyData, isSkel
                 <XAxis type="number" dataKey="x" name="总用水量" tick={{ fill: '#94a3b8', fontSize: 10 }} label={{ value: '总用水量(亿m³)', fill: '#94a3b8', fontSize: 10 }} />
                 <YAxis type="number" dataKey="y" name="地下水占比" tick={{ fill: '#94a3b8', fontSize: 10 }} domain={[0, 100]} label={{ value: '地下水占比(%)', fill: '#94a3b8', fontSize: 10, angle: -90, position: 'insideLeft' }} />
                 <ZAxis type="number" dataKey="size" range={[30, 400]} />
-                <Tooltip content={({ active, payload }: any) => {
+                <Tooltip content={// eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ({ active, payload }: any) => {
                   if (!active || !payload?.[0]) return null;
                   const d = payload[0].payload;
                   return (<div className="bg-gw-card border border-gw-border rounded-lg p-3 text-xs shadow-xl">
@@ -172,7 +173,8 @@ export function CountySingleView({ currentCity, selectedCity, countyData, isSkel
                   <XAxis type="number" dataKey="precip" name="降水量" tick={{ fill: '#94a3b8', fontSize: 10 }} label={{ value: '降水量(mm)', fill: '#94a3b8', fontSize: 10, position: 'insideBottom' }} />
                   <YAxis type="number" dataKey="gwRatio" name="地下水占比" tick={{ fill: '#94a3b8', fontSize: 10 }} domain={[0, 100]} label={{ value: '地下水占比(%)', fill: '#94a3b8', fontSize: 10, angle: -90, position: 'insideLeft' }} />
                   <ZAxis type="number" dataKey="totalUse" range={[20, 200]} />
-                  <Tooltip content={({ active, payload }: any) => {
+                  <Tooltip content={// eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ({ active, payload }: any) => {
                     if (!active || !payload?.[0]) return null;
                     const d = payload[0].payload;
                     const q = d.precip >= avgPrecip ? (d.gwRatio >= avgGw ? '高水高依赖' : '高水低依赖') : (d.gwRatio >= avgGw ? '低水高依赖' : '低水低依赖');

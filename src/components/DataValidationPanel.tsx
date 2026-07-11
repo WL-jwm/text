@@ -8,6 +8,7 @@ import { getValidationResult, getModuleScanResult, clearValidationCache, type Va
 interface ValidationRule {
   field: string;
   type: 'required' | 'numeric' | 'range' | 'enum' | 'unique' | 'pattern';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: Record<string, any>;
   label: string;
 }

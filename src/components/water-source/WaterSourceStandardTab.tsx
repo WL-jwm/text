@@ -31,7 +31,7 @@ export function WaterSourceStandardTab() {
             <YAxis tick={{ fill: '#8b9dc3', fontSize: 10 }} label={{ value: '万m³/d', angle: -90, position: 'insideLeft', style: { fill: '#8b9dc3', fontSize: 10 } }} />
             <Tooltip content={<ChartTooltip title="规模阈值" unit="万m³/d" />} />
             <Bar dataKey="threshold" name="允许开采量" radius={[3, 3, 0, 0]}>
-              {chartData.map((_: any, i: number) => (
+              {chartData.map((_, i: number) => (
                 <rect key={i} fill={['#10b981', '#3b82f6', '#f59e0b', '#ef4444'][i] || '#64748b'} />
               ))}
             </Bar>

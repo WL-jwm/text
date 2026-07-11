@@ -3,8 +3,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend
 import { TechCard, StatCard, ChartTooltip, SortableTechTable } from '../UI';
 
 interface BulletinSupplyTabProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supplyStructureData: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useStructureData: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bulletinData: any[];
 }
 

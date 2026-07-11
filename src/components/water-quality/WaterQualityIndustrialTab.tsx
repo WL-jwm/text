@@ -109,7 +109,7 @@ export function WaterQualityIndustrialTab() {
               <th className="text-gw-muted py-2 px-3 text-xs">特征</th>
             </tr></thead>
             <tbody>
-              {industrialWaterQuality.map((c: any, i: number) => (
+              {industrialWaterQuality.map((c, i: number) => (
                 <tr key={i} className="border-b border-gw-border/30 data-row">
                   <td className="py-2 px-3 text-xs text-gw-text">{c.city}</td>
                   <td className="py-2 px-3 font-mono text-xs text-gw-cyan">{c.scale}</td>

@@ -7,6 +7,7 @@ import { ExportButton } from '../UI';
 import { ChartRefLines } from '../ChartAnnotation';
 
 interface ResourcesDynamicTabProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   gd: any;
   handleExportDynamic: () => void;
 }

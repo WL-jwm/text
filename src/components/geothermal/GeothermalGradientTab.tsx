@@ -72,7 +72,7 @@ export function GeothermalGradientTab() {
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={catPie} cx="50%" cy="50%" innerRadius={45} outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                {catPie.map((entry: any, i: number) => <Cell key={i} fill={entry.name === '高热流' ? '#ef4444' : entry.name === '中热流' ? '#f59e0b' : '#3b82f6'} />)}
+                {catPie.map((entry, i: number) => <Cell key={i} fill={entry.name === '高热流' ? '#ef4444' : entry.name === '中热流' ? '#f59e0b' : '#3b82f6'} />)}
               </Pie>
               <Tooltip content={<ChartTooltip title="热流等级" />} />
               <Legend wrapperStyle={{ fontSize: 10 }} />

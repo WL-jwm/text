@@ -18,7 +18,7 @@ export function GeothermalPotentialTab() {
     cityGeothermalPotential.map(c => {
       const m = c.heatingArea.match(/([\d.]+)/);
       return { name: c.city.replace(/（.*?）/, ''), '供暖潜力(万m2)': m ? parseFloat(m[1]) : 0, '优先级': c.priority };
-    }).sort((a: any, b: any) => b['供暖潜力(万m2)'] - a['供暖潜力(万m2)']),
+    }).sort((a, b) => b['供暖潜力(万m2)'] - a['供暖潜力(万m2)']),
   []);
 
   // 优先级分级饼图
@@ -70,7 +70,7 @@ export function GeothermalPotentialTab() {
               <YAxis type="category" dataKey="name" tick={{ fill: '#8b9dc3', fontSize: 9 }} width={75} />
               <Tooltip content={<ChartTooltip unit="万m2" title="供暖潜力" />} />
               <Bar dataKey="供暖潜力(万m2)" name="供暖潜力" radius={[0, 4, 4, 0]}>
-                {heatingData.map((entry: any, i: number) => <Cell key={i} fill={PRIORITY_COLORS[entry['优先级']] || '#64748b'} />)}
+                {heatingData.map((entry, i: number) => <Cell key={i} fill={PRIORITY_COLORS[entry['优先级']] || '#64748b'} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -81,7 +81,7 @@ export function GeothermalPotentialTab() {
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={priorityPie} cx="50%" cy="50%" innerRadius={45} outerRadius={80} dataKey="value" label={({ name, value }) => `${name} ${value}市`}>
-                {priorityPie.map((entry: any, i: number) => <Cell key={i} fill={PRIORITY_COLORS[entry.name] || '#64748b'} />)}
+                {priorityPie.map((entry, i: number) => <Cell key={i} fill={PRIORITY_COLORS[entry.name] || '#64748b'} />)}
               </Pie>
               <Tooltip content={<ChartTooltip title="优先级" />} />
               <Legend wrapperStyle={{ fontSize: 10 }} />

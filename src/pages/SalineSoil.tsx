@@ -314,7 +314,7 @@ export function SalineSoil() {
                     </tr>
                   </thead>
                   <tbody>
-                    {specificYieldInfiltration.regionalParams.map((r: any, i: number) => (
+                    {specificYieldInfiltration.regionalParams.map((r, i: number) => (
                       <tr key={i} className="border-b border-gw-border/50">
                         <td className="px-2 py-1 text-gw-text text-[10px]">{r.zone}</td>
                         <td className="px-2 py-1 text-gw-text">给水度μ={r.sy}</td>

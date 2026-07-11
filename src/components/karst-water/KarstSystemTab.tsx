@@ -8,7 +8,9 @@ import { LazyChartCard } from '../LazyChartCard';
 import { ChartExport } from '../ChartExport';
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tBarData: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   exploitationBarData: any[];
   handleExportZones: () => void;
 }

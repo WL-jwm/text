@@ -18,7 +18,7 @@ import { ExportProgressDialog } from '../components/ExportProgressDialog';
 import { CrossLinkPanel } from '../components/CrossLink';
 // 注册报告生成器
 type TabKey = 'query' | 'compare' | 'exceed' | 'standard';
-const TABS: { key: TabKey; label: string; icon: any }[] = [
+const TABS: { key: TabKey; label: string; icon }[] = [
   { key: 'query', label: '背景值查询', icon: FlaskConical },
   { key: 'compare', label: '分区对比', icon: Layers },
   { key: 'exceed', label: '超标因子', icon: AlertTriangle },

@@ -27,7 +27,7 @@ import { ExportProgressDialog } from '../components/ExportProgressDialog';
 import { CrossLinkPanel } from '../components/CrossLink';
 // 注册报告生成器
 type TabKey = 'springs' | 'aquifer' | 'runoff' | 'basin' | 'engineering' | 'geophysics' | 'stratigraphy';
-const TABS: { key: TabKey; label: string; icon: any; count?: number }[] = [
+const TABS: { key: TabKey; label: string; icon; count?: number }[] = [
   { key: 'springs', label: '泉水数据库', icon: Droplets, count: historicalSprings.length },
   { key: 'aquifer', label: '含水层参数', icon: Layers },
   { key: 'runoff', label: '径流与渗漏', icon: Waves },

@@ -68,6 +68,7 @@ describe('dataSourceRegistry', () => {
     });
 
     it('不存在的类别返回空数组', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = getSourcesByCategory('Z-未知' as any);
       expect(result).toHaveLength(0);
     });

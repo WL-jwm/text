@@ -5,6 +5,7 @@ import { TechCard, ChartTooltip, StatCard } from '../UI';
 import { LazyChartCard } from '../LazyChartCard';
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   wq: any;
 }
 

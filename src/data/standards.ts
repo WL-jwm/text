@@ -14,6 +14,7 @@ export interface StandardVersion {
   status: '现行' | '修订中' | '废止';
   description: string;
   /** 标准版本数据 */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: Record<string, any>;
   /** 变更说明 */
   changelog?: string;

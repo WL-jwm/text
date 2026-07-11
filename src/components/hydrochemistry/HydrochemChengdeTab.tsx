@@ -8,11 +8,11 @@ import { LazyChartCard } from '../LazyChartCard';
 export function HydrochemChengdeTab() {
   // 提取数值型数据做对比图
   const chartData = React.useMemo(() => {
-    const numericItems = chengdeHydrochemistry.filter((c: any) => {
+    const numericItems = chengdeHydrochemistry.filter((c) => {
       const v = parseFloat(c.strongErosion);
       return !isNaN(v) && v > 0;
     });
-    return numericItems.map((c: any) => ({
+    return numericItems.map((c) => ({
       name: c.component,
       强烈侵蚀区: parseFloat(c.strongErosion) || 0,
       侵蚀沉积浅层: parseFloat(c.erosionDepositShallow) || 0,
@@ -67,7 +67,7 @@ export function HydrochemChengdeTab() {
               </tr>
             </thead>
             <tbody>
-              {chengdeHydrochemistry.map((c: any, i: number) => (
+              {chengdeHydrochemistry.map((c, i: number) => (
                 <tr key={i} className="border-b border-gw-border/50 hover:bg-gw-surface/50">
                   <td className="px-2 py-1 text-gw-text font-medium">{c.component}</td>
                   <td className="px-2 py-1 font-mono text-gw-highlight">{c.strongErosion}</td>

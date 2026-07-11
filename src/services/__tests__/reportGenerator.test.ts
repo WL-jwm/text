@@ -39,6 +39,7 @@ describe('buildTable', () => {
     const first = result[0];
     expect(first).toBeDefined();
     // Paragraph 对象有 type 属性
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((first as any).constructor.name).toBe('Paragraph');
   });
 

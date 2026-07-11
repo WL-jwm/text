@@ -122,7 +122,7 @@ export function HydrochemRegionalTab({ tdsBarData, fluorideBarData, phBarData }:
                 <YAxis stroke="#64748b" fontSize={9} />
                 <Tooltip content={<ChartTooltip title="氟化物" />} />
                 <Bar dataKey="fluoride" name="F(mg/L)" radius={[2, 2, 0, 0]}>
-                  {fluorideBarData.map((entry: any, i: number) => (
+                  {fluorideBarData.map((entry, i: number) => (
                     <Cell key={i} fill={entry.fluoride > 1.0 ? '#ef4444' : entry.fluoride > 0.8 ? '#f59e0b' : '#22c55e'} />
                   ))}
                 </Bar>
@@ -192,7 +192,7 @@ export function HydrochemRegionalTab({ tdsBarData, fluorideBarData, phBarData }:
           <ChartExport data={hydrochemicalByRegion} filename="hydrochemical-by-region" sheetName="分区水化学" formats={['xlsx', 'csv', 'json']} label="导出数据" />
         </div>
         <FilterableTechTable headers={['区域', 'TDS(mg/L)', '硬度', 'SO4', 'Cl', 'F(mg/L)', 'pH', '水化学类型']}
-          rows={hydrochemicalByRegion.map((r: any) => [
+          rows={hydrochemicalByRegion.map((r) => [
             r.region,
             String(r.tds),
             String(r.hardness),

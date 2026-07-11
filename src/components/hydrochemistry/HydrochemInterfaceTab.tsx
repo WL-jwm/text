@@ -13,7 +13,7 @@ const TREND_COLORS: Record<string, string> = { '稳定': '#22c55e', '界面下�
 export function HydrochemInterfaceTab() {
   // 界面深度柱图
   const depthData = useMemo(() =>
-    freshSalineInterface.map((f: any) => ({
+    freshSalineInterface.map((f) => ({
       name: f.region,
       浅层淡水底界: parseInt(f.shallowFreshDepth) || 0,
       咸水体顶界: parseInt(f.salineBodyTop) || 0,
@@ -108,7 +108,7 @@ export function HydrochemInterfaceTab() {
 
           <TechCard title="界面特征分带卡片" badge="5区域">
             <div className="space-y-2">
-              {freshSalineInterface.map((f: any, i: number) => {
+              {freshSalineInterface.map((f, i: number) => {
                 const TrendIcon = TREND_ICONS[f.trend] || ArrowRight;
                 return (
                   <div key={i} className="p-2.5 rounded-lg bg-gw-surface/50 border border-gw-border/30">
@@ -163,7 +163,7 @@ export function HydrochemInterfaceTab() {
       {/* 界面分布表 + 盐碱地治理 */}
       <TechCard title="咸淡水界面分布特征">
         <FilterableTechTable headers={['区域', '浅层淡水深度(m)', '咸水体顶界(m)', '界面描述', '趋势']}
-          rows={freshSalineInterface.map((f: any) => [f.region, f.shallowFreshDepth, f.salineBodyTop, f.interfaceDesc, f.trend])}
+          rows={freshSalineInterface.map((f) => [f.region, f.shallowFreshDepth, f.salineBodyTop, f.interfaceDesc, f.trend])}
           filterPlaceholder="搜索..."
         />
       </TechCard>

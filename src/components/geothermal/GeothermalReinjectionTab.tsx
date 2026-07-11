@@ -67,7 +67,7 @@ export function GeothermalReinjectionTab() {
                 { y: 90, stroke: '#f59e0b', strokeDasharray: '8 4', label: '政策目标 90%', position: 'top', fontSize: 10 },
               ]} />
               <Bar dataKey="回灌率(%)" name="实际回灌率" radius={[4, 4, 0, 0]}>
-                {rateData.map((entry: any, i: number) => (
+                {rateData.map((entry, i: number) => (
                   <Cell key={i} fill={entry['回灌率(%)'] >= 90 ? '#22c55e' : entry['回灌率(%)'] >= 70 ? '#f59e0b' : '#ef4444'} />
                 ))}
               </Bar>

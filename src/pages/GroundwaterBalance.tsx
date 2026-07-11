@@ -21,7 +21,7 @@ import { ExportProgressDialog } from '../components/ExportProgressDialog';
 import { CrossLinkPanel } from '../components/CrossLink';
 // 注册报告生成器
 type TabKey = 'overview' | 'city' | 'potential' | 'quality' | 'pollution';
-const TABS: { key: TabKey; label: string; icon: any }[] = [
+const TABS: { key: TabKey; label: string; icon }[] = [
   { key: 'overview', label: '均衡总览', icon: Scale },
   { key: 'city', label: '各市均衡', icon: MapPin },
   { key: 'potential', label: '开采潜力', icon: BarChart3 },

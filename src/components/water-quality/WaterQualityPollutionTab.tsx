@@ -8,6 +8,7 @@ import { FilterableTechTable } from '../FilterableTechTable';
 
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pollutionPie: any[];
 }
 
@@ -92,7 +93,7 @@ export function WaterQualityPollutionTab({ pollutionPie }: Props) {
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie data={pollutionPie} cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={2} dataKey="value" stroke="none">
-                {pollutionPie.map((entry: any, i: number) => <Cell key={i} fill={entry.color} />)}
+                {pollutionPie.map((entry, i: number) => <Cell key={i} fill={entry.color} />)}
               </Pie>
               <Tooltip content={<ChartTooltip title="污染面积构成" />} />
               <Legend wrapperStyle={{ fontSize: 11 }} />

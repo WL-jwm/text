@@ -6,6 +6,7 @@ import { FilterableTechTable } from '../FilterableTechTable';
 import { ChartExport } from '../ChartExport';
 
 interface ResourcesOverviewTabProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ws: any;
 }
 

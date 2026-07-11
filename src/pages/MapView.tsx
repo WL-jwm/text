@@ -49,6 +49,7 @@ export function MapView() {
   const cityBoundaryLayerRef = useRef<LLayerGroup | null>(null);
   const waterSourcePOILayerRef = useRef<LLayerGroup | null>(null);
   const karstSpringPOILayerRef = useRef<LLayerGroup | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contourLayerRef = useRef<any>(null); // L.imageOverlay
 
   // ═══════ v4.3.0: 可叠加图层状态 ═══════

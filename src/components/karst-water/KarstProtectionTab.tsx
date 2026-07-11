@@ -7,7 +7,9 @@ import { TechTable } from '../UI';
 import { LazyChartCard } from '../LazyChartCard';
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protectionBarData: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protectionPieData: any[];
 }
 

@@ -98,6 +98,7 @@ registerReportGenerator('time-series', (data) => {
 
   // 4. 水位埋深章节
   if (waterLevel && waterLevel.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filtered = waterLevel.filter(w => cities.includes(w.city as string) && w.shallowDepth !== null) as Array<Record<string, any>>;
     if (filtered.length > 0) {
       sections.push({

@@ -80,7 +80,7 @@ export function Geology() {
             </BarChart>
           </ResponsiveContainer>
           <div className="mt-2 space-y-1">
-            {stratigraphyAquifer.map((s: any, i: number) => (
+            {stratigraphyAquifer.map((s, i: number) => (
               <div key={i} className="flex items-center justify-between text-[9px] px-2 py-0.5 bg-gw-surface/50 rounded hover:bg-gw-surface/80">
                 <span className="text-gw-muted">{s.era} · {s.period}</span>
                 <span className={`font-medium ${s.aquiferType.includes('岩溶') ? 'text-cyan-400' : s.aquiferType.includes('孔隙') ? 'text-blue-400' : 'text-amber-400'}`}>
@@ -93,7 +93,7 @@ export function Geology() {
 
         <TechCard title="构造单元含水特征卡片" className="hud-corners">
           <div className="space-y-2">
-            {tectonicUnits.map((t: any, i: number) => (
+            {tectonicUnits.map((t, i: number) => (
               <div key={i} className="p-2 bg-gw-surface/50 rounded-lg border border-gw-border/30">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-gw-text">{t.unit}</span>

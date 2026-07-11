@@ -35,6 +35,7 @@ interface ResourcesBulletinTabProps {
   handleBulletinSort: (col: number) => void;
   handleCountySort: (col: number) => void;
   handleExportBulletin: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bulletinData: any[];
 }
 

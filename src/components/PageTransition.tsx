@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
  * PageTransition - 路由切换过渡动画 (framer-motion)
  * 路由切换时淡入+微上滑，120ms退出 + 300ms进入
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pageVariants: Record<string, any> = {
   initial: { opacity: 0, y: 8 },
   enter: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } },

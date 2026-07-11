@@ -82,7 +82,7 @@ export function GeothermalChemistryTab() {
               <YAxis tick={{ fill: '#8b9dc3', fontSize: 10 }} label={{ value: 'mg/L', angle: -90, position: 'insideLeft', fill: '#8b9dc3' }} />
               <Tooltip content={<ChartTooltip unit="mg/L" title="氟含量" />} />
               <Bar dataKey="氟(mg/L)" name="氟含量" radius={[4, 4, 0, 0]}>
-                {fRankData.map((entry: any, i: number) => (
+                {fRankData.map((entry, i: number) => (
                   <Cell key={i} fill={entry['氟(mg/L)'] > 6 ? '#ef4444' : entry['氟(mg/L)'] > 4 ? '#f59e0b' : '#22c55e'} />
                 ))}
               </Bar>
@@ -95,7 +95,7 @@ export function GeothermalChemistryTab() {
           <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie data={waterTypePie} cx="50%" cy="50%" innerRadius={45} outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                {waterTypePie.map((e: any, i: number) => <Cell key={i} fill={CHEM_COLORS[i % CHEM_COLORS.length]} />)}
+                {waterTypePie.map((e, i: number) => <Cell key={i} fill={CHEM_COLORS[i % CHEM_COLORS.length]} />)}
               </Pie>
               <Tooltip content={<ChartTooltip title="水化学类型" />} />
             </PieChart>

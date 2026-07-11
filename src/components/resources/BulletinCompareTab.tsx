@@ -9,6 +9,7 @@ interface BulletinCompareTabProps {
   bulletinSortCol: number | null;
   bulletinSortDir: 'asc' | 'desc';
   handleBulletinSort: (col: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bulletinData: any[];
 }
 

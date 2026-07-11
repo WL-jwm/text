@@ -10,35 +10,35 @@ import { FilterableTechTable } from '../FilterableTechTable';
 
 export function GeothermalHotSpringsTab() {
   const springs = hotSpringData.hotSprings;
-  const above37 = springs.filter((s: any) => s.temp && parseFloat(s.temp) >= 37).length;
-  const above42 = springs.filter((s: any) => s.temp && parseFloat(s.temp) >= 42).length;
+  const above37 = springs.filter((s) => s.temp && Number(s.temp) >= 37).length;
+  const above42 = springs.filter((s) => s.temp && Number(s.temp) >= 42).length;
   const avgTemp = useMemo(() => {
-    const temps = springs.filter((s: any) => s.temp).map((s: any) => parseFloat(s.temp));
+    const temps = springs.filter((s) => s.temp).map((s) => Number(s.temp));
     return temps.length ? (temps.reduce((a: number, b: number) => a + b) / temps.length).toFixed(1) : '-';
   }, [springs]);
 
   // 温度区间分布
   const tempBins = useMemo(() => [
-    { name: '25-30C', range: [25, 30], count: springs.filter((s: any) => s.temp && parseFloat(s.temp) >= 25 && parseFloat(s.temp) < 30).length, color: '#3b82f6' },
-    { name: '30-37C', range: [30, 37], count: springs.filter((s: any) => s.temp && parseFloat(s.temp) >= 30 && parseFloat(s.temp) < 37).length, color: '#22c55e' },
-    { name: '37-42C', range: [37, 42], count: springs.filter((s: any) => s.temp && parseFloat(s.temp) >= 37 && parseFloat(s.temp) < 42).length, color: '#f59e0b' },
-    { name: '42C以上', range: [42, 100], count: springs.filter((s: any) => s.temp && parseFloat(s.temp) >= 42).length, color: '#ef4444' },
+    { name: '25-30C', range: [25, 30], count: springs.filter((s) => s.temp && Number(s.temp) >= 25 && Number(s.temp) < 30).length, color: '#3b82f6' },
+    { name: '30-37C', range: [30, 37], count: springs.filter((s) => s.temp && Number(s.temp) >= 30 && Number(s.temp) < 37).length, color: '#22c55e' },
+    { name: '37-42C', range: [37, 42], count: springs.filter((s) => s.temp && Number(s.temp) >= 37 && Number(s.temp) < 42).length, color: '#f59e0b' },
+    { name: '42C以上', range: [42, 100], count: springs.filter((s) => s.temp && Number(s.temp) >= 42).length, color: '#ef4444' },
   ], [springs]);
 
   // 水化学类型饼图
   const typePie = useMemo(() => {
     const m: Record<string, number> = {};
-    springs.forEach((s: any) => { if (s.type) { const t = s.type.split('型')[0] + '型'; m[t] = (m[t] || 0) + 1; } });
+    springs.forEach((s) => { if (s.type) { const t = s.type.split('型')[0] + '型'; m[t] = (m[t] || 0) + 1; } });
     return Object.entries(m).map(([name, value],_i) => ({ name, value }));
   }, [springs]);
 
   // 温度排名数据
   const tempRankData = useMemo(() =>
-    springs.filter((s: any) => s.temp).map((s: any) => ({
+    springs.filter((s) => s.temp).map((s) => ({
       name: s.name,
-      '温度(C)': parseFloat(s.temp),
-      '流量(m3/h)': s.flow ? parseFloat(s.flow) : 0,
-    })).sort((a: any, b: any) => b['温度(C)'] - a['温度(C)']).slice(0, 12),
+      '温度(C)': typeof s.temp === 'number' ? s.temp : Number(s.temp),
+      '流量(m3/h)': s.flow ? Number(s.flow) : 0,
+    })).sort((a, b) => b['温度(C)'] - a['温度(C)']).slice(0, 12),
   []);
 
   return (
@@ -70,7 +70,7 @@ export function GeothermalHotSpringsTab() {
               <YAxis type="category" dataKey="name" tick={{ fill: '#8b9dc3', fontSize: 9 }} width={65} />
               <Tooltip content={<ChartTooltip unit="C" title="热泉温度" />} />
               <Bar dataKey="温度(C)" name="温度" radius={[0, 4, 4, 0]}>
-                {tempRankData.map((entry: any, i: number) => (
+                {tempRankData.map((entry, i: number) => (
                   <Cell key={i} fill={entry['温度(C)'] >= 60 ? '#ef4444' : entry['温度(C)'] >= 42 ? '#f59e0b' : entry['温度(C)'] >= 37 ? '#22c55e' : '#3b82f6'} />
                 ))}
               </Bar>
@@ -87,7 +87,7 @@ export function GeothermalHotSpringsTab() {
                 <YAxis tick={{ fill: '#8b9dc3', fontSize: 10 }} />
                 <Tooltip content={<ChartTooltip unit="个" title="温度区间" />} />
                 <Bar dataKey="count" name="数量" radius={[4, 4, 0, 0]}>
-                  {tempBins.map((entry: any, i: number) => <Cell key={i} fill={entry.color} />)}
+                  {tempBins.map((entry, i: number) => <Cell key={i} fill={entry.color} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -96,7 +96,7 @@ export function GeothermalHotSpringsTab() {
             <ResponsiveContainer width="100%" height={120}>
               <PieChart>
                 <Pie data={typePie} cx="50%" cy="50%" innerRadius={25} outerRadius={50} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                  {typePie.map((e: any, i: number) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+                  {typePie.map((e, i: number) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                 </Pie>
                 <Tooltip content={<ChartTooltip title="水化学类型" />} />
               </PieChart>
@@ -108,11 +108,11 @@ export function GeothermalHotSpringsTab() {
       {/* ── 热泉详细列表 ── */}
       <TechCard title="主要热泉一览" badge={springs.length + '处'}>
         <div className="mb-2 flex justify-end">
-          <ChartExport data={springs.map((s: any) => ({ name: s.name, location: s.location, temp: s.temp, flow: s.flow, type: s.type }))} filename="热泉一览" sheetName="热泉" formats={['xlsx', 'csv', 'json']} label="导出数据" />
+          <ChartExport data={springs.map((s) => ({ name: s.name, location: s.location, temp: s.temp, flow: s.flow, type: s.type }))} filename="热泉一览" sheetName="热泉" formats={['xlsx', 'csv', 'json']} label="导出数据" />
         </div>
         <FilterableTechTable
           headers={['泉名', '位置', '温度(C)', '流量(m3/h)', '水化学类型']}
-          rows={springs.map((s: any) => [s.name, s.location, s.temp ?? '-', s.flow ?? '-', s.type || '-'])}
+          rows={springs.map((s) => [s.name, s.location, s.temp ?? '-', s.flow ?? '-', s.type || '-'])}
           filterPlaceholder="搜索热泉..."
         />
         <div className="mt-3 flex flex-wrap gap-3 text-[10px]">
@@ -125,7 +125,7 @@ export function GeothermalHotSpringsTab() {
       {/* ── 平原地热异常区 ── */}
       <TechCard title="平原地热异常区" badge="3处">
         <div className="space-y-2">
-          {hotSpringData.geothermalAnomalies.map((ga: any, i: number) => (
+          {hotSpringData.geothermalAnomalies.map((ga, i: number) => (
             <div key={i} className="p-2.5 bg-gw-surface/50 rounded-lg border border-gw-border/30">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium text-gw-text">{ga.name}</span>

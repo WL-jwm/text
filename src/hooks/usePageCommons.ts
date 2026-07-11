@@ -4,6 +4,7 @@ import { useToast } from '../components/Toast';
 
 interface PageCommonsConfig {
   pageName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   collector: () => any;
   autoCollect?: boolean;
 }

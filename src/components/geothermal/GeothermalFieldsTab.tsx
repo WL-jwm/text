@@ -33,7 +33,7 @@ export function GeothermalFieldsTab({ tempBarData, areaBarData, gradientDepthDat
       const temps = f.temperature.split('~').map(Number);
       const mid = temps.length === 2 ? (temps[0] + temps[1]) / 2 : temps[0];
       return { name: f.name.replace('地热田', ''), '温度中值(C)': mid, '面积(km2)': parseInt(String(f.area)) };
-    }).sort((a: any, b: any) => b['温度中值(C)'] - a['温度中值(C)']),
+    }).sort((a, b) => b['温度中值(C)'] - a['温度中值(C)']),
   []);
 
   // 储量面积对比

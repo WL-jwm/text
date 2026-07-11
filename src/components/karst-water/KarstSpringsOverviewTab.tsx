@@ -7,6 +7,7 @@ import { FilterableTechTable } from '../FilterableTechTable';
 import { LazyChartCard } from '../LazyChartCard';
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   springAreaData: any[];
   handleExportSprings: () => void;
 }

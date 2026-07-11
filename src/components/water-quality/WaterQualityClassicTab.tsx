@@ -10,7 +10,9 @@ export function WaterQualityClassicTab() {
   // 城市开采量柱图
   const extractionData = React.useMemo(() =>
     [...citySupplyHydrogeology]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .sort((a: any, b: any) => parseFloat(b.extraction) - parseFloat(a.extraction))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((c: any) => ({ name: c.city, 开采量: parseFloat(c.extraction) || 0 })),
     []
   );
@@ -42,7 +44,7 @@ export function WaterQualityClassicTab() {
 
         <LazyChartCard title="视电阻率与矿化度分级" badge="5级" className="hud-corners" height={320}>
           <div className="flex items-center gap-3 mb-2 text-[10px] text-gw-muted flex-wrap">
-            {resistivityMineralization.map((r: any, i: number) => (
+            {resistivityMineralization.map((r, i: number) => (
               <span key={i} className="flex items-center gap-1">
                 <span className={`w-2 h-2 rounded-full ${
                   r.waterType.includes('淡') ? 'bg-emerald-400' :
@@ -55,7 +57,8 @@ export function WaterQualityClassicTab() {
             ))}
           </div>
           <div className="space-y-3">
-            {resistivityMineralization.map((r: any, i: number) => {
+            {resistivityMineralization.map((r, i: number) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const maxResistivity = Math.max(...resistivityMineralization.map((x: any) => {
                 const v = x.resistivity.replace(/[~>]/g, '').split('-').pop();
                 return parseFloat(v) || 100;
@@ -88,7 +91,7 @@ export function WaterQualityClassicTab() {
           物探视电阻率(Ω·m)与地下水矿化度(g/L)的对应关系，用于水质快速判别
         </p>
         <div className="space-y-2">
-          {resistivityMineralization.map((r: any, i: number) => (
+          {resistivityMineralization.map((r, i: number) => (
             <div key={i} className={`flex items-center justify-between p-3 rounded-lg border ${
               r.waterType.includes('淡') ? 'bg-emerald-500/5 border-emerald-500/15' :
               r.waterType.includes('微') ? 'bg-cyan-500/5 border-cyan-500/15' :
@@ -109,7 +112,7 @@ export function WaterQualityClassicTab() {
       <TechCard title="主要城市供水水质基础条件" icon={MapPin}>
         <p className="text-[10px] text-gw-muted mb-3">1980年代前城市地下水开采与含水层条件概述</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {citySupplyHydrogeology.map((c: any, i: number) => (
+          {citySupplyHydrogeology.map((c, i: number) => (
             <div key={i} className="p-3 bg-gw-surface/50 rounded-lg border border-gw-border/50">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gw-text">{c.city}</span>

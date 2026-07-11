@@ -7,6 +7,7 @@ import { FilterableTechTable } from '../FilterableTechTable';
 import { ChartExport } from '../ChartExport';
 
 interface Props {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   systemAreaData: any[];
 }
 

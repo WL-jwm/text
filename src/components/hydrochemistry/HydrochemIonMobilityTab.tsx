@@ -8,12 +8,12 @@ import { LazyChartCard } from '../LazyChartCard';
 export function HydrochemIonMobilityTab() {
   // 离子迁移率柱图数据
   const chartData = React.useMemo(() => {
-    const cations = ionMobility.filter((i: any) => i.ionType === '阳离子').map((i: any) => ({
+    const cations = ionMobility.filter((i) => i.ionType === '阳离子').map((i) => ({
       name: i.ion,
       mobility: parseFloat(i.mobility) || 0,
       type: '阳离子',
     }));
-    const anions = ionMobility.filter((i: any) => i.ionType === '阴离子').map((i: any) => ({
+    const anions = ionMobility.filter((i) => i.ionType === '阴离子').map((i) => ({
       name: i.ion,
       mobility: parseFloat(i.mobility) || 0,
       type: '阴离子',
@@ -25,8 +25,8 @@ export function HydrochemIonMobilityTab() {
     <div className="space-y-4">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard title="离子总数" value={String(ionMobility.length)} unit="种" icon={Zap} accent="blue" />
-        <StatCard title="阳离子" value={String(ionMobility.filter((i: any) => i.ionType === '阳离子').length)} unit="种" icon={Activity} accent="cyan" />
-        <StatCard title="阴离子" value={String(ionMobility.filter((i: any) => i.ionType === '阴离子').length)} unit="种" icon={Activity} accent="green" />
+        <StatCard title="阳离子" value={String(ionMobility.filter((i) => i.ionType === '阳离子').length)} unit="种" icon={Activity} accent="cyan" />
+        <StatCard title="阴离子" value={String(ionMobility.filter((i) => i.ionType === '阴离子').length)} unit="种" icon={Activity} accent="green" />
         <StatCard title="最高迁移率" value="H⁺" unit="324.2" icon={TrendingUp} accent="amber" />
       </div>
 
@@ -42,7 +42,7 @@ export function HydrochemIonMobilityTab() {
             <YAxis tick={{ fill: '#8b9dc3', fontSize: 10 }} label={{ value: '迁移率', angle: -90, position: 'insideLeft', style: { fill: '#8b9dc3', fontSize: 10 } }} />
             <Tooltip content={<ChartTooltip title="离子迁移率" />} />
             <Bar dataKey="mobility" name="迁移率" radius={[3, 3, 0, 0]}>
-              {chartData.map((d: any, i: number) => (
+              {chartData.map((d, i: number) => (
                 <rect key={i} fill={d.type === '阳离子' ? '#3b82f6' : '#f59e0b'} />
               ))}
             </Bar>
@@ -62,7 +62,7 @@ export function HydrochemIonMobilityTab() {
               <th className="px-2 py-1.5 text-left text-gw-muted font-medium">类型</th>
             </tr></thead>
             <tbody>
-              {ionMobility.map((ion: any, i: number) => (
+              {ionMobility.map((ion, i: number) => (
                 <tr key={i} className={`border-b border-gw-border/50 hover:bg-gw-surface/50 ${ion.ionType === '阳离子' ? '' : 'bg-gw-surface/20'}`}>
                   <td className="px-2 py-1 text-gw-text font-medium">{ion.ion}</td>
                   <td className="px-2 py-1 font-mono text-gw-highlight">{ion.mobility}</td>

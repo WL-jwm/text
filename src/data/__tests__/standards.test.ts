@@ -60,15 +60,19 @@ describe('地下水质量标准 (GB/T 14848)', () => {
 
   it('v2017应包含5个水质类别', () => {
     const v2017 = groundwaterQualityStandards.versions.find(v => v.id === 'v2017')!;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const classes = v2017.data.classes as any[];
     expect(classes.length).toBe(5);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const classNames = classes.map((c: any) => c.class);
     expect(classNames).toEqual(['I', 'II', 'III', 'IV', 'V']);
   });
 
   it('每个水质类别应有color', () => {
     const v2017 = groundwaterQualityStandards.versions.find(v => v.id === 'v2017')!;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const classes = v2017.data.classes as any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     classes.forEach((c: any) => {
       expect(c.color).toMatch(/^#[0-9a-fA-F]{6}$/);
     });
@@ -78,6 +82,7 @@ describe('地下水质量标准 (GB/T 14848)', () => {
 describe('地表水质量标准 (GB 3838)', () => {
   it('应包含6个类别（含劣V类）', () => {
     const v2002 = surfaceWaterQualityStandards.versions.find(v => v.id === 'v2002')!;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const classes = v2002.data.classes as any[];
     expect(classes.length).toBe(6);
   });
@@ -97,6 +102,7 @@ describe('getCurrentStandard', () => {
   });
 
   it('不存在的category应返回null', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(getCurrentStandard('不存在的类别' as any)).toBeNull();
   });
 

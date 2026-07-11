@@ -17,7 +17,7 @@ function parseResistivityMid(range: string): number {
 export function HydrochemZoningTab() {
   // TDS范围提取
   const tdsData = useMemo(() =>
-    hydrochemicalZoning.map((z: any) => {
+    hydrochemicalZoning.map((z) => {
       const parts = z.tdsRange.replace(/[~>]/g, '').split('-');
       const avg = parts.length > 1
         ? (parseFloat(parts[0]) + parseFloat(parts[1])) / 2
@@ -37,7 +37,7 @@ export function HydrochemZoningTab() {
 
   // Treemap数据
   const treemapData = useMemo(() =>
-    hydrochemicalZoning.map((z: any, i) => ({
+    hydrochemicalZoning.map((z, i) => ({
       name: z.zone,
       size: parseResistivityMid(z.tdsRange),
       color: ZONE_GRADIENT[i] || '#64748b',
@@ -47,9 +47,9 @@ export function HydrochemZoningTab() {
 
   // 垂直分带对比（TDS递增从浅到深）
   const verticalData = useMemo(() => {
-    const shallow = hydrochemicalZoning.find((z: any) => z.zone.includes('山前'));
-    const mid = hydrochemicalZoning.find((z: any) => z.zone.includes('中部'));
-    const coastal = hydrochemicalZoning.find((z: any) => z.zone.includes('滨海'));
+    const shallow = hydrochemicalZoning.find((z) => z.zone.includes('山前'));
+    const mid = hydrochemicalZoning.find((z) => z.zone.includes('中部'));
+    const coastal = hydrochemicalZoning.find((z) => z.zone.includes('滨海'));
     return [
       { depth: '浅层(0-50m)', 山前: shallow ? parseResistivityMid(shallow.tdsRange) : 300, 中部: mid ? parseResistivityMid(mid.tdsRange) : 800, 滨海: coastal ? parseResistivityMid(coastal.tdsRange) : 3000 },
       { depth: '中层(50-150m)', 山前: Math.round(300 * 1.2), 中部: Math.round(800 * 1.5), 滨海: Math.round(3000 * 1.3) },
@@ -78,7 +78,7 @@ export function HydrochemZoningTab() {
         <StatCard title="最低TDS" value={minTds} unit="mg/L" accent="emerald" subtitle="山前溶滤区" />
         <StatCard title="最高TDS" value={maxTds.toLocaleString()} unit="mg/L" accent="red" subtitle="滨海海侵区" />
         <StatCard title="TDS倍数" value={tdsRange.toFixed(0)} unit="倍" accent="amber" subtitle="最大/最小" />
-        <StatCard title="水类型" value={new Set(hydrochemicalZoning.map((z: any) => z.waterType)).size} unit="种" accent="blue" subtitle="演化序列" />
+        <StatCard title="水类型" value={new Set(hydrochemicalZoning.map((z) => z.waterType)).size} unit="种" accent="blue" subtitle="演化序列" />
       </div>
 
       {/* TDS梯度 + TDS趋势线 */}
@@ -159,7 +159,7 @@ export function HydrochemZoningTab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TechCard title="水化学水平分带特征卡片" badge="山前→滨海">
           <div className="space-y-2">
-            {hydrochemicalZoning.map((z: any, i: number) => (
+            {hydrochemicalZoning.map((z, i: number) => (
               <div key={i} className="p-3 bg-gw-surface/50 rounded-lg border border-gw-border/30">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-semibold text-gw-text">{z.zone}</span>
@@ -203,7 +203,7 @@ export function HydrochemZoningTab() {
         </div>
         <FilterableTechTable
           headers={['分带', '位置', 'TDS(mg/L)', '主要离子', '硬度类型', 'pH', '水类型']}
-          rows={hydrochemicalZoning.map((z: any) => [z.zone, z.location, z.tdsRange, z.mainIons, z.hardnessType, z.phRange, z.waterType])}
+          rows={hydrochemicalZoning.map((z) => [z.zone, z.location, z.tdsRange, z.mainIons, z.hardnessType, z.phRange, z.waterType])}
           pageSize={10}
         />
       </TechCard>
