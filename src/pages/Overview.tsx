@@ -17,7 +17,6 @@ import type { CountyDataItem } from '../types/county';
 
 import { systemZones } from '../data/systemZoning';
 
-
 import { salineSoilDistribution } from '../data/salineSoil';
 
 import { mineWaterUtilization } from '../data/mineHydrogeology';
@@ -37,6 +36,9 @@ import { useCountUp, KPICard, GaugeCard } from './OverviewHelpers';
 import { OverExploitMilestones } from '../components/overview/OverExploitMilestones';
 import { OverviewWaterPressure } from './OverviewWaterPressure';
 import { OverviewNavigation } from './OverviewNavigation';
+import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
+import { GovernanceSummaryCards } from '../components/overview/GovernanceSummaryCards';
+import { CollapsiblePanel } from '../components/overview/CollapsiblePanel';
 import { HydrogeologyReferenceLibrary } from '../components/overview/HydrogeologyReferenceLibrary';
 import { ExploitationControlComparison } from '../components/overview/ExploitationControlComparison';
 import { ExploitationManagement } from '../components/overview/ExploitationManagement';
@@ -46,8 +48,6 @@ import { HydroParamsReferencePanel } from '../components/overview/HydroParamsRef
 import { ZoneParamsPanel } from '../components/overview/ZoneParamsPanel';
 import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
 import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
-import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
-import { GovernanceSummaryCards } from '../components/overview/GovernanceSummaryCards';
 
 export function Overview() {
 
@@ -204,7 +204,7 @@ export function Overview() {
 
   // 咸水面积分布
 
-  // ── 县级水资源公报数据统计 ──
+// ── 县级水资源公报数据统计 ──
 
   const countyDataStats = useMemo(() => {
 
@@ -421,7 +421,9 @@ export function Overview() {
         <GovernanceSummaryCards />
       </TechCard>
 
-      <OverviewWaterPressure dataCounties={countyDataStats.dataCounties} />{/* ═══════════════════ 地下水动态仪表盘 ═══════════════════ */}
+      <OverviewWaterPressure dataCounties={countyDataStats.dataCounties} />
+
+      {/* ═══════════════════ 地下水动态仪表盘 ═══════════════════ */}
 
       <TechCard title="2024年地下水动态" icon={Activity} className="hud-corners">
 
@@ -789,26 +791,43 @@ export function Overview() {
         animEcoVolume={animEcoVolume}
       />
 
-      <HydrogeologyReferenceLibrary />
+      {/* ═══════════════════ 参数参考面板（默认折叠） ═══════════════════ */}
+      <CollapsiblePanel title="历史水文地质参数参考库" badge="A表">
+        <HydrogeologyReferenceLibrary />
+      </CollapsiblePanel>
 
-      <ExploitationControlComparison />
+      <CollapsiblePanel title="超采治理成效对比" badge="exploitation">
+        <ExploitationControlComparison />
+      </CollapsiblePanel>
 
-      <ExploitationManagement />
+      <CollapsiblePanel title="开采管理概览" badge="管理">
+        <ExploitationManagement />
+      </CollapsiblePanel>
 
+      <CollapsiblePanel title="冲洪积扇与水源地" badge="蓄水构造">
+        <AlluvialFansWaterSources />
+      </CollapsiblePanel>
 
-            <AlluvialFansWaterSources />
+      <CollapsiblePanel title="评价标准参考" badge="GB">
+        <StandardsReferencePanel />
+      </CollapsiblePanel>
 
-      <StandardsReferencePanel />
+      <CollapsiblePanel title="水文地质参数速查" badge="B表">
+        <HydroParamsReferencePanel />
+      </CollapsiblePanel>
 
-      <HydroParamsReferencePanel />
+      <CollapsiblePanel title="地下水系统分区参数" badge="分区">
+        <ZoneParamsPanel />
+      </CollapsiblePanel>
 
-      <ZoneParamsPanel />
+      <CollapsiblePanel title="历史演变与污染对比" badge="历史">
+        <HistoricalEvolution />
+        <PollutionQualityComparison />
+      </CollapsiblePanel>
 
-      <HistoricalEvolution />
+      <OverviewNavigation />
 
-      <PollutionQualityComparison />
-
-      <OverviewNavigation />{/* 导出报告按钮 */}
+      {/* 导出报告按钮 */}
       <div className="flex items-center justify-end mb-2">
         <button onClick={() => setExportOpen(true)} className="px-3 py-1.5 rounded-lg text-xs bg-gw-blue/15 text-gw-highlight border border-gw-blue/30 hover:bg-gw-blue/25 transition-all">
           导出总览报告
@@ -837,4 +856,3 @@ export function Overview() {
 }
 
 // ── KPI 卡片 ──
-
