@@ -61,6 +61,20 @@ analyze_any.py
 eslint-any.err
 eslint-any*.json
 geology_full.txt
+coverage/
+*.py
+
+# === Untracked leftover ===
+_fix_any.py
+_fix_last_10.py
+_fix_tsc_errors.py
+# === P7/P8 临时脚本(已清理或保留) ===
+_add_disables.py
+_analyze_remaining.py
+_batch_fix_any.py
+_refactor_mapview.py
+_restructure.py
+
 # strays in src/
 src/pages/_fix_header.txt
 src/pages/MapStatCards.tsx
