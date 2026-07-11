@@ -1,22 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import {
-  Layers,
-  Maximize2, Navigation,
-
- X
-} from 'lucide-react';
-import { TechCard, DataSourceNote, ExportButton } from '../components/UI';
+import { Layers, Maximize2, X } from 'lucide-react';
+import { TechCard, DataSourceNote } from '../components/UI';
 import { cityBulletin2024 } from '../data/resources';
 import { exportExcel } from '../utils/exportUtils';
 import { CrossLinkPanel } from '../components/CrossLink';
 import {
- mapZones, springMarkers, geothermalMarkers,
+  mapZones, springMarkers, geothermalMarkers,
   salineMarkers, waterSourceMarkers, mineMarkers,
   allMarkers, hebeiBoundary, cityCenters, getVisibleMarkers,
   type MapMarker, type MapLayerConfig as _MapLayerConfig } from '../data/mapData';
 import {
-  cityBounds, overdraftPolygons, overdraftLegend,
-  getCityResourceGrades, getCityAggregatedInfo,
+  cityBounds, overdraftPolygons,
+  getCityResourceGrades,
   gradeColors, gradeLabels,
   type CityResourceGrade as _CityResourceGrade } from '../data/mapDataEnhanced';
 import { importantWaterSources } from '../data/waterSource';
@@ -26,15 +21,22 @@ import type { CountyDataItem } from '../types/county';
 import type { LMap, LLayerGroup, LNamespace } from '../types/leaflet';
 import { useReportData } from '../hooks/useReportData';
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
-import { contourDatasets, getContourDataset } from '../data/contourData';
+import { getContourDataset } from '../data/contourData';
 import { idwInterpolate, gridToCanvas, COLOR_SCHEMES } from '../utils/idwInterpolation';
 import {
-  TIAN_DI_TOKEN, LAYER_DEFS, CATEGORY_COLORS,
+  TIAN_DI_TOKEN, CATEGORY_COLORS,
   createCircleIcon, createPulseIcon, createGradeBubble,
   WATER_SOURCE_COORDS, KARST_SPRING_COORDS,
   createWaterSourceIcon, createKarstSpringIcon,
 } from './mapConstants';
 import { MapSidebar } from './MapSidebar';
+// Extracted sub-components
+import { MapLayerControls } from '../components/map/MapLayerControls';
+import { MapLegend } from '../components/map/MapLegend';
+import { MapToolbar } from '../components/map/MapToolbar';
+import { MapStatsCards } from '../components/map/MapStatsCards';
+import { ContourControlPanel } from '../components/map/ContourControlPanel';
+import { MapCityDetailPanel } from '../components/map/MapCityDetailPanel';
 
 export function MapView() {
   const { success } = useToast();
@@ -131,6 +133,9 @@ export function MapView() {
       return next;
     });
   };
+
+  /** 重置图层到默认 */
+  const resetLayers = () => setActiveLayers(new Set(['markers']));
 
   /** 加载Leaflet */
   useEffect(() => {
@@ -761,231 +766,32 @@ export function MapView() {
         </div>
       </div>
 
-      {/* ═══════ v4.3.0: 图层切换按钮（可叠加） ═══════ */}
-      <div className="flex gap-2 flex-wrap">
-        {LAYER_DEFS.map(layerDef => {
-          const IconComp = layerDef.icon;
-          const isActive = activeLayers.has(layerDef.key);
-          return (
-            <button
-              key={layerDef.key}
-              onClick={() => toggleLayer(layerDef.key)}
-              className={'flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all border ' +
-                (isActive
-                  ? 'border-opacity-30 shadow-[0_0_8px_rgba(255,255,255,0.05)]'
-                  : 'text-gw-muted hover:text-gw-text bg-gw-surface/30 border-gw-border/30 hover:border-gw-border/60'
-                )
-              }
-              style={isActive ? {
-                borderColor: layerDef.color + '40',
-                backgroundColor: layerDef.color + '15',
-                color: layerDef.color,
-              } : {}}
-            >
-              <IconComp size={14} />
-              {layerDef.label}
-              <span className="text-[10px] opacity-60 hidden sm:inline">{layerDef.desc}</span>
-            </button>
-          );
-        })}
-        <div className="flex items-center px-2 text-[10px] text-gw-muted ml-1">
-          已激活 {activeLayerCount} 个图层
-          {activeLayerCount > 1 && (
-            <button onClick={() => setActiveLayers(new Set(['markers']))}
-              className="ml-2 px-1.5 py-0.5 rounded bg-gw-surface/50 border border-gw-border/30 text-gw-muted hover:text-gw-text text-[10px]">
-              重置
-            </button>
-          )}
-        </div>
-      </div>
+      {/* 图层切换按钮 */}
+      <MapLayerControls
+        activeLayers={activeLayers}
+        activeLayerCount={activeLayerCount}
+        onToggleLayer={toggleLayer}
+        onResetLayers={resetLayers}
+      />
 
-      {/* 统计卡片 — 根据活跃图层动态显示 */}
-      {activeLayers.has('markers') && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {categoryStats.map(s => (
-            <div
-              key={s.key}
-              onClick={() => toggleMarkerCategory(s.key)}
-              className={'px-3 py-2 rounded-lg border cursor-pointer transition-all ' +
-                (visibleLayers.has(s.key) ? 'border-opacity-30 bg-opacity-10' : 'border-gw-border/30 bg-gw-surface/30 opacity-50')
-              }
-              style={visibleLayers.has(s.key) ? {
-                borderColor: s.color + '50',
-                backgroundColor: s.color + '15',
-              } : {}}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-gw-muted">{s.label}</span>
-                <span className="text-sm font-bold" style={{ color: visibleLayers.has(s.key) ? s.color : '#6b7280' }}>{s.count}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {activeLayers.has('resource') && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {([5, 4, 3, 2, 1] as const).map(grade => {
-            const cities = cityGrades.filter(g => g.grade === grade);
-            return (
-              <div key={grade} className="px-3 py-2 rounded-lg border cursor-default transition-all"
-                style={{ borderColor: gradeColors[grade] + '50', backgroundColor: gradeColors[grade] + '15' }}>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-gw-muted">{gradeLabels[grade].split('(')[0]}</span>
-                  <span className="text-sm font-bold" style={{ color: gradeColors[grade] }}>{cities.length}市</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {activeLayers.has('overdraft') && (
-        <div className="grid grid-cols-3 gap-2">
-          {overdraftLegend.map(item => (
-            <div key={item.type}
-              onClick={() => toggleOverdraftType(item.type)}
-              className={'px-3 py-2 rounded-lg border cursor-pointer transition-all ' +
-                (overdraftFilter.has(item.type) ? 'opacity-100' : 'opacity-40')
-              }
-              style={{ borderColor: item.color + '50', backgroundColor: item.fill }}>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-gw-muted">{item.label}</span>
-                <span className="text-sm font-bold" style={{ color: item.color }}>
-                  {overdraftPolygons.filter(p => p.type === item.type).length}个
-                </span>
-              </div>
-            </div>
-          ))}
-          <div className="px-3 py-2 rounded-lg border border-gw-border/30 bg-gw-surface/30">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">总面积</span>
-              <span className="text-sm font-bold text-gw-text">69,693 km²</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeLayers.has('waterSourcePOI') && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#22d3ee50', backgroundColor: '#22d3ee15' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">水源地数量</span>
-              <span className="text-sm font-bold text-cyan-300">{importantWaterSources.length}个</span>
-            </div>
-          </div>
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#22d3ee50', backgroundColor: '#22d3ee15' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">已替代</span>
-              <span className="text-sm font-bold text-amber-400">{importantWaterSources.filter(w => w.status.includes('替代')).length}个</span>
-            </div>
-          </div>
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#22d3ee50', backgroundColor: '#22d3ee15' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">正常开采</span>
-              <span className="text-sm font-bold text-emerald-400">{importantWaterSources.filter(w => w.status.includes('正常')).length}个</span>
-            </div>
-          </div>
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#22d3ee50', backgroundColor: '#22d3ee15' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">总供水规模</span>
-              <span className="text-sm font-bold text-cyan-300">{importantWaterSources.reduce((s, w) => s + parseFloat(w.supply), 0).toFixed(0)} 万m³/d</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeLayers.has('karstSpringPOI') && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#10b98150', backgroundColor: '#10b98115' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">岩溶泉数量</span>
-              <span className="text-sm font-bold text-emerald-400">{karstSprings.length}个</span>
-            </div>
-          </div>
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#10b98150', backgroundColor: '#10b98115' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">有流量数据</span>
-              <span className="text-sm font-bold text-emerald-400">{karstSprings.filter(k => k.discharge !== '-').length}个</span>
-            </div>
-          </div>
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#10b98150', backgroundColor: '#10b98115' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">总泉域面积</span>
-              <span className="text-sm font-bold text-emerald-400">{karstSprings.reduce((s, k) => s + parseFloat(k.area || '0'), 0).toLocaleString()} km²</span>
-            </div>
-          </div>
-          <div className="px-3 py-2 rounded-lg border" style={{ borderColor: '#10b98150', backgroundColor: '#10b98115' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gw-muted">全排型</span>
-              <span className="text-sm font-bold text-emerald-400">{karstSprings.filter(k => k.type === '全排型').length}个</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 统计卡片 */}
+      <MapStatsCards
+        activeLayers={activeLayers}
+        visibleLayers={visibleLayers}
+        overdraftFilter={overdraftFilter}
+        cityGrades={cityGrades}
+        onToggleMarkerCategory={toggleMarkerCategory}
+        onToggleOverdraftType={toggleOverdraftType}
+      />
 
       {/* 等值线图层控制面板 */}
       {activeLayers.has('contour') && (
-        <TechCard title="等值线图层控制" badge="IDW插值">
-          <div className="space-y-3">
-            <div>
-              <div className="text-[10px] text-gw-muted mb-1">数据图层</div>
-              <div className="flex flex-wrap gap-1.5">
-                {contourDatasets.map(ds => (
-                  <button
-                    key={ds.key}
-                    onClick={() => setActiveContour(ds.key)}
-                    className={'px-2.5 py-1 rounded text-[10px] font-medium transition-all ' +
-                      (activeContour === ds.key ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-gw-surface/50 text-gw-muted border border-gw-border/30 hover:border-purple-500/20')}
-                  >
-                    {ds.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <div className="text-[10px] text-gw-muted mb-1">透明度: {(contourOpacity * 100).toFixed(0)}%</div>
-              <input
-                type="range"
-                min={0.1}
-                max={1}
-                step={0.1}
-                value={contourOpacity}
-                onChange={e => setContourOpacity(parseFloat(e.target.value))}
-                className="w-full h-1 bg-gw-border/30 rounded-lg appearance-none cursor-pointer accent-purple-500"
-              />
-            </div>
-            {(() => {
-              const ds = getContourDataset(activeContour);
-              if (!ds) return null;
-              return (
-                <div className="grid grid-cols-3 gap-1.5">
-                  <div className="px-2 py-1.5 rounded border text-center" style={{ borderColor: '#8b5cf650', backgroundColor: '#8b5cf615' }}>
-                    <div className="text-[9px] text-gw-muted">数据点</div>
-                    <div className="text-xs font-bold text-purple-400">{ds.points.length}</div>
-                  </div>
-                  <div className="px-2 py-1.5 rounded border text-center" style={{ borderColor: '#8b5cf650', backgroundColor: '#8b5cf615' }}>
-                    <div className="text-[9px] text-gw-muted">单位</div>
-                    <div className="text-xs font-bold text-purple-400">{ds.unit}</div>
-                  </div>
-                  <div className="px-2 py-1.5 rounded border text-center" style={{ borderColor: '#8b5cf650', backgroundColor: '#8b5cf615' }}>
-                    <div className="text-[9px] text-gw-muted">范围</div>
-                    <div className="text-xs font-bold text-purple-400">{ds.minVal}~{ds.maxVal}</div>
-                  </div>
-                </div>
-              );
-            })()}
-            <div className="text-[10px] text-gw-muted">{getContourDataset(activeContour)?.description}</div>
-            {/* 色带图例 */}
-            <div className="flex items-center gap-1">
-              <span className="text-[9px] text-gw-muted">低</span>
-              <div className="flex-1 h-2.5 rounded-full overflow-hidden" style={{
-                background: 'linear-gradient(to right, #3b82f6, #22c55e, #eab308, #f97316, #ef4444)'
-              }} />
-              <span className="text-[9px] text-gw-muted">高</span>
-            </div>
-          </div>
-        </TechCard>
+        <ContourControlPanel
+          activeContour={activeContour}
+          contourOpacity={contourOpacity}
+          onSetActiveContour={setActiveContour}
+          onSetContourOpacity={setContourOpacity}
+        />
       )}
 
       {/* 主体：地图 + 侧边栏 */}
@@ -999,100 +805,26 @@ export function MapView() {
             </div>
           )}
 
-          {/* 地图顶部操作条 */}
+          {/* 地图顶部工具栏 */}
           {mapLoaded && (
-            <div className="absolute top-3 left-3 z-[1000] flex items-center px-2 py-1 rounded-lg text-[10px] bg-gw-surface/80 border border-gw-border/40 text-gw-muted backdrop-blur-sm gap-2">
-              <Navigation size={11} className="inline" />
-              {activeLayerCount} 图层
-              <div className="flex items-center gap-1 ml-2">
-                {activeLayers.has('markers') && (
-                  <>
-                    <ExportButton onClick={handleExportMarkers} label="全部" />
-                    <ExportButton onClick={handleExportVisible} label="已选" />
-                  </>
-                )}
-                {activeLayers.has('overdraft') && (
-                  <ExportButton onClick={handleExportOverdraft} label="超采区" />
-                )}
-                {activeLayers.has('resource') && (
-                  <ExportButton onClick={handleExportResource} label="资源" />
-                )}
-                {activeLayers.has('waterSourcePOI') && (
-                  <ExportButton onClick={handleExportWaterSourcePOI} label="水源地" />
-                )}
-                {activeLayers.has('karstSpringPOI') && (
-                  <ExportButton onClick={handleExportKarstSpringPOI} label="岩溶泉" />
-                )}
-              </div>
-            </div>
+            <MapToolbar
+              activeLayers={activeLayers}
+              activeLayerCount={activeLayerCount}
+              onExportMarkers={handleExportMarkers}
+              onExportVisible={handleExportVisible}
+              onExportOverdraft={handleExportOverdraft}
+              onExportResource={handleExportResource}
+              onExportWaterSourcePOI={handleExportWaterSourcePOI}
+              onExportKarstSpringPOI={handleExportKarstSpringPOI}
+            />
           )}
 
-          {/* ═══════ v4.3.0: 自适应图例 — 根据活跃图层动态显示 ═══════ */}
+          {/* 自适应图例 */}
           {mapLoaded && activeLayerCount > 0 && (
-            <div className="absolute top-3 right-3 z-[1000] px-3 py-2 rounded-lg text-[10px] bg-gw-surface/90 border border-gw-border/40 backdrop-blur-sm max-h-[320px] overflow-y-auto scrollbar-none">
-              <p className="font-medium text-gw-text mb-1.5">图例</p>
-
-              {/* 标注图例 */}
-              {activeLayers.has('markers') && (
-                <div className="mb-2">
-                  <p className="text-gw-muted text-[9px] mb-0.5">标注分类</p>
-                  {categoryStats.map(s => (
-                    <div key={s.key} className="flex items-center gap-2 py-0.5">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: s.color }} />
-                      <span className="text-gw-muted">{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* 资源量图例 */}
-              {activeLayers.has('resource') && (
-                <div className="mb-2">
-                  <p className="text-gw-muted text-[9px] mb-0.5">资源量等级</p>
-                  {([5, 4, 3, 2, 1] as const).map(grade => (
-                    <div key={grade} className="flex items-center gap-2 py-0.5">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: gradeColors[grade] }} />
-                      <span className="text-gw-muted">{gradeLabels[grade]}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* 超采区图例 */}
-              {activeLayers.has('overdraft') && (
-                <div className="mb-2">
-                  <p className="text-gw-muted text-[9px] mb-0.5">超采区类型</p>
-                  {overdraftLegend.map(item => (
-                    <div key={item.type} className="flex items-center gap-2 py-0.5">
-                      <div className="w-3 h-3 rounded-sm border" style={{ borderColor: item.color, backgroundColor: item.fill, borderStyle: item.type === 'deep-severe' ? 'solid' : 'dashed' }} />
-                      <span className="text-gw-muted">{item.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* 水源地POI图例 */}
-              {activeLayers.has('waterSourcePOI') && (
-                <div className="mb-2">
-                  <p className="text-gw-muted text-[9px] mb-0.5">水源地</p>
-                  <div className="flex items-center gap-2 py-0.5">
-                    <div className="w-3 h-3 bg-cyan-300 border border-white rotate-45" style={{ transform: 'rotate(45deg)', width: 10, height: 10 }} />
-                    <span className="text-gw-muted">重要水源地</span>
-                  </div>
-                </div>
-              )}
-
-              {/* 岩溶泉POI图例 */}
-              {activeLayers.has('karstSpringPOI') && (
-                <div className="mb-2">
-                  <p className="text-gw-muted text-[9px] mb-0.5">岩溶泉</p>
-                  <div className="flex items-center gap-2 py-0.5">
-                    <span className="text-emerald-400 text-xs">&#9733;</span>
-                    <span className="text-gw-muted">岩溶大泉</span>
-                  </div>
-                </div>
-              )}
-            </div>
+            <MapLegend
+              activeLayers={activeLayers}
+              categoryStats={categoryStats}
+            />
           )}
 
           {/* 选中标注信息条 */}
@@ -1113,67 +845,14 @@ export function MapView() {
             </div>
           )}
 
-          {/* ═══════ v4.3.0: 点击城市详情面板（替代底部信息条） ═══════ */}
-          {cityDetailPanel && (() => {
-            const info = getCityAggregatedInfo(cityDetailPanel);
-            const grade = cityGrades.find(g => g.city === cityDetailPanel);
-            if (!info || !grade) return null;
-            const shallowColor = info.shallowType === '一般超采区' ? '#f59e0b' : '#6b7280';
-            const deepColor = info.deepType === '严重超采区' ? '#ef4444' : info.deepType === '一般超采区' ? '#3b82f6' : '#6b7280';
-            return (
-              <div className="absolute bottom-3 left-3 z-[1000] w-[300px] rounded-lg bg-gw-surface/95 border border-gw-border/40 backdrop-blur-sm shadow-lg">
-                {/* 头部 */}
-                <div className="flex items-center justify-between px-3 py-2 border-b border-gw-border/30">
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] text-white font-bold" style={{ background: gradeColors[grade.grade] }}>{grade.grade}</div>
-                    <span className="text-sm font-bold text-gw-text">{cityDetailPanel}市</span>
-                    <span className="text-[10px] text-gw-muted">地下水概览</span>
-                  </div>
-                  <button onClick={() => setCityDetailPanel(null)} className="text-gw-muted hover:text-gw-text">
-                    <X size={12} />
-                  </button>
-                </div>
-                {/* 核心指标 */}
-                <div className="px-3 py-2 grid grid-cols-2 gap-1.5">
-                  <div className="p-1.5 rounded bg-cyan-500/5 border border-cyan-500/10">
-                    <p className="text-[9px] text-gw-muted">地下水资源量</p>
-                    <p className="text-xs font-mono font-bold text-cyan-400">{info.groundResource.toFixed(2)} <span className="text-gw-muted font-normal text-[9px]">亿m³</span></p>
-                  </div>
-                  <div className="p-1.5 rounded bg-blue-500/5 border border-blue-500/10">
-                    <p className="text-[9px] text-gw-muted">地下水供水</p>
-                    <p className="text-xs font-mono font-bold text-blue-400">{info.gwSupply.toFixed(2)} <span className="text-gw-muted font-normal text-[9px]">亿m³</span></p>
-                  </div>
-                  <div className="p-1.5 rounded bg-purple-500/5 border border-purple-500/10">
-                    <p className="text-[9px] text-gw-muted">供水占比</p>
-                    <p className="text-xs font-mono font-bold text-purple-400">{info.gwRatio.toFixed(1)}%</p>
-                  </div>
-                  <div className="p-1.5 rounded bg-emerald-500/5 border border-emerald-500/10">
-                    <p className="text-[9px] text-gw-muted">地表水资源量</p>
-                    <p className="text-xs font-mono font-bold text-emerald-400">{info.surfaceResource.toFixed(2)} <span className="text-gw-muted font-normal text-[9px]">亿m³</span></p>
-                  </div>
-                  <div className="p-1.5 rounded bg-amber-500/5 border border-amber-500/10">
-                    <p className="text-[9px] text-gw-muted">降水量</p>
-                    <p className="text-xs font-mono font-bold text-amber-400">{info.precipitation > 0 ? info.precipitation.toFixed(0) + ' mm' : '-'}</p>
-                  </div>
-                  <div className="p-1.5 rounded bg-slate-500/5 border border-slate-500/10">
-                    <p className="text-[9px] text-gw-muted">总供水量</p>
-                    <p className="text-xs font-mono font-bold text-slate-300">{info.totalSupply.toFixed(2)} <span className="text-gw-muted font-normal text-[9px]">亿m³</span></p>
-                  </div>
-                </div>
-                {/* 超采区 */}
-                <div className="px-3 pb-2">
-                  <p className="text-[9px] text-gw-muted mb-1">超采区类型</p>
-                  <div className="flex gap-1.5">
-                    <span className="px-1.5 py-0.5 rounded text-[10px]" style={{ backgroundColor: shallowColor + '20', color: shallowColor }}>浅层: {info.shallowType}</span>
-                    <span className="px-1.5 py-0.5 rounded text-[10px]" style={{ backgroundColor: deepColor + '20', color: deepColor }}>深层: {info.deepType}</span>
-                  </div>
-                  {info.hasCone && (
-                    <p className="text-[9px] text-gw-muted mt-1">漏斗: {info.coneInfo}</p>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
+          {/* 城市详情面板 */}
+          {cityDetailPanel && (
+            <MapCityDetailPanel
+              cityName={cityDetailPanel}
+              cityGrades={cityGrades}
+              onClose={() => setCityDetailPanel(null)}
+            />
+          )}
         </TechCard>
 
         {sidebarOpen && (
