@@ -36,6 +36,9 @@ export default defineConfig({
             if (id.includes('mapData')) return 'data-map';
             if (id.includes('groundwaterResources')) return 'data-gw-resources';
             if (id.includes('zoneParams') || id.includes('hydroParams')) return 'data-hydro-params';
+            // 仅被Changelog/DataQuality页面引用的大文件独立chunk
+            if (id.includes('dataValidation')) return 'data-validation';
+            if (id.endsWith('changelog.ts')) return 'data-changelog';
             return 'data-modules';
           }
           // CrossLink组件独立chunk（被17个页面共享引用）
