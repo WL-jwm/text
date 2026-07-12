@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useDeferredValue, useTransition } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { TechTable } from './UI';
 
@@ -27,16 +27,18 @@ export function FilterableTechTable({
   className?: string;
 }) {
   const [filterText, setFilterText] = useState('');
+  const [isPending, startTransition] = useTransition();
+  const deferredFilter = useDeferredValue(filterText);
 
   const filteredRows = useMemo(() => {
-    if (!filterText.trim()) return rows;
-    const lowerFilter = filterText.toLowerCase();
+    if (!deferredFilter.trim()) return rows;
+    const lowerFilter = deferredFilter.toLowerCase();
     return rows.filter(row =>
       row.some(cell =>
         cell !== null && cell !== undefined && String(cell).toLowerCase().includes(lowerFilter)
       )
     );
-  }, [rows, filterText]);
+  }, [rows, deferredFilter]);
 
   return (
     <div className={className}>
@@ -47,7 +49,7 @@ export function FilterableTechTable({
           <input
             type="text"
             value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
+            onChange={(e) => startTransition(() => setFilterText(e.target.value))}
             placeholder={filterPlaceholder}
             className="w-full pl-8 pr-8 py-1.5 rounded-lg bg-gw-surface/50 border border-gw-border/40 text-xs text-gw-text placeholder:text-gw-muted/40 focus:outline-none focus:border-gw-blue/40 focus:ring-1 focus:ring-gw-blue/20 transition-all"
             aria-label={filterPlaceholder}

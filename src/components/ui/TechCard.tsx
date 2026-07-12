@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function TechCard({ title, children, badge, className = '', icon: CardIcon, glow }: { title?: string; children: React.ReactNode; badge?: string; className?: string; icon?: React.ElementType; glow?: boolean }) {
+export const TechCard = React.memo(function TechCard({ title, children, badge, className = '', icon: CardIcon, glow }: { title?: string; children: React.ReactNode; badge?: string; className?: string; icon?: React.ElementType; glow?: boolean }) {
   return (
     <div className={`rounded-xl bg-gw-card/80 backdrop-blur-sm border border-gw-border/60 p-4 md:p-5 space-y-3 ${glow ? 'card-glow' : ''} ${className}`}>
       {(title || badge || CardIcon) && (
@@ -15,4 +15,4 @@ export function TechCard({ title, children, badge, className = '', icon: CardIco
       {children}
     </div>
   );
-}
+});

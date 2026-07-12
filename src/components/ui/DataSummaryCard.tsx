@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function DataSummaryCard({
+export const DataSummaryCard = React.memo(function DataSummaryCard({
   title,
   icon,
   metrics,
@@ -42,4 +42,4 @@ export function DataSummaryCard({
       {footer && <div className="mt-2 pt-2 border-t border-gw-border/20 text-[10px] text-gw-muted">{footer}</div>}
     </div>
   );
-}
+});
