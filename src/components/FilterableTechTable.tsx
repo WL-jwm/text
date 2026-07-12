@@ -27,7 +27,7 @@ export function FilterableTechTable({
   className?: string;
 }) {
   const [filterText, setFilterText] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
   const deferredFilter = useDeferredValue(filterText);
 
   const filteredRows = useMemo(() => {

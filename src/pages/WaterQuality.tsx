@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useTabTransition } from '../hooks/useTabTransition';
 import { FlaskConical, AlertTriangle, Droplets, Shield, BookOpen, TrendingUp, MapPin } from 'lucide-react';
 import { waterQuality2024, pollutionDegree1990s, shallowGroundwaterQuality2024, waterQualityTrend, groundwaterQualityStandard } from '../data/waterQuality';

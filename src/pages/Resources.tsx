@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useTabTransition } from '../hooks/useTabTransition';
 import { Droplets, BarChart3, Activity, TrendingUp, FileText, AlertTriangle, Scale, Zap } from 'lucide-react';
 import { cityWaterSupply2024, cityGroundwaterDynamic2024, resourceTimeSeries, cityGroundwater2024, groundwaterDynamic2024 } from '../data/resources';
@@ -34,7 +34,7 @@ type BulletinSubKey = 'compare' | 'supply' | 'dynamic' | 'detail';
 
 export function Resources() {
   const { success } = useToast();
-  const [activeTab, setActiveTab] = useTabTransition('overview');
+  const [activeTab, setActiveTab] = useTabTransition<typeof TABS[number]['key']>('overview');
   const [exportOpen, setExportOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [dataYear, setDataYear] = useState(2024);
