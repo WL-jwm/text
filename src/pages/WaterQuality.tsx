@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
 import { FlaskConical, AlertTriangle, Droplets, Shield, BookOpen, TrendingUp, MapPin } from 'lucide-react';
 import { waterQuality2024, pollutionDegree1990s, shallowGroundwaterQuality2024, waterQualityTrend, groundwaterQualityStandard } from '../data/waterQuality';
 import { exportDataCSV } from '../utils/exportUtils';
@@ -32,7 +33,7 @@ type TabKey = typeof TABS[number]['key'];
 
 export function WaterQuality() {
   const { success } = useToast();
-  const [activeTab, setActiveTab] = useState<TabKey>('drinking');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('drinking');
   const [exportOpen, setExportOpen] = useState(false);
   const wq = waterQuality2024;
 
