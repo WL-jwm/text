@@ -1,3 +1,4 @@
+export { dbMeta } from './dbMeta';
 // 数据库变更日志
 export const changelog = [
   {
@@ -544,41 +545,3 @@ export const dataSources = [
 ];
 
 // 数据库概况
-export const dbMeta = {
-  name: '河北地下水数据库',
-  version: 'v3.23.0',
-  lastUpdate: '2026-06-16',
-  // 旧字段保留(Changelog.tsx使用)
-  totalSheets: 25,
-  totalRows: 0, // 由Changelog.tsx计算自changelog数组
-  fileSize: '541.1KB',
-  updatedSheets: [
-    'geology', 'environment', 'exploitation', 'resources', 'waterQuality',
-    'hydrochemistry', 'geothermal', 'salineWater', 'salineSoil', 'mineHydrogeology',
-    'karstWater', 'fractureWater', 'mineralWater', 'waterSource', 'systemZoning',
-    'hydroParams', 'zoneParams', 'backgroundValues', 'groundwaterFunction',
-    'groundwaterResources', 'hydrogeologyHistorical', 'hydrogeologyReference',
-    'mapData', 'searchIndex', 'changelog',
-  ],
-  staticSheets: [],
-  // 新增字段
-  totalExports: 270,
-  dataSize: '541.1KB',
-  totalPages: 23,
-  pageSize: '894.5KB',
-  totalComponents: 30,
-  componentSize: '210.2KB',
-  totalSearchEntries: 200,
-  source: '1999年《河北省地下水》基础文献 + 2024年河北省官方数据 + 2024-2025年度公报',
-  updatedModules: [
-    'geology', 'environment', 'exploitation', 'resources', 'waterQuality',
-    'hydrochemistry', 'geothermal', 'salineWater', 'salineSoil', 'mineHydrogeology',
-    'karstWater', 'fractureWater', 'mineralWater', 'waterSource', 'systemZoning',
-    'hydroParams', 'zoneParams', 'backgroundValues', 'groundwaterFunction',
-    'groundwaterResources', 'hydrogeologyHistorical', 'hydrogeologyReference',
-    'mapData', 'searchIndex', 'changelog',
-  ],
-  staticModules: [],
-  pwaEnabled: true,
-  offlineCacheSize: '~2MB',
-};

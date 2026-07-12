@@ -11,7 +11,7 @@ import { historicalComparison, cityWaterSupply2024, groundwaterDynamic2024, reso
 
 import { shallowTotal2024, deepTotal2024 } from '../data/environment';
 
-import { dbMeta } from '../data/changelog';
+import { dbMeta } from '../data/dbMeta';
 import type { CityBulletinBrief } from '../types/county';
 import type { CountyDataItem } from '../types/county';
 

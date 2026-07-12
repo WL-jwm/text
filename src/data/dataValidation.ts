@@ -10,7 +10,7 @@
 import { dataSourceRegistry } from './dataSourceRegistry';
 import { cityWaterSupply2024 } from './resources';
 import { shallowCones2024, deepCones2024 } from './environment';
-import { dbMeta } from './changelog';
+import { dbMeta } from './dbMeta';
 
 /* ── 新增导入：用于全平台扫描 ── */
 import { cityGroundwater2024 } from './resources-core';

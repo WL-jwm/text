@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import {
   Database, FileText,  CheckCircle2,   PieChart as PieChartIcon,
 } from 'lucide-react';
-import { dbMeta } from '../data/changelog';
+import { dbMeta } from '../data/dbMeta';
 import {
   TechCard, StatCard, 
 } from '../components/UI';
