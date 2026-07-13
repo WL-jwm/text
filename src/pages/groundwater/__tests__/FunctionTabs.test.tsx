@@ -12,16 +12,16 @@ vi.mock('recharts', () => {
     'AreaChart', 'Area', 'Legend',
     'RadarChart', 'Radar', 'PolarGrid', 'PolarAngleAxis', 'PolarRadiusAxis',
   ];
-  const mocks: Record<string, React.FC<any>> = {};
+  const mocks: Record<string, React.FC<{ children?: React.ReactNode }>> = {};
   for (const name of components) {
-    mocks[name] = ({ children }: any) => <>{children}</>;
+    mocks[name] = ({ children }: { children?: React.ReactNode }) => <>{children}</>;
   }
   return mocks;
 });
 
 // TechCard mock: only render title as plain string (no badge splitting)
 vi.mock('../../../components/UI', () => ({
-  TechCard: ({ title, children }: any) => (
+  TechCard: ({ title, children }: { title?: string; children?: React.ReactNode }) => (
     <div data-testid="tech-card">
       <h3 data-testid="tech-card-title">{String(title ?? '')}</h3>
       {children}
@@ -31,7 +31,7 @@ vi.mock('../../../components/UI', () => ({
 }));
 
 vi.mock('../../../components/LazyChartCard', () => ({
-  LazyChartCard: ({ title, children }: any) => (
+  LazyChartCard: ({ title, children }: { title?: string; children?: React.ReactNode }) => (
     <div data-testid="lazy-chart-card">
       <h4>{title}</h4>
       {children}

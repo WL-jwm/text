@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import React from 'react';
+// React import not needed in vitest globals mode
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useChartInteraction, useTableHighlight } from '../useChartInteraction';
@@ -258,7 +258,7 @@ describe('useStoreInit', () => {
 
   it('calls init from useAppStore on mount', async () => {
     const mockInit = vi.fn().mockResolvedValue(undefined);
-    useAppStore.mockImplementation((selector: any) =>
+    useAppStore.mockImplementation((selector: (state: Record<string, unknown>) => unknown) =>
       selector({ init: mockInit, isInitialized: false, theme: 'system', language: 'zh-CN' })
     );
 

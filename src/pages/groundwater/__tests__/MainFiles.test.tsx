@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
@@ -16,21 +16,22 @@ vi.mock('recharts', () => {
     'RadarChart', 'Radar', 'PolarGrid', 'PolarAngleAxis', 'PolarRadiusAxis',
     'LineChart', 'Line',
   ];
-  const m: Record<string, React.FC<any>> = {};
-  for (const n of names) m[n] = ({ children }: any) => <>{children}</>;
+  type MockFC = React.FC<{ children?: React.ReactNode }>;
+  const m: Record<string, MockFC> = {};
+  for (const n of names) m[n] = ({ children }) => <>{children}</>;
   return m;
 });
 
 vi.mock('../../../components/UI', () => ({
-  SectionTitle: ({ children }: any) => <h2>{children}</h2>,
-  StatCard: ({ label, value }: any) => <div><span>{label}</span><span>{String(value)}</span></div>,
-  DataSourceNote: ({ children }: any) => <div>数据来源：{children}</div>,
-  TechCard: ({ title, children }: any) => <div><h3>{String(title ?? '')}</h3>{children}</div>,
+  SectionTitle: ({ children }: { children?: React.ReactNode }) => <h2>{children}</h2>,
+  StatCard: ({ label, value }: { label?: string; value?: string | number }) => <div><span>{label}</span><span>{String(value)}</span></div>,
+  DataSourceNote: ({ children }: { children?: React.ReactNode }) => <div>数据来源：{children}</div>,
+  TechCard: ({ title, children }: { title?: string; children?: React.ReactNode }) => <div><h3>{String(title ?? '')}</h3>{children}</div>,
   ChartTooltip: () => null,
 }));
 
 vi.mock('../../../components/LazyChartCard', () => ({
-  LazyChartCard: ({ title, children }: any) => <div><h4>{title}</h4>{children}</div>,
+  LazyChartCard: ({ title, children }: { title?: string; children?: React.ReactNode }) => <div><h4>{title}</h4>{children}</div>,
 }));
 
 vi.mock('../../../components/ChartExport', () => ({
@@ -70,7 +71,7 @@ vi.mock('lucide-react', () => {
     'Plus', 'Minus', 'ChevronDown', 'ExternalLink', 'Copy',
     'MinusCircle', 'TrendingDown', 'Ban', 'CheckCircle2',
   ];
-  const m: Record<string, any> = {};
+  const m: Record<string, () => null> = {};
   for (const n of names) m[n] = () => null;
   return m;
 });
