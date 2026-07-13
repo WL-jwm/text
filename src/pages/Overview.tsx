@@ -24,6 +24,7 @@ import { mineWaterUtilization } from '../data/mineHydrogeology';
 import { cityOverExploitDetail } from '../data/exploitation';
 
 import { TechCard, ChartTooltip } from '../components/UI';
+import { DataSourceTag } from '../components/ui/DataSourceTag';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
@@ -488,6 +489,7 @@ export function Overview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         <LazyChartCard title="水资源量时序变化" className="scan-line min-h-[320px]" height={280}>
+            <div className="flex justify-start mb-2"><DataSourceTag module="resources" /></div>
             <div className="mb-2 flex justify-end">
               <ChartExport data={resourceTimeSeries} filename="水资源量时序变化" sheetName="水资源时序" formats={['xlsx','csv','json']} label="导出数据" />
             </div>
@@ -640,6 +642,7 @@ export function Overview() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         <LazyChartCard title="供水结构(2024)" className="hud-corners" height={280}>
+            <div className="flex justify-start mb-2"><DataSourceTag module="resources" /></div>
             <div className="mb-2 flex justify-end">
               <ChartExport data={supplyStructure} filename="供水结构2024" sheetName="供水结构" formats={['xlsx','csv','json']} label="导出数据" />
             </div>
@@ -664,6 +667,7 @@ export function Overview() {
         </LazyChartCard>
 
         <LazyChartCard title="各市浅层水位年变幅(2024)" className="scan-line lg:col-span-2" height={280}>
+            <div className="flex justify-start mb-2"><DataSourceTag module="environment" /></div>
             <div className="mb-2 flex justify-end">
               <ChartExport data={cityWaterLevelData} filename="各市浅层水位年变幅2024" sheetName="水位变幅" formats={['xlsx','csv','json']} label="导出数据" />
             </div>
@@ -710,6 +714,7 @@ export function Overview() {
       {/* ═══════════════════ 14市供水量 ═══════════════════ */}
 
       <LazyChartCard title="14市地下水供水量" height={280}>
+        <div className="flex justify-start mb-2"><DataSourceTag module="exploitation" /></div>
 
         <ResponsiveContainer width="100%" height={320}>
 
