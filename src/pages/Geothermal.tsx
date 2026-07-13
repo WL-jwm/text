@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import { Thermometer, MapPin, Factory, Recycle, BookOpen, BarChart3, Activity, Target, Flame, TrendingUp, Zap } from 'lucide-react';
 import { geothermalFields, geothermalTypes, geothermalUtilization, geothermalResources, geothermalGradient } from '../data/geothermal';
 import { exportDataCSV } from '../utils/exportUtils';
@@ -36,7 +37,7 @@ export function Geothermal() {
     collector: useCallback(async () => ({ geothermalFields, geothermalTypes }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('fields');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('fields');
 
   // ── 图表数据 ──
   const typePie: PieItem[] = useMemo(() =>

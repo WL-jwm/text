@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Mountain, Layers, Grid3X3, BookOpen, Droplets, Shield, FlaskConical, Clock } from 'lucide-react';
 import { stratigraphyAquifer, tectonicUnits, geology } from '../data/geology';
@@ -34,7 +35,7 @@ export function Geology() {
     collector: async () => ({ geology }),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('overview');
 
   // 报告数据预采集（增量缓存）
   return (

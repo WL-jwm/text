@@ -1,4 +1,5 @@
-import React, { useState,  useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { Mountain, Droplets, AlertTriangle, Layers, HardHat, Leaf, BarChart3, BookOpen, Gauge } from 'lucide-react';
 import { mineHydrogeologyData, mineHydrogeologyClassification, mineDrainageImpact, mineWaterUtilization, mineComplexityStandard, mineDrainageStatistics, mineWaterInrushHistory, mineEcologicalRestoration } from '../data/mineHydrogeology';
@@ -38,7 +39,7 @@ export function MineHydrogeology() {
     collector: useCallback(async () => ({ mineData: mineHydrogeologyData }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('mines');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('mines');
 
   const inflowData = mineHydrogeologyData.map(d => {
     const range = d.mineWaterInflow.split('～');

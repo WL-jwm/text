@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import {
   AlertTriangle, MapPin, TrendingUp, Layers, Ban, CheckCircle2,
 } from 'lucide-react';
@@ -38,7 +39,7 @@ export function GroundwaterFunction() {
     }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('overview');
 
   // ── 衍生数据 ──
   const typePieData = useMemo(() => [

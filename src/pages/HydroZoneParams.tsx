@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Database, Map, BookOpen, Droplets, Search, Wifi, WifiOff, RefreshCw } from 'lucide-react';
 import {
@@ -34,7 +35,7 @@ const TABS = [
 
 export function HydroZoneParams() {
   const { success, info } = useToast();
-  const [activeTab, setActiveTab] = useState<string>('display');
+  const [activeTab, setActiveTab] = useTabTransition<string>('display');
   const [exportOpen, setExportOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [lithFilter, setLithFilter] = useState('全部');

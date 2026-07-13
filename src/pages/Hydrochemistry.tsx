@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import { FlaskConical, Layers, Atom, MapPin, Droplets, BookOpen, Zap, Database } from 'lucide-react';
 import { hydrochemistry, hydrochemicalByRegion, isotopeSamples, salineWater } from '../data/hydrochemistry';
 import { salineDistribution } from '../data/salineWater';
@@ -39,7 +40,7 @@ export function Hydrochemistry() {
     collector: useCallback(async () => ({ salineWaterOverview: salineWater, salineDistribution }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('classification');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('classification');
 
   // ── 图表数据 ──
   const classPie = useMemo(() =>

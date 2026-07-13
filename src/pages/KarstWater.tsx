@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import { Waves, Droplets, Mountain, Gauge, Shield } from 'lucide-react';
 import { karstSprings, karstSystemZones, karstWaterChemistry, karstProtectionZones, karstExploitation } from '../data/karstWater';
 import { springDatabase, getSpringStatsByGeology } from '../data/hydrogeologyReference';
@@ -28,7 +29,7 @@ export function KarstWater() {
     collector: useCallback(async () => ({ karstSprings }), []),
   });
 
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [activeTab, setActiveTab] = useTabTransition(tabs[0]);
 
   // ── 导出 ──
   const handleExportSprings = () => {

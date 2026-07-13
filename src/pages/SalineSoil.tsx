@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, ComposedChart, Line, AreaChart, Area } from 'recharts';
 import { Sprout, MapPin, AlertTriangle, TrendingDown, Leaf, Beaker, Wheat, Layers, BookOpen } from 'lucide-react';
@@ -28,7 +29,7 @@ export function SalineSoil() {
     collector: useCallback(async () => ({ distribution: salineSoilDistribution }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('distribution');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('distribution');
   const [sortCol, setSortCol] = useState<number | null>(null);
   const [_sortDir, _setSortDir] = useState<'asc' | 'desc'>('desc');
 

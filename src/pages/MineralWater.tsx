@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,  ResponsiveContainer,
   PieChart, Pie, Cell, Legend, ComposedChart, Line, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
@@ -26,7 +27,7 @@ export function MineralWater() {
     collector: useCallback(async () => ({ mineralWaterSites }), []),
   });
 
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [activeTab, setActiveTab] = useTabTransition(tabs[0]);
 
   // ── 导出 ──
   const handleExport = () => {

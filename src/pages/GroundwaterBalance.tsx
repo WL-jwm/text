@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import {
   Scale, BarChart3, MapPin, AlertTriangle, Droplets,
   TrendingDown, TrendingUp, MinusCircle,
@@ -40,7 +41,7 @@ export function GroundwaterBalance() {
     }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('overview');
 
   const rechargePie = useMemo(() =>
     plainWaterBalance.rechargeBreakdown.map(r => ({ name: r.item, value: r.value })), []);

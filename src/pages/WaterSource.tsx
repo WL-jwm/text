@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import { Layers, Mountain, Droplets, Shield, Database, BookOpen, Waves, Activity } from 'lucide-react';
 import { storageStructureSummary, karstBasinStructures, alluvialFanStructures, importantWaterSources, mountainFrontRichZones } from '../data/waterSource';
 import { exportDataCSV } from '../utils/exportUtils';
@@ -38,7 +39,7 @@ export function WaterSource() {
     collector: useCallback(async () => ({ summary: storageStructureSummary, karstBasin: karstBasinStructures }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('overview');
 
   const summaryPie = useMemo(() => storageStructureSummary.map((s, i) => ({ name: s.type, value: s.count, color: CHART_COLORS[i % CHART_COLORS.length] })), []);
   const totalStructures = storageStructureSummary.reduce((s, x) => s + x.count, 0);

@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, AreaChart, Area } from 'recharts';
 import { Droplets, MapPin, AlertTriangle, TrendingDown, TrendingUp, Waves, Fish, Factory, BookOpen } from 'lucide-react';
@@ -28,7 +29,7 @@ export function SalineWater() {
     collector: useCallback(async () => ({ salineWaterOverview: { totalArea: 40000, totalStorage: "1793.85" }, salineDistribution }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('distribution');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('distribution');
   const [sortCol, setSortCol] = useState<number | null>(null);
   const [_sortDir, _setSortDir] = useState<'asc' | 'desc'>('desc');
 

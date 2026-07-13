@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -71,7 +72,7 @@ export function HydrogeologyHistorical() {
     }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('springs');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('springs');
   const [springSearch, setSpringSearch] = useState('');
   const [springRegion, setSpringRegion] = useState('全部');
   const [expandedSpring, setExpandedSpring] = useState<number | null>(null);

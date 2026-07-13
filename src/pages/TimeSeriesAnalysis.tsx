@@ -4,6 +4,7 @@
 // Phase 6b: 从1567行拆分为11个子模块
 // ═══════════════════════════════════════════════════════════
 
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useCallback } from 'react';
 import { FileText } from 'lucide-react';
 import { DataSourceNote } from '../components/UI';
@@ -60,7 +61,7 @@ function getTimeSeriesReportData(selectedCities: Set<string>) {
 
 export function TimeSeriesAnalysis() {
   const [selectedCities, setSelectedCities] = useState<Set<string>>(new Set(['石家庄', '保定', '邯郸', '邢台', '沧州', '衡水']));
-  const [activeTab, setActiveTab] = useState<TabKey>('exploitation');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('exploitation');
   const [exportOpen, setExportOpen] = useState(false);
   const [baseline, setBaseline] = useState<number>(2020);
 

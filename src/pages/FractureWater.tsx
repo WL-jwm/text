@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import { Mountain, Search, Droplets, Layers, MapPin, FlaskConical, Wrench, Gauge, Crosshair, BookOpen } from 'lucide-react';
@@ -26,7 +27,7 @@ const TABS = [
 export function FractureWater() {
   const [exportOpen, setExportOpen] = useState(false);
   const {success} = useToast();
-  const [activeTab, setActiveTab] = useState<string>('types');
+  const [activeTab, setActiveTab] = useTabTransition<typeof TABS[number]['key']>('types');
   const [searchQuery, setSearchQuery] = useState('');
 
   // ── 类型分布饼图 ──

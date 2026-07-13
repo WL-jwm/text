@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { TrendingDown, AlertTriangle, ArrowDown, Shield, Activity, Droplets, CheckCircle2 } from 'lucide-react';
 import { shallowCones2024, shallowTotal2024, deepCones2024, deepTotal2024, historicalCones, landSubsidence, landSubsidence2024, subsidenceRateTrend, envStatus2024, envProblems } from '../data/environment';
@@ -24,7 +25,7 @@ type TabKey = string;
 
 export function Environment() {
   const {} = useToast();
-  const [activeTab, setActiveTab] = useState<TabKey>('shallow');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('shallow');
   const [exportOpen, setExportOpen] = useState(false);
 
   const shallowBar = useMemo(() => shallowCones2024.map(c => ({

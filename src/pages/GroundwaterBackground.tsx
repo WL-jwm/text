@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { FlaskConical, AlertTriangle, BookOpen, Layers } from 'lucide-react';
 import {
@@ -24,7 +25,7 @@ const TABS: { key: TabKey; label: string; icon: typeof FlaskConical }[] = [
 
 export function GroundwaterBackground() {
   const [exportOpen, setExportOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabKey>('query');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('query');
   const [selectedZone, setSelectedZone] = useState('山前平原');
   const [selectedLayer, setSelectedLayer] = useState<'shallow' | 'deep'>('shallow');
   const [expandedCity, setExpandedCity] = useState<string | null>(null);

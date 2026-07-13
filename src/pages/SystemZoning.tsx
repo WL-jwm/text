@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useTabTransition } from '../hooks/useTabTransition';
+import React, { useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Layers, MapPin, Droplets, Database, GitBranch, Info, BookOpen } from 'lucide-react';
 import { systemZones, subZones, zoneRechargeDischarge, zoneAquiferParams, zoneBoundaryStats } from '../data/systemZoning';
@@ -29,7 +30,7 @@ export function SystemZoning() {
     collector: useCallback(async () => ({ systemZones, subZones }), []),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('zones');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('zones');
 
   const activeZones = useMemo(() => systemZones.filter(z => z.area > 0), []);
   const totalArea = systemZones.reduce((s, z) => s + z.area, 0);

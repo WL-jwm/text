@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState } from 'react';
 import {
   Layers, TrendingUp, MapPin, Zap, Globe,
@@ -23,7 +24,7 @@ const TABS = [
 ] as const;
 
 export function SpatialAnalysis() {
-  const [activeTab, setActiveTab] = useState<string>('correlation');
+  const [activeTab, setActiveTab] = useTabTransition<typeof TABS[number]['key']>('correlation');
   const [expandedTabs, setExpandedTabs] = useState<Set<string>>(new Set(['correlation']));
   const [exportOpen, setExportOpen] = useState(false);
 

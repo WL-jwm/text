@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { Suspense, useState } from 'react';
 import {
   BarChart3, Droplets, MapPin, Layers, Users,
@@ -53,7 +54,7 @@ export function DataInsightInner() {
     }),
   });
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('overview');
   const { activeKey, setActiveKey } = useChartInteraction<string>();
   const [highlight, setHighlight] = useState<string | null>(null);
 

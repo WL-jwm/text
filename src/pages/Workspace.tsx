@@ -1,3 +1,4 @@
+import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useEffect } from 'react';
 import { Database, Upload, BookMarked, Shield, Layers, Activity } from 'lucide-react';
 import { SectionTitle, StatCard } from '../components/UI';
@@ -19,7 +20,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string 
 ];
 
 export function Workspace() {
-  const [activeTab, setActiveTab] = useState<TabKey>('import');
+  const [activeTab, setActiveTab] = useTabTransition<TabKey>('import');
   const { datasets, annotations, bookmarks } = useAppStore();
 
   // 检查 IndexedDB 是否已初始化（有数据或已初始化）
