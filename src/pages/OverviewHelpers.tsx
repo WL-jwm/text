@@ -36,12 +36,14 @@ interface KPICardProps {
   accent: string;
   sparkline?: number[];
   sparkColor?: string;
+  /** 点击卡片跳转的路由路径 */
+  href?: string;
 }
 
 /**
  * KPI指标卡 - 用于总览页面的关键指标展示
  */
-export function KPICard({ title, value, unit, sub, change, changeType, icon: Icon, accent, sparkline, sparkColor }: KPICardProps) {
+export function KPICard({ title, value, unit, sub, change, changeType, icon: Icon, accent, sparkline, sparkColor, href }: KPICardProps) {
   const changeColor = changeType === 'up' ? 'text-emerald-400' : changeType === 'down' ? 'text-amber-400' : 'text-gw-muted';
   const accentMap: Record<string, string> = {
     blue: 'from-blue-500/15 to-blue-600/5 border-blue-500/25',
@@ -56,7 +58,7 @@ export function KPICard({ title, value, unit, sub, change, changeType, icon: Ico
   const IconComponent = Icon;
 
   return (
-    <div className={`rounded-xl bg-gradient-to-br ${cls} border p-4`}>
+    <a href={href} className={`rounded-xl bg-gradient-to-br ${cls} border p-4 block transition-all duration-200 ${href ? 'cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-gw-cyan/5' : ''}`} onClick={href ? (e: React.MouseEvent) => { e.preventDefault(); window.location.hash = href ?? ''; } : undefined}>
       <div className="flex items-center justify-between mb-2">
         <div className="text-[10px] text-gw-muted flex items-center gap-1.5">
           {IconComponent && <IconComponent size={12} className="flex-shrink-0 opacity-70" />}
@@ -74,21 +76,28 @@ export function KPICard({ title, value, unit, sub, change, changeType, icon: Ico
         {unit && <span className="text-xs text-gw-muted">{unit}</span>}
       </div>
       {sub && <div className="text-[10px] text-gw-muted mt-1">{sub}</div>}
-      {sparkline && sparkline.length > 0 && (
-        <div className="mt-2 h-8">
-          <svg width="100%" height="100%" viewBox={`0 0 ${sparkline.length - 1} 100`} preserveAspectRatio="none">
-            <polyline
-              points={sparkline.map((v, i) => `${i},${100 - v}`).join(' ')}
-              fill="none"
-              stroke={sparkColor || '#3b82f6'}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      )}
-    </div>
+      {sparkline && sparkline.length > 0 && (() => {
+        const min = Math.min(...sparkline);
+        const max = Math.max(...sparkline);
+        const range = max - min || 1;
+        const normalized = sparkline.map(v => ((v - min) / range) * 80 + 10);
+        const w = sparkline.length - 1;
+        return (
+          <div className="mt-2 h-8">
+            <svg width="100%" height="100%" viewBox={`0 0 ${w} 100`} preserveAspectRatio="none">
+              <polyline
+                points={normalized.map((v, i) => `${i},${100 - v}`).join(' ')}
+                fill="none"
+                stroke={sparkColor || '#3b82f6'}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        );
+      })()}
+    </a>
   );
 }
 

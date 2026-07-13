@@ -398,21 +398,21 @@ export function Overview() {
 
       <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3" staggerDelay={60}>
 
-        <KPICard title="水资源总量" value={animResource} unit="亿m³" sub="2024年" change="+40.5%" changeType="up" icon={Droplets} accent="blue" sparkline={[167.7, 214.8, 206.2, 226.9, 168.6, 241.4, 247.9]} sparkColor="#3b82f6" />
+        <KPICard title="水资源总量" value={animResource} unit="亿m³" sub="2024年" href="/resources" change="+40.5%" changeType="up" icon={Droplets} accent="blue" sparkline={[167.7, 214.8, 206.2, 226.9, 168.6, 241.4, 247.9]} sparkColor="#3b82f6" />
 
-        <KPICard title="地下水供水量" value={animSupply} unit="亿m³" sub="2024年" change={`峰值${d.declinePercent}%`} changeType="down" icon={Activity} accent="cyan" sparkline={[120.2, 112.6, 108.5, 106.1, 99.8, 82.3, 73.2]} sparkColor="#06b6d4" />
+        <KPICard title="地下水供水量" value={animSupply} unit="亿m³" sub="2024年" href="/resources" change={`峰值${d.declinePercent}%`} changeType="down" icon={Activity} accent="cyan" sparkline={[120.2, 112.6, 108.5, 106.1, 99.8, 82.3, 73.2]} sparkColor="#06b6d4" />
 
-        <KPICard title="饮水源达标率" value={animCompliance} unit="%" change="27水源地" changeType="up" icon={CheckCircle2} accent="green" />
+        <KPICard title="饮水源达标率" value={animCompliance} unit="%" href="/water-quality" change="27水源地" changeType="up" icon={CheckCircle2} accent="green" />
 
-        <KPICard title="严重超采缩减" value={animOverExploitReduction} unit="%" change="历史突破" changeType="up" icon={Trophy} accent="emerald" sparkline={[155.3, 149.3, 143.8, 138.0, 132.6, 126.8, 121.1, 115.7, 110.8, 105.7, 94.5]} sparkColor="#10b981" />
+        <KPICard title="严重超采缩减" value={animOverExploitReduction} unit="%" href="/groundwater-function" change="历史突破" changeType="up" icon={Trophy} accent="emerald" sparkline={[155.3, 149.3, 143.8, 138.0, 132.6, 126.8, 121.1, 115.7, 110.8, 105.7, 94.5]} sparkColor="#10b981" />
 
-        <KPICard title="浅层水位" value={animShallowRise} unit="m" change="同比回升" changeType="up" icon={TrendingUp} accent="cyan" sparkline={[25.8, 27.2, 29.5, 32.1, 35.8, 40.2, 44.5, 50.3, 56.8, 63.5]} sparkColor="#06b6d4" />
+        <KPICard title="浅层水位" value={animShallowRise} unit="m" href="/time-series" change="同比回升" changeType="up" icon={TrendingUp} accent="cyan" sparkline={[25.8, 27.2, 29.5, 32.1, 35.8, 40.2, 44.5, 50.3, 56.8, 63.5]} sparkColor="#06b6d4" />
 
-        <KPICard title="深层水位" value={animDeepRise} unit="m" change="同比回升" changeType="up" icon={TrendingUp} accent="blue" sparkline={[0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.91]} sparkColor="#3b82f6" />
+        <KPICard title="深层水位" value={animDeepRise} unit="m" href="/time-series" change="同比回升" changeType="up" icon={TrendingUp} accent="blue" sparkline={[0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.91]} sparkColor="#3b82f6" />
 
-        <KPICard title="矿坑水利用" value={avgMineUtilization} unit="%" change={`${totalMineDrainage.toFixed(1)}亿m³/a`} changeType="up" icon={HardHat} accent="amber" />
+        <KPICard title="矿坑水利用" value={avgMineUtilization} unit="%" href="/mine-hydrogeology" change={`${totalMineDrainage.toFixed(1)}亿m³/a`} changeType="up" icon={HardHat} accent="amber" />
 
-        <KPICard title="深层漏斗" value="消散" unit="" change="3个漏斗" changeType="neutral" icon={Shield} accent="purple" />
+        <KPICard title="深层漏斗" value="消散" unit="" href="/groundwater-background" change="3个漏斗" changeType="neutral" icon={Shield} accent="purple" />
 
       </StaggerContainer>
 
