@@ -196,7 +196,7 @@ function buildExceededSheet(samples: SampleResult[]): XLSX.WorkSheet {
 }
 
 /** Sheet 4：苏卡列夫分类 */
-function buildSukalovSheet(sukalov: SukalovResult | null): XLSX.WorkSheet {
+function buildSukalovSheet(sukalovList?: { name: string; result: SukalovResult }[]): XLSX.WorkSheet {
   const ionLabelMap: Record<string, string> = {
     HCO3: 'HCO₃⁻',
     SO4: 'SO₄²⁻',
@@ -206,24 +206,24 @@ function buildSukalovSheet(sukalov: SukalovResult | null): XLSX.WorkSheet {
     Na: 'Na⁺',
   };
 
-  const rows = sukalov
-    ? [{
-        '水样名称': '水样1',
-        '水化学类型': sukalov.type,
-        '分区号': sukalov.zone > 0 ? sukalov.zone : '未分类',
-        [`${ionLabelMap.HCO3} %ep`]: Number(sukalov.anionPercentages.HCO3.toFixed(1)),
-        [`${ionLabelMap.SO4} %ep`]: Number(sukalov.anionPercentages.SO4.toFixed(1)),
-        [`${ionLabelMap.Cl} %ep`]: Number(sukalov.anionPercentages.Cl.toFixed(1)),
-        [`${ionLabelMap.Ca} %ep`]: Number(sukalov.cationPercentages.Ca.toFixed(1)),
-        [`${ionLabelMap.Mg} %ep`]: Number(sukalov.cationPercentages.Mg.toFixed(1)),
-        [`${ionLabelMap.Na} %ep`]: Number(sukalov.cationPercentages.Na.toFixed(1)),
-        '阴离子优势': sukalov.anions.length > 0
-          ? sukalov.anions.map(a => ionLabelMap[a] ?? a).join('·')
+  const rows = (sukalovList && sukalovList.length > 0)
+    ? sukalovList.map(item => ({
+        '水样名称': item.name,
+        '水化学类型': item.result.type,
+        '分区号': item.result.zone > 0 ? item.result.zone : '未分类',
+        [`${ionLabelMap.HCO3} %ep`]: Number(item.result.anionPercentages.HCO3.toFixed(1)),
+        [`${ionLabelMap.SO4} %ep`]: Number(item.result.anionPercentages.SO4.toFixed(1)),
+        [`${ionLabelMap.Cl} %ep`]: Number(item.result.anionPercentages.Cl.toFixed(1)),
+        [`${ionLabelMap.Ca} %ep`]: Number(item.result.cationPercentages.Ca.toFixed(1)),
+        [`${ionLabelMap.Mg} %ep`]: Number(item.result.cationPercentages.Mg.toFixed(1)),
+        [`${ionLabelMap.Na} %ep`]: Number(item.result.cationPercentages.Na.toFixed(1)),
+        '阴离子优势': item.result.anions.length > 0
+          ? item.result.anions.map(a => ionLabelMap[a] ?? a).join('·')
           : '无',
-        '阳离子优势': sukalov.cations.length > 0
-          ? sukalov.cations.map(c => ionLabelMap[c] ?? c).join('·')
+        '阳离子优势': item.result.cations.length > 0
+          ? item.result.cations.map(c => ionLabelMap[c] ?? c).join('·')
           : '无',
-      }]
+      }))
     : [{ '备注': '未执行苏卡列夫分类' }];
 
   const ws = XLSX.utils.json_to_sheet(rows);
@@ -286,12 +286,12 @@ function buildStandardSheet(): XLSX.WorkSheet {
  * 导出水质评价结果为 Excel 文件
  *
  * @param samples   标准指数法评价结果数组（可为空数组）
- * @param sukalov   苏卡列夫分类结果（可为 null）
+ * @param sukalovList   苏卡列夫分类结果数组（可为空数组，每项含水样名称）
  * @param filename  文件名前缀，默认 "水质评价报告"
  */
 export function exportWaterQualityReport(
   samples: SampleResult[],
-  sukalov: SukalovResult | null,
+  sukalovList?: { name: string; result: SukalovResult }[],
   filename?: string,
 ): void {
   const wb = XLSX.utils.book_new();
@@ -305,7 +305,7 @@ export function exportWaterQualityReport(
   const ws3 = buildExceededSheet(samples);
   XLSX.utils.book_append_sheet(wb, ws3, '超标汇总');
 
-  const ws4 = buildSukalovSheet(sukalov);
+  const ws4 = buildSukalovSheet(sukalovList);
   XLSX.utils.book_append_sheet(wb, ws4, '苏卡列夫分类');
 
   const ws5 = buildStandardSheet();
