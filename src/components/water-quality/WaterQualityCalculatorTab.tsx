@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Calculator, Plus, Trash2, Beaker, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
+import { Calculator, Plus, Trash2, Beaker, AlertTriangle, CheckCircle, ArrowRight, FileSpreadsheet } from 'lucide-react';
 import { TechCard } from '../UI';
 import { groundwaterQualityStandard } from '../../data/waterQuality';
 import {
@@ -10,6 +10,7 @@ import {
   type SukalovResult,
   type EvaluationFactor,
 } from '../../utils/waterQualityCalculator';
+import { exportWaterQualityReport } from '../../utils/waterQualityReportExport';
 
 // ═══════════════════════════════════════════════════════
 // 类型定义
@@ -154,6 +155,13 @@ export function WaterQualityCalculatorTab() {
               <button onClick={handleCalculate}
                 className="flex items-center gap-1 text-xs bg-emerald-600/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-600/25 px-2.5 py-1 rounded transition-colors">
                 <Calculator size={14} /> 计算评价
+              </button>
+              <button
+                onClick={() => exportWaterQualityReport(results, sukalovResult)}
+                disabled={results.length === 0 && !sukalovResult}
+                className="flex items-center gap-1 text-xs bg-sky-600/15 text-sky-400 border border-sky-500/20 hover:bg-sky-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
+                title="导出为Excel文件">
+                <FileSpreadsheet size={14} /> 导出报告
               </button>
             </div>
           </div>
