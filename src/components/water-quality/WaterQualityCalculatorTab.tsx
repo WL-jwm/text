@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Calculator, Plus, Trash2, Beaker, AlertTriangle, CheckCircle, ArrowRight, FileSpreadsheet } from 'lucide-react';
+import { Calculator, Plus, Trash2, Beaker, AlertTriangle, CheckCircle, ArrowRight, FileSpreadsheet, FileText } from 'lucide-react';
 import { TechCard } from '../UI';
 import { groundwaterQualityStandard } from '../../data/waterQuality';
 import {
@@ -11,6 +11,7 @@ import {
   type EvaluationFactor,
 } from '../../utils/waterQualityCalculator';
 import { exportWaterQualityReport } from '../../utils/waterQualityReportExport';
+import { generateWaterQualityReport } from '../../utils/waterQualityReportWord';
 
 // ═══════════════════════════════════════════════════════
 // 类型定义
@@ -188,7 +189,19 @@ export function WaterQualityCalculatorTab() {
                 disabled={results.length === 0 && !samples.some(s => s.sukalovResult)}
                 className="flex items-center gap-1 text-xs bg-sky-600/15 text-sky-400 border border-sky-500/20 hover:bg-sky-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
                 title="导出为Excel文件">
-                <FileSpreadsheet size={14} /> 导出报告
+                <FileSpreadsheet size={14} /> 导出Excel
+              </button>
+              <button
+                onClick={() => {
+                  const sukalovResults = samples
+                    .filter(s => s.sukalovResult !== null)
+                    .map(s => ({ name: s.name, result: s.sukalovResult! }));
+                  generateWaterQualityReport(results, sukalovResults);
+                }}
+                disabled={results.length === 0}
+                className="flex items-center gap-1 text-xs bg-amber-600/15 text-amber-400 border border-amber-500/20 hover:bg-amber-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
+                title="生成Word评价报告">
+                <FileText size={14} /> 导出Word
               </button>
             </div>
           </div>
@@ -401,12 +414,19 @@ export function WaterQualityCalculatorTab() {
                 disabled={results.length === 0 && !samples.some(s => s.sukalovResult)}
                 className="flex items-center gap-1 text-xs bg-sky-600/15 text-sky-400 border border-sky-500/20 hover:bg-sky-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
                 title="导出为Excel文件">
-                <FileSpreadsheet size={14} /> 导出报告
+                <FileSpreadsheet size={14} /> 导出Excel
+              </button>
+              <button
+                onClick={() => generateWaterQualityReport(results, samples
+                  .filter(s => s.sukalovResult !== null)
+                  .map(s => ({ name: s.name, result: s.sukalovResult! })))}
+                disabled={results.length === 0}
+                className="flex items-center gap-1 text-xs bg-amber-600/15 text-amber-400 border border-amber-500/20 hover:bg-amber-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
+                title="生成Word评价报告">
+                <FileText size={14} /> 导出Word
               </button>
             </div>
           </TechCard>
-
-          {/* 苏卡列夫结果 */}
           {currentSukalovSample?.sukalovResult && (
             <TechCard title={`分类结果 — ${currentSukalovSample.name}`}>
               <div className="space-y-4">
