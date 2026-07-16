@@ -10,7 +10,7 @@ import {
   type SukalovResult,
   type EvaluationFactor,
 } from '../../utils/waterQualityCalculator';
-import { exportWaterQualityReport } from '../../utils/waterQualityReportExport';
+import { exportStyledWaterQualityReport } from '../../utils/waterQualityReportStyled';
 import { generateWaterQualityReport } from '../../utils/waterQualityReportWord';
 
 // ═══════════════════════════════════════════════════════
@@ -180,15 +180,15 @@ export function WaterQualityCalculatorTab() {
                 <Calculator size={14} /> 计算评价
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   const sukalovResults = samples
                     .filter(s => s.sukalovResult !== null)
                     .map(s => ({ name: s.name, result: s.sukalovResult! }));
-                  exportWaterQualityReport(results, sukalovResults);
+                  await exportStyledWaterQualityReport(results, sukalovResults);
                 }}
                 disabled={results.length === 0 && !samples.some(s => s.sukalovResult)}
                 className="flex items-center gap-1 text-xs bg-sky-600/15 text-sky-400 border border-sky-500/20 hover:bg-sky-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
-                title="导出为Excel文件">
+                title="导出为Excel文件(带样式)">
                 <FileSpreadsheet size={14} /> 导出Excel
               </button>
               <button
@@ -408,12 +408,14 @@ export function WaterQualityCalculatorTab() {
                 <Beaker size={14} /> 计算分类
               </button>
               <button
-                onClick={() => exportWaterQualityReport(results, samples
-                  .filter(s => s.sukalovResult !== null)
-                  .map(s => ({ name: s.name, result: s.sukalovResult! })))}
+                onClick={async () => {
+                  await exportStyledWaterQualityReport(results, samples
+                    .filter(s => s.sukalovResult !== null)
+                    .map(s => ({ name: s.name, result: s.sukalovResult! })));
+                }}
                 disabled={results.length === 0 && !samples.some(s => s.sukalovResult)}
                 className="flex items-center gap-1 text-xs bg-sky-600/15 text-sky-400 border border-sky-500/20 hover:bg-sky-600/25 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1 rounded transition-colors"
-                title="导出为Excel文件">
+                title="导出为Excel文件(带样式)">
                 <FileSpreadsheet size={14} /> 导出Excel
               </button>
               <button
