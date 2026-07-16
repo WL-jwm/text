@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import type { SampleResult, SukalovResult } from '../utils/waterQualityCalculator';
 
 /* ── 类型定义 ────────────────────────────────────────── */
 export interface CustomAnnotation {
@@ -46,6 +47,17 @@ export interface AppSettings {
   lastUpdated: string;
 }
 
+export interface WaterQualitySnapshot {
+  id: string;
+  label: string;
+  sampleName: string;
+  savedAt: string;
+  values: Record<string, string>;
+  result: SampleResult;
+  sukalovInput?: Record<string, string>;
+  sukalovResult?: SukalovResult;
+}
+
 /* ── IndexedDB Schema ───────────────────────────────── */
 interface AppDBSchema extends DBSchema {
   annotations: {
@@ -67,10 +79,15 @@ interface AppDBSchema extends DBSchema {
     key: string;
     value: AppSettings;
   };
+  waterQualityHistory: {
+    key: string;
+    value: WaterQualitySnapshot;
+    indexes: { 'by-savedAt': string };
+  };
 }
 
 const DB_NAME = 'hebei-groundwater-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 /* ── Zustand Store ──────────────────────────────────── */
 interface AppState {
@@ -101,6 +118,12 @@ interface AppState {
   settings: AppSettings;
   loadSettings: () => Promise<void>;
   updateSettings: (patch: Partial<AppSettings>) => Promise<void>;
+
+  // Water Quality History
+  waterQualityHistory: WaterQualitySnapshot[];
+  loadWaterQualityHistory: () => Promise<void>;
+  saveWaterQualitySnapshot: (snapshot: Omit<WaterQualitySnapshot, 'id' | 'savedAt'>) => Promise<string>;
+  deleteWaterQualitySnapshot: (id: string) => Promise<void>;
 
   // Init
   init: () => Promise<void>;
@@ -249,6 +272,32 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ settings: updated });
   },
 
+  // ── Water Quality History ──
+  waterQualityHistory: [],
+
+  loadWaterQualityHistory: async () => {
+    const db = get().db;
+    if (!db) return;
+    const all = await db.getAll('waterQualityHistory');
+    set({ waterQualityHistory: all.sort((a, b) => b.savedAt.localeCompare(a.savedAt)) });
+  },
+
+  saveWaterQualitySnapshot: async (snapshot) => {
+    const db = get().db;
+    if (!db) throw new Error('DB not initialized');
+    const record: WaterQualitySnapshot = { ...snapshot, id: uid(), savedAt: new Date().toISOString() };
+    await db.put('waterQualityHistory', record);
+    await get().loadWaterQualityHistory();
+    return record.id;
+  },
+
+  deleteWaterQualitySnapshot: async (id) => {
+    const db = get().db;
+    if (!db) return;
+    await db.delete('waterQualityHistory', id);
+    await get().loadWaterQualityHistory();
+  },
+
   // ── Init ──
   init: async () => {
     if (get().initialized) return;
@@ -277,6 +326,11 @@ export const useAppStore = create<AppState>((set, get) => ({
           if (!db.objectStoreNames.contains('settings')) {
             db.createObjectStore('settings', { keyPath: 'id' });
           }
+          // waterQualityHistory store
+          if (!db.objectStoreNames.contains('waterQualityHistory')) {
+            const wh = db.createObjectStore('waterQualityHistory', { keyPath: 'id' });
+            wh.createIndex('by-savedAt', 'savedAt');
+          }
         },
       });
       set({ db: db, initialized: true });
@@ -286,6 +340,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         get().loadDatasets(),
         get().loadBookmarks(),
         get().loadSettings(),
+        get().loadWaterQualityHistory(),
       ]);
       console.log('[AppStore] IndexedDB initialized, data loaded');
     } catch (err) {
