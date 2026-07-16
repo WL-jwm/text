@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { History, Save, Trash2, AlertCircle, TrendingDown, Minus, TrendingUp, Tag } from 'lucide-react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { History, Save, Trash2, AlertCircle, TrendingDown, Minus, TrendingUp, Tag, X } from 'lucide-react';
 import { TechCard } from '../UI';
 import { useAppStore, type WaterQualitySnapshot } from '../../store/useAppStore';
 
@@ -127,6 +127,21 @@ interface HistoryListProps {
 }
 
 function HistoryList({ snapshots, onDelete }: HistoryListProps) {
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const confirmRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to dismiss confirm
+  useEffect(() => {
+    if (!confirmId) return;
+    const handler = (e: MouseEvent) => {
+      if (confirmRef.current && !confirmRef.current.contains(e.target as Node)) {
+        setConfirmId(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [confirmId]);
+
   if (snapshots.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-10 text-gw-muted/50">
@@ -161,13 +176,30 @@ function HistoryList({ snapshots, onDelete }: HistoryListProps) {
                 )}
               </div>
             </div>
-            <button
-              onClick={() => onDelete(snap.id)}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded text-gw-muted/40 hover:text-red-400 hover:bg-red-500/10 transition-all"
-              title="\u5220\u9664\u6b64\u8bb0\u5f55"
-            >
-              <Trash2 size={14} />
-            </button>
+            {confirmId === snap.id ? (
+              <div ref={confirmRef} className="flex items-center gap-1 shrink-0">
+                <button
+                  onClick={(e) => { e.stopPropagation(); onDelete(snap.id); setConfirmId(null); }}
+                  className="px-2 py-1 rounded text-[10px] bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 transition-colors"
+                >
+                  \u786e\u8ba4\u5220\u9664
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setConfirmId(null); }}
+                  className="p-1 rounded text-gw-muted/40 hover:text-gw-text transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={(e) => { e.stopPropagation(); setConfirmId(snap.id); }}
+                className="p-1.5 rounded text-gw-muted/30 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                title="\u5220\u9664\u6b64\u8bb0\u5f55"
+              >
+                <Trash2 size={14} />
+              </button>
+            )}
           </div>
         );
       })}
