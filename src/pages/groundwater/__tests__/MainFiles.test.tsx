@@ -69,7 +69,7 @@ vi.mock('lucide-react', () => {
     'Gauge', 'Compass', 'Route', 'ArrowDown', 'ArrowUp',
     'ArrowRight', 'Filter', 'RefreshCw', 'Settings', 'X',
     'Plus', 'Minus', 'ChevronDown', 'ExternalLink', 'Copy',
-    'MinusCircle', 'TrendingDown', 'Ban', 'CheckCircle2',
+    'MinusCircle', 'TrendingDown', 'Ban', 'CheckCircle2', 'Calculator',
   ];
   const m: Record<string, () => null> = {};
   for (const n of names) m[n] = () => null;
@@ -87,13 +87,14 @@ import { GroundwaterBackground } from '../../GroundwaterBackground';
 // GroundwaterBalance
 // ═══════════════════════════════════════════════════════
 describe('GroundwaterBalance 主文件集成', () => {
-  it('renders all 5 tab buttons', () => {
+  it('renders all 6 tab buttons', () => {
     render(<GroundwaterBalance />);
     expect(screen.getByText('均衡总览')).toBeInTheDocument();
     expect(screen.getByText('各市均衡')).toBeInTheDocument();
     expect(screen.getByText('开采潜力')).toBeInTheDocument();
     expect(screen.getByText('水质评价')).toBeInTheDocument();
     expect(screen.getByText('污染评价')).toBeInTheDocument();
+    expect(screen.getByText('均衡计算')).toBeInTheDocument();
   });
 
   it('shows overview tab by default', () => {

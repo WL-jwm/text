@@ -2,7 +2,7 @@ import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useMemo, useCallback } from 'react';
 import {
   Scale, BarChart3, MapPin, AlertTriangle, Droplets,
-  TrendingDown, TrendingUp, MinusCircle,
+  TrendingDown, TrendingUp, MinusCircle, Calculator,
 } from 'lucide-react';
 import {
   plainWaterBalance, cityWaterBalance,
@@ -20,14 +20,16 @@ import { BalanceCityTab } from './groundwater/BalanceCityTab';
 import { BalancePotentialTab } from './groundwater/BalancePotentialTab';
 import { BalanceQualityTab } from './groundwater/BalanceQualityTab';
 import { BalancePollutionTab } from './groundwater/BalancePollutionTab';
+import { BalanceCalculatorTab } from '../components/groundwater/BalanceCalculatorTab';
 
-type TabKey = 'overview' | 'city' | 'potential' | 'quality' | 'pollution';
+type TabKey = 'overview' | 'city' | 'potential' | 'quality' | 'pollution' | 'calculator';
 const TABS: { key: TabKey; label: string; icon: typeof Scale }[] = [
   { key: 'overview', label: '均衡总览', icon: Scale },
   { key: 'city', label: '各市均衡', icon: MapPin },
   { key: 'potential', label: '开采潜力', icon: BarChart3 },
   { key: 'quality', label: '水质评价', icon: Droplets },
   { key: 'pollution', label: '污染评价', icon: AlertTriangle },
+  { key: 'calculator', label: '均衡计算', icon: Calculator },
 ];
 
 export function GroundwaterBalance() {
@@ -103,6 +105,7 @@ export function GroundwaterBalance() {
       {activeTab === 'potential' && <BalancePotentialTab potentialChart={potentialChart} />}
       {activeTab === 'quality' && <BalanceQualityTab />}
       {activeTab === 'pollution' && <BalancePollutionTab pollutionChart={pollutionChart} />}
+      {activeTab === 'calculator' && <BalanceCalculatorTab />}
 
       <ExportProgressDialog
         open={exportOpen}
