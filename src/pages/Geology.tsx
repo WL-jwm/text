@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Mountain, Layers, Grid3X3, BookOpen, Droplets, Shield, FlaskConical, Clock } from 'lucide-react';
+import { Mountain, Layers, Grid3X3, BookOpen, Droplets, Shield, FlaskConical, Clock, Calculator } from 'lucide-react';
 import { stratigraphyAquifer, tectonicUnits, geology } from '../data/geology';
 import { stratigraphyLayers, weatheringThickness, rockCompressiveStrength } from '../data/hydrogeologyReference';
 import { SectionTitle, TechCard, ChartTooltip, DataSourceNote } from '../components/UI';
@@ -14,6 +14,7 @@ import { GeologyStratigraphyTab } from '../components/geology/GeologyStratigraph
 import { GeologyFunctionTab } from '../components/geology/GeologyFunctionTab';
 import { GeologyBackgroundTab } from '../components/geology/GeologyBackgroundTab';
 import { GeologyHistoryTab } from '../components/geology/GeologyHistoryTab';
+import { AquiferParamTab } from '../components/geology/AquiferParamTab';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 // 注册报告生成器
@@ -25,6 +26,7 @@ const TABS = [
   { key: 'function', label: '功能分区', icon: Shield },
   { key: 'background', label: '背景值', icon: FlaskConical },
   { key: 'history', label: '地质发展史', icon: Clock },
+  { key: 'calculator', label: '参数速算', icon: Calculator },
 ] as const;
 type TabKey = typeof TABS[number]['key'];
 
@@ -61,6 +63,7 @@ export function Geology() {
       {activeTab === 'function' && <GeologyFunctionTab />}
       {activeTab === 'background' && <GeologyBackgroundTab />}
       {activeTab === 'history' && <GeologyHistoryTab />}
+      {activeTab === 'calculator' && <AquiferParamTab />}
 
       {/* ═══════════════════ 地层-含水介质-构造 综合分析 ═══════════════════ */}
       <SectionTitle icon={BookOpen} badge="综合分析" >地层-构造-含水关系</SectionTitle>
