@@ -171,7 +171,7 @@ function HistoryList({ snapshots, onDelete }: HistoryListProps) {
                 {snap.sukalovResult && (
                   <>
                     <span className="text-gw-border">|</span>
-                    <span>\u82cf\u5361\u5217\u592b: {snap.sukalovResult.waterType}</span>
+                    <span>\u82cf\u5361\u5217\u592b: {snap.sukalovResult.type}</span>
                   </>
                 )}
               </div>
@@ -236,7 +236,7 @@ function ComparisonTable({ snapshots }: ComparisonTableProps) {
       const classes: number[] = [];
       for (const snap of snapshots) {
         const found = snap.result?.factors?.find(f => f.name === factor);
-        classes.push(found ? piToClass(found.Pi) : 0);
+        classes.push(found ? piToClass(parseFloat(found.Pi)) : 0);
       }
 
       // Calculate trend: compare first and last
@@ -340,8 +340,10 @@ export function WaterQualityHistoryTab() {
         values: {},
         result: {
           sampleName: '',
-          overallClass: 1,
-          overallLabel: 'I',
+          overallClass: '1',
+          overallClassNum: 1,
+          exceededCount: 0,
+          exceededFactors: [],
           factors: [],
         },
       });
@@ -364,7 +366,7 @@ export function WaterQualityHistoryTab() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Left: Save + History List */}
       <div className="space-y-4">
-        <TechCard title="\u5feb\u7167\u7ba1\u7406" accent="emerald">
+        <TechCard title="\u5feb\u7167\u7ba1\u7406">
           <SavePanel onSave={handleSave} saving={saving} />
           {saveError && (
             <div className="mt-2 flex items-center gap-1.5 text-[10px] text-red-400">
@@ -373,13 +375,13 @@ export function WaterQualityHistoryTab() {
             </div>
           )}
         </TechCard>
-        <TechCard title="\u5386\u53f2\u8bb0\u5f55" accent="blue" count={waterQualityHistory.length}>
+        <TechCard title="\u5386\u53f2\u8bb0\u5f55">
           <HistoryList snapshots={waterQualityHistory} onDelete={handleDelete} />
         </TechCard>
       </div>
 
       {/* Right: Comparison Table */}
-      <TechCard title="\u591a\u65f6\u6bb5\u5bf9\u6bd4" accent="cyan">
+      <TechCard title="\u591a\u65f6\u6bb5\u5bf9\u6bd4">
         <ComparisonTable snapshots={waterQualityHistory} />
       </TechCard>
     </div>

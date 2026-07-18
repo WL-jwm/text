@@ -1,0 +1,32 @@
+/**
+ * water quality report word generator
+ * based on reportGenerator.ts
+ */
+import {
+  type ReportConfig,
+  type ReportSection,
+  buildTable,
+  buildParagraph,
+  buildParagraphs,
+  generateAndDownload,
+} from '../services/reportGenerator';
+import type { SampleResult, SukalovResult } from './waterQualityCalculator';
+
+// ═══════════════════════════════════════════════════════
+// Section builders
+// ═══════════════════════════════════════════════════════
+
+function buildMethodSection(): ReportSection {
+  return {
+    title: '\u4e00\u3001\u8bc4\u4ef7\u6807\u51c6\u4e0e\u65b9\u6cd5',
+    level: 1,
+    content: [
+      ...buildParagraphs([
+        '\u5730\u4e0b\u6c34\u8d28\u91cf\u8bc4\u4ef7\u6267\u884c\u300a\u5730\u4e0b\u6c34\u8d28\u91cf\u6807\u51c6\u300b\uff08GB/T 14848-2017\uff09\uff0c\u91c7\u7528\u5355\u56e0\u5b50\u6807\u51c6\u6307\u6570\u6cd5\u8fdb\u884c\u8bc4\u4ef7\u3002',
+        '\u5355\u56e0\u5b50\u6807\u51c6\u6307\u6570\u6cd5\u7684\u8bc4\u4ef7\u539f\u5219\u4e3a\uff1a\u5bf9\u6bcf\u4e2a\u8bc4\u4ef7\u56e0\u5b50\u5206\u522b\u8ba1\u7b97\u6807\u51c6\u6307\u6570Pi\uff0c\u4ee5\u6240\u6709\u53c2\u8bc4\u56e0\u5b50\u4e2d\u7684\u6700\u5dee\u7c7b\u522b\u4f5c\u4e3a\u8be5\u6c34\u6837\u7684\u7efc\u5408\u8bc4\u5b9a\u7c7b\u522b\u3002\u5f53\u67d0\u4e00\u56e0\u5b50\u7684\u6807\u51c6\u6307\u6570Pi\u5927\u4e8e1\u65f6\uff0c\u5224\u5b9a\u8be5\u56e0\u5b50\u8d85\u6807\u3002',
+        'pH\u6807\u51c6\u6307\u6570\u91c7\u7528\u7279\u6b8a\u516c\u5f0f\u8ba1\u7b97\uff1a\u5f53pH\u503c\u57286.5~8.5\u8303\u56f4\u5185\u65f6\uff0cPi=0\uff1b\u5f53pH\u503c\u5c0f\u4e8e6.5\u65f6\uff0cPpH=(7.0-pHi)/(7.0-6.5)\uff1b\u5f53pH\u503c\u5927\u4e8e8.5\u65f6\uff0cPpH=(pHi-7.0)/(8.5-7.0)\u3002',
+        '\u672a\u68c0\u51fa\u6570\u636e\u5904\u7406\uff1a\u5f53\u76d1\u6d4b\u7ed3\u679c\u4e3a\u201c\u672a\u68c0\u51fa\u201d\u65f6\uff0c\u4ee5\u68c0\u51fa\u9650\u768450%\u53c2\u4e0e\u6807\u51c6\u6307\u6570\u8ba1\u7b97\u3002',
+      ]),
+    ],
+  };
+}
