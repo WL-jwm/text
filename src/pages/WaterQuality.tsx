@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useTabTransition } from '../hooks/useTabTransition';
-import { FlaskConical, AlertTriangle, Droplets, Shield, BookOpen, TrendingUp, MapPin, Calculator, History } from 'lucide-react';
+import { FlaskConical, AlertTriangle, Droplets, Shield, BookOpen, TrendingUp, MapPin, Calculator, History, BellRing } from 'lucide-react';
 import { waterQuality2024, pollutionDegree1990s, shallowGroundwaterQuality2024, waterQualityTrend, groundwaterQualityStandard } from '../data/waterQuality';
 import { exportDataCSV } from '../utils/exportUtils';
 import { StatCard, DataSourceNote } from '../components/UI';
@@ -19,6 +19,7 @@ import { WaterQualityCityRateTab } from '../components/water-quality/WaterQualit
 import { WaterQualityClassicTab } from '../components/water-quality/WaterQualityClassicTab';
 import { WaterQualityCalculatorTab } from '../components/water-quality/WaterQualityCalculatorTab';
 import { WaterQualityHistoryTab } from '../components/water-quality/WaterQualityHistoryTab';
+import { PollutionAlertTab } from '../components/water-quality/PollutionAlertTab';
 
 const TABS = [
   { key: 'drinking', label: '饮水安全', icon: Shield },
@@ -31,6 +32,7 @@ const TABS = [
   { key: 'classic', label: '经典参数', icon: BookOpen },
   { key: 'calculator', label: '评价计算', icon: Calculator },
   { key: 'history', label: '历史对比', icon: History },
+  { key: 'alert', label: '污染预警', icon: BellRing },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -152,6 +154,7 @@ export function WaterQuality() {
       {activeTab === 'classic' && <WaterQualityClassicTab />}
       {activeTab === 'calculator' && <WaterQualityCalculatorTab />}
       {activeTab === 'history' && <WaterQualityHistoryTab />}
+      {activeTab === 'alert' && <PollutionAlertTab />}
 
       <DataSourceNote source="2024河北省水资源公报 | GB/T 14848-2017 | 1999年《河北省地下水》" version="v2.1" />
       <CrossLinkPanel currentPath="/water-quality" />
