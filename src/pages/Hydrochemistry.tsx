@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useMemo, useCallback } from 'react';
-import { FlaskConical, Layers, Atom, MapPin, Droplets, BookOpen, Zap, Database } from 'lucide-react';
+import { FlaskConical, Layers, Atom, MapPin, Droplets, BookOpen, Zap, Database, Calculator } from 'lucide-react';
 import { hydrochemistry, hydrochemicalByRegion, isotopeSamples, salineWater } from '../data/hydrochemistry';
 import { salineDistribution } from '../data/salineWater';
 import { exportDataCSV } from '../utils/exportUtils';
@@ -16,6 +16,7 @@ import { HydrochemGeophysicalTab } from '../components/hydrochemistry/HydrochemG
 import { HydrochemIonMobilityTab } from '../components/hydrochemistry/HydrochemIonMobilityTab';
 import { HydrochemChengdeTab } from '../components/hydrochemistry/HydrochemChengdeTab';
 import { HydrochemResistivityTab } from '../components/hydrochemistry/HydrochemResistivityTab';
+import { HydrochemCalculatorTab } from '../components/hydrochemistry/HydrochemCalculatorTab';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 // 注册报告生成器
@@ -29,6 +30,7 @@ const TABS = [
   { key: 'ionMobility', label: '离子迁移率', icon: Zap },
   { key: 'chengde', label: '承德水化学', icon: MapPin },
   { key: 'resistivity', label: '电阻率详表', icon: Database },
+  { key: 'calculator', label: '水化学计算器', icon: Calculator },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -147,6 +149,7 @@ export function Hydrochemistry() {
       {activeTab === 'ionMobility' && <HydrochemIonMobilityTab />}
       {activeTab === 'chengde' && <HydrochemChengdeTab />}
       {activeTab === 'resistivity' && <HydrochemResistivityTab />}
+      {activeTab === 'calculator' && <HydrochemCalculatorTab />}
 
       <DataSourceNote source="1999基础文献 + 2024河北省水资源公报 + 第三次土壤普查" version="v2.0" />
       <CrossLinkPanel currentPath="/hydrochemistry" />
