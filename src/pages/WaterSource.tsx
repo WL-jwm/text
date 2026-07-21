@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useMemo, useCallback } from 'react';
-import { Layers, Mountain, Droplets, Shield, Database, BookOpen, Waves, Activity } from 'lucide-react';
+import { Layers, Mountain, Droplets, Shield, Database, BookOpen, Waves, Activity, Lock } from 'lucide-react';
 import { storageStructureSummary, karstBasinStructures, alluvialFanStructures, importantWaterSources, mountainFrontRichZones } from '../data/waterSource';
 import { exportDataCSV } from '../utils/exportUtils';
 import { StatCard, DataSourceNote } from '../components/UI';
@@ -14,6 +14,7 @@ import { WaterSourceClassificationTab } from '../components/water-source/WaterSo
 import { WaterSourceStandardTab } from '../components/water-source/WaterSourceStandardTab';
 import { WaterSourceClassicTab } from '../components/water-source/WaterSourceClassicTab';
 import { WaterSourceIrrigationTab } from '../components/water-source/WaterSourceIrrigationTab';
+import { ProtectionZoneTab } from '../components/water-source/ProtectionZoneTab';
 import { IntermontaneBasinSection } from '../components/water-source/IntermontaneBasinSection';
 import { PaleochannelSection } from '../components/water-source/PaleochannelSection';
 
@@ -28,6 +29,7 @@ const TABS = [
   { key: 'standard', label: '规模标准', icon: BookOpen },
   { key: 'classic', label: '经典参数', icon: BookOpen },
   { key: 'irrigation', label: '灌区概况', icon: Waves },
+  { key: 'protection', label: '保护区划分', icon: Lock },
 ] as const;
 
 type TabKey = string;
@@ -123,6 +125,7 @@ export function WaterSource() {
       {activeTab === 'standard' && <WaterSourceStandardTab />}
       {activeTab === 'classic' && <WaterSourceClassicTab />}
       {activeTab === 'irrigation' && <WaterSourceIrrigationTab />}
+      {activeTab === 'protection' && <ProtectionZoneTab />}
 
       <IntermontaneBasinSection />
       <PaleochannelSection />
