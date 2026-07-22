@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useMemo, useCallback } from 'react';
-import { Thermometer, MapPin, Factory, Recycle, BookOpen, BarChart3, Activity, Target, Flame, TrendingUp, Zap } from 'lucide-react';
+import { Thermometer, MapPin, Factory, Recycle, BookOpen, BarChart3, Activity, Target, Flame, TrendingUp, Zap, Calculator } from 'lucide-react';
 import { geothermalFields, geothermalTypes, geothermalUtilization, geothermalResources, geothermalGradient } from '../data/geothermal';
 import { exportDataCSV } from '../utils/exportUtils';
 import { StatCard, DataSourceNote, CHART_COLORS } from '../components/UI';
@@ -13,6 +13,7 @@ import { GeothermalHotSpringsTab } from '../components/geothermal/GeothermalHotS
 import { GeothermalGradientTab } from '../components/geothermal/GeothermalGradientTab';
 import { GeothermalChemistryTab } from '../components/geothermal/GeothermalChemistryTab';
 import { GeothermalPotentialTab } from '../components/geothermal/GeothermalPotentialTab';
+import { GeothermalCalculatorTab } from '../components/geothermal/GeothermalCalculatorTab';
 import type { GeothermalField, GeothermalType, GeothermalUtilization, GeothermalGradient, TempBarItem, AreaBarItem, GradientDepthItem, PieItem, BarItem } from '../types/geothermal';
 
 import { usePageCommons } from '../hooks/usePageCommons'
@@ -26,6 +27,7 @@ const TABS = [
   { key: 'gradient', label: '地温梯度', icon: BarChart3 },
   { key: 'chemistry', label: '流体化学', icon: Activity },
   { key: 'potential', label: '潜力评估', icon: Target },
+  { key: 'calculator', label: '资源量计算', icon: Calculator },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -127,6 +129,7 @@ export function Geothermal() {
       {activeTab === 'gradient' && <GeothermalGradientTab />}
       {activeTab === 'chemistry' && <GeothermalChemistryTab />}
       {activeTab === 'potential' && <GeothermalPotentialTab />}
+      {activeTab === 'calculator' && <GeothermalCalculatorTab />}
 
       <DataSourceNote source="1999基础文献 + 2024年数据 | 第十章" version="v2.0" />
       <CrossLinkPanel currentPath="/geothermal" />
