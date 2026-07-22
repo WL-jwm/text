@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Layers, MapPin, Droplets, Database, GitBranch, Info, BookOpen } from 'lucide-react';
+import { Layers, MapPin, Droplets, Database, GitBranch, Info, BookOpen, Calculator } from 'lucide-react';
 import { systemZones, subZones, zoneRechargeDischarge, zoneAquiferParams, zoneBoundaryStats } from '../data/systemZoning';
 import { hydrogeoZones, getHydrogeoSummary, stratigraphyLayers, rockEngineeringGroups } from '../data/hydrogeologyReference';
 import { exportDataCSV } from '../utils/exportUtils';
@@ -9,6 +9,7 @@ import { TechCard, StatCard, ChartTooltip, DataSourceNote, CHART_COLORS } from '
 import { LazyChartCard } from '../components/LazyChartCard';
 import { CrossLinkPanel } from '../components/CrossLink';
 import { ChartExport } from '../components/ChartExport';
+import { ZoneParamCalculatorTab } from '../components/hydrochemistry/ZoneParamCalculatorTab';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 // 注册报告生成器
@@ -19,6 +20,7 @@ const TABS = [
   { key: 'params', label: '含水层参数', icon: Database },
   { key: 'boundary', label: '边界类型', icon: MapPin },
   { key: 'classic', label: '经典分区', icon: BookOpen },
+  { key: 'calculator', label: '参数计算器', icon: Calculator },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -311,6 +313,8 @@ export function SystemZoning() {
           </div>
         </div>
       )}
+
+{activeTab === 'calculator' && <ZoneParamCalculatorTab />}
 
 {activeTab === 'classic' && (
         <div className="space-y-4">
