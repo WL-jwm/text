@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useTabTransition } from '../hooks/useTabTransition';
-import { Droplets, BarChart3, Activity, TrendingUp, FileText, AlertTriangle, Scale, Zap } from 'lucide-react';
+import { Droplets, BarChart3, Activity, TrendingUp, FileText, AlertTriangle, Scale, Zap, Calculator } from 'lucide-react';
 import { cityWaterSupply2024, cityGroundwaterDynamic2024, resourceTimeSeries, cityGroundwater2024, groundwaterDynamic2024 } from '../data/resources';
 import { SectionTitle, DataSourceNote } from '../components/UI';
 import { CrossLinkPanel } from '../components/CrossLink';
@@ -17,6 +17,7 @@ import { ResourcesBulletinTab } from '../components/resources/ResourcesBulletinT
 import { ResourcesOverexploitTab } from '../components/resources/ResourcesOverexploitTab';
 import { ResourcesBalanceTab } from '../components/resources/ResourcesBalanceTab';
 import { ResourcesPotentialTab } from '../components/resources/ResourcesPotentialTab';
+import { ExploitableResourceTab } from '../components/resources/ExploitableResourceTab';
 import type {   CityBulletinData} from '../types/county';
 
 const TABS = [
@@ -28,6 +29,7 @@ const TABS = [
   { key: 'overexploit', label: '超采治理', icon: AlertTriangle },
   { key: 'balance', label: '均衡分析', icon: Scale },
   { key: 'potential', label: '潜力分析', icon: Zap },
+  { key: 'exploitable', label: '可开采量评价', icon: Calculator },
 ] as const;
 
 type BulletinSubKey = 'compare' | 'supply' | 'dynamic' | 'detail';
@@ -320,6 +322,7 @@ export function Resources() {
       {activeTab === 'overexploit' && <ResourcesOverexploitTab />}
       {activeTab === 'balance' && <ResourcesBalanceTab />}
       {activeTab === 'potential' && <ResourcesPotentialTab />}
+      {activeTab === 'exploitable' && <ExploitableResourceTab />}
 
       <CrossLinkPanel currentPath="/resources" />
       <DataSourceNote source={`${dataYear}年河北省水资源公报`} version="v3.5" />
