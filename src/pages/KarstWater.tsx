@@ -15,12 +15,13 @@ import { KarstDevDepthTab } from '../components/karst-water/KarstDevDepthTab';
 import { KarstFlowDynamicsTab } from '../components/karst-water/KarstFlowDynamicsTab';
 import { KarstRechargeTab } from '../components/karst-water/KarstRechargeTab';
 import { KarstIsotopeTab } from '../components/karst-water/KarstIsotopeTab';
+import { SpringDecayTab } from '../components/karst-water/SpringDecayTab';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 // 注册报告生成器
 // ── Tab 定义 ──
-const tabs = ['泉域概览', '系统分区', '水化学特征', '保护分区', '泉域恢复', '经典岩溶泉', '发育深度', '泉水动态', '补给特征', '同位素特征'];
-const [SPRINGS, SYSTEM, CHEMISTRY, PROTECTION, RECOVERY, KARST_SPRINGS, DEV_DEPTH, FLOW_DYNAMICS, RECHARGE, ISOTOPE] = tabs;
+const tabs = ['泉域概览', '系统分区', '水化学特征', '保护分区', '泉域恢复', '经典岩溶泉', '发育深度', '泉水动态', '补给特征', '同位素特征', '流量衰减'];
+const [SPRINGS, SYSTEM, CHEMISTRY, PROTECTION, RECOVERY, KARST_SPRINGS, DEV_DEPTH, FLOW_DYNAMICS, RECHARGE, ISOTOPE, DECAY] = tabs;
 
 export function KarstWater() {
 
@@ -217,6 +218,7 @@ export function KarstWater() {
       {activeTab === FLOW_DYNAMICS && <KarstFlowDynamicsTab />}
       {activeTab === RECHARGE && <KarstRechargeTab />}
       {activeTab === ISOTOPE && <KarstIsotopeTab />}
+      {activeTab === DECAY && <SpringDecayTab />}
     </div>
   );
 }
