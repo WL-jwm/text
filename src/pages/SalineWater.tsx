@@ -6,6 +6,7 @@ import { salineDistribution, salineTypes, salineUtilization, salineFeatures, sal
 import { resistivityMineralization, deepWaterParameters } from '../data/hydrogeologyReference';
 import { TechCard, StatCard, TechTable, ChartTooltip, DataSourceNote } from '../components/UI';
 import { CrossLinkPanel } from '../components/CrossLink';
+import { IntrusionRiskTab } from '../components/saline-water/IntrusionRiskTab';
 import { LazyChartCard } from '../components/LazyChartCard';
 import { FilterableTechTable } from '../components/FilterableTechTable';
 import { ChartExport } from '../components/ChartExport';
@@ -18,6 +19,7 @@ const TABS = [
   { key: 'utilization', label: '开发利用', icon: Factory },
   { key: 'interface', label: '界面变化', icon: AlertTriangle },
   { key: 'geophysical', label: '物探参数', icon: BookOpen },
+  { key: 'intrusion', label: '入侵风险', icon: AlertTriangle },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -275,6 +277,8 @@ export function SalineWater() {
           </TechCard>
         </div>
       )}
+
+{activeTab === 'intrusion' && <IntrusionRiskTab />}
 
 {activeTab === 'geophysical' && (
         <div className="space-y-4">
