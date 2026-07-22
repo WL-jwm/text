@@ -13,12 +13,14 @@ import { EnvironmentShallowTab } from '../components/environment/EnvironmentShal
 import { EnvironmentDeepTab } from '../components/environment/EnvironmentDeepTab';
 import { EnvironmentSubsidenceTab } from '../components/environment/EnvironmentSubsidenceTab';
 import { EnvironmentOverviewTab } from '../components/environment/EnvironmentOverviewTab';
+import { SubsidenceTab } from '../components/environment/SubsidenceTab';
 
 const TABS = [
   { key: 'shallow', label: '浅层漏斗', icon: TrendingDown },
   { key: 'deep', label: '深层漏斗', icon: AlertTriangle },
   { key: 'subsidence', label: '地面沉降', icon: ArrowDown },
   { key: 'overview', label: '环境总览', icon: Shield },
+  { key: 'subsidence_calc', label: '沉降分析', icon: ArrowDown },
 ] as const;
 
 type TabKey = string;
@@ -130,6 +132,7 @@ export function Environment() {
       {activeTab === 'deep' && <EnvironmentDeepTab historicalCompareData={historicalCompareData} />}
       {activeTab === 'subsidence' && <EnvironmentSubsidenceTab subsidenceData={subsidenceData} subsidenceGrades={subsidenceGrades} />}
       {activeTab === 'overview' && <EnvironmentOverviewTab />}
+      {activeTab === 'subsidence_calc' && <SubsidenceTab />}
 
       <DataSourceNote source="2024年12月浅层漏斗数据 + 1999基础文献" version="v3.1" />
       <CrossLinkPanel currentPath="/environment" />
