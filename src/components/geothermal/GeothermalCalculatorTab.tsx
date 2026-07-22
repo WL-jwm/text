@@ -71,7 +71,7 @@ function ReservoirPanel() {
   const presets = useMemo(() => calcAllPresetFields(), []);
   const summary = useMemo(() => calcGeothermalSummary(), []);
 
-  const compareData = useMemo(() => presets.map(r => ({
+  const compareData = useMemo(() => presets.map((r, i) => ({
     name: PRESET_FIELDS[i].name.replace('地热田', ''),
     热储量: r.totalHeatReservePJ,
     可开采量: r.recoverableHeat,

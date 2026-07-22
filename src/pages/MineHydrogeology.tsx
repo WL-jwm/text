@@ -12,6 +12,8 @@ import { FilterableTechTable } from '../components/FilterableTechTable';
 import { ChartExport } from '../components/ChartExport';
 
 import { usePageCommons } from '../hooks/usePageCommons'
+import { MineInflowTab } from '../components/mine/MineInflowTab';
+import { Calculator } from 'lucide-react';
 // 注册报告生成器
 const TABS = [
   { key: 'mines', label: '矿区特征', icon: Mountain },
@@ -23,6 +25,7 @@ const TABS = [
   { key: 'restoration', label: '生态修复', icon: Leaf },
   { key: 'complexity', label: '复杂度分级', icon: HardHat },
   { key: 'classic', label: '坝基工程', icon: BookOpen },
+  { key: 'inflow_calc', label: '涌水量预测', icon: Calculator },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -472,6 +475,8 @@ export function MineHydrogeology() {
           </table>
         </div>
       </TechCard>
+
+      {activeTab === 'inflow_calc' && <MineInflowTab />}
 
       <CrossLinkPanel currentPath="/mine-hydrogeology" />
     </div>
