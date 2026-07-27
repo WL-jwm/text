@@ -17,6 +17,7 @@ import { HydrochemIonMobilityTab } from '../components/hydrochemistry/HydrochemI
 import { HydrochemChengdeTab } from '../components/hydrochemistry/HydrochemChengdeTab';
 import { HydrochemResistivityTab } from '../components/hydrochemistry/HydrochemResistivityTab';
 import { HydrochemCalculatorTab } from '../components/hydrochemistry/HydrochemCalculatorTab';
+import { IsotopeAgeTab } from '../components/hydrochemistry/IsotopeAgeTab';
 
 import { usePageCommons } from '../hooks/usePageCommons'
 // 注册报告生成器
@@ -31,6 +32,7 @@ const TABS = [
   { key: 'chengde', label: '承德水化学', icon: MapPin },
   { key: 'resistivity', label: '电阻率详表', icon: Database },
   { key: 'calculator', label: '水化学计算器', icon: Calculator },
+  { key: 'isotope_age', label: '同位素年龄', icon: Atom },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -150,6 +152,7 @@ export function Hydrochemistry() {
       {activeTab === 'chengde' && <HydrochemChengdeTab />}
       {activeTab === 'resistivity' && <HydrochemResistivityTab />}
       {activeTab === 'calculator' && <HydrochemCalculatorTab />}
+      {activeTab === 'isotope_age' && <IsotopeAgeTab />}
 
       <DataSourceNote source="1999基础文献 + 2024河北省水资源公报 + 第三次土壤普查" version="v2.0" />
       <CrossLinkPanel currentPath="/hydrochemistry" />
