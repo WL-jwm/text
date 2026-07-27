@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
-import { Mountain, Search, Droplets, Layers, MapPin, FlaskConical, Wrench, Gauge, Crosshair, BookOpen } from 'lucide-react';
+import { Mountain, Search, Droplets, Layers, MapPin, FlaskConical, Wrench, Gauge, Crosshair, BookOpen, Calculator } from 'lucide-react';
 import { fractureWaterTypes, fractureWaterZones, fractureWaterCases, fractureExplorationMethods, fractureWaterResources, fractureWaterChemistry, fractureWaterUtilization, fractureWaterYieldByLithology } from '../data/fractureWater';
 import { rockEngineeringGroups, weatheringThickness, rockCompressiveStrength, runoffModulus } from '../data/hydrogeologyReference';
 import { exportDataCSV } from '../utils/exportUtils';
@@ -9,6 +9,7 @@ import { SectionTitle, TechCard, StatCard, TechTable, ChartTooltip, DataSourceNo
 import { FilterableTechTable } from '../components/FilterableTechTable';
 import { ChartExport } from '../components/ChartExport';
 import { CrossLinkPanel } from '../components/CrossLink';
+import { FractureWaterCalculatorTab } from '../components/fracture-water/FractureWaterCalculatorTab';
 import { useToast } from '../components/Toast';
 import { LazyChartCard } from '../components/LazyChartCard';
 
@@ -22,6 +23,7 @@ const TABS = [
   { key: 'cases', label: '开发案例', icon: Droplets },
   { key: 'lithology', label: '岩性富水性', icon: Gauge },
   { key: 'classic', label: '经典参考', icon: BookOpen },
+  { key: 'calculator', label: '涌水量估算', icon: Calculator },
 ] as const;
 
 export function FractureWater() {
@@ -451,6 +453,8 @@ export function FractureWater() {
           <DataSourceNote source="《河北省水文地质工程地质》| 岩石力学+风化带+径流模数" version="经典参考" />
         </div>
       )}
+
+      {activeTab === 'calculator' && <FractureWaterCalculatorTab />}
 
 <CrossLinkPanel currentPath={window.location.pathname} />
       {/* 导出报告对话框 */}
