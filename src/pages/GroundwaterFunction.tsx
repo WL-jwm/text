@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useMemo, useCallback } from 'react';
 import {
-  AlertTriangle, MapPin, TrendingUp, Layers, Ban, CheckCircle2,
+  AlertTriangle, MapPin, TrendingUp, Layers, Ban, CheckCircle2, Calculator,
 } from 'lucide-react';
 import {
   overdraftOverview, cityOverdraftZones, restrictedZones,
@@ -16,6 +16,7 @@ import { FunctionCityTab } from './groundwater/FunctionCityTab';
 import { FunctionZonesTab } from './groundwater/FunctionZonesTab';
 import { FunctionRecoveryTab } from './groundwater/FunctionRecoveryTab';
 import { FunctionRestrictedTab } from './groundwater/FunctionRestrictedTab';
+import { GroundwaterFunctionCalculatorTab } from '../components/groundwater/GroundwaterFunctionCalculatorTab';
 
 const TABS = [
   { key: 'overview', label: '超采总览', icon: AlertTriangle },
@@ -23,6 +24,7 @@ const TABS = [
   { key: 'zones', label: '功能区划', icon: Layers },
   { key: 'recovery', label: '水位回升', icon: TrendingUp },
   { key: 'restricted', label: '禁采/限采', icon: Ban },
+  { key: 'calculator', label: '功能评价', icon: Calculator },
 ] as const;
 type TabKey = (typeof TABS)[number]['key'];
 
@@ -161,6 +163,8 @@ export function GroundwaterFunction() {
       {activeTab === 'restricted' && (
         <FunctionRestrictedTab />
       )}
+
+      {activeTab === 'calculator' && <GroundwaterFunctionCalculatorTab />}
 
       <ExportProgressDialog
         open={exportOpen}
