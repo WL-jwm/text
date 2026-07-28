@@ -32,6 +32,7 @@ import { RegionalComparePanel } from './ForecastPanels';
 import { RadarComparePanel } from './RadarComparePanel';
 import { CorrelationPanel } from './CorrelationPanel';
 import { GovernancePanel } from './GovernancePanel';
+import { TimeSeriesCalculatorTab } from '../components/time-series/TimeSeriesCalculatorTab';
 
 function getTimeSeriesReportData(selectedCities: Set<string>) {
   return {
@@ -164,6 +165,7 @@ export function TimeSeriesAnalysis() {
         {activeTab === 'correlation' && <CorrelationPanel selected={selectedCities} />}
         {activeTab === 'governance' && <GovernancePanel selected={selectedCities} />}
         {activeTab === 'regional' && <RegionalComparePanel selected={selectedCities} />}
+        {activeTab === 'calculator' && <TimeSeriesCalculatorTab />}
       </div>
 
       {/* 底部 */}

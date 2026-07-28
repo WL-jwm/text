@@ -1,7 +1,7 @@
 // 时间序列分析 - 常量与工具函数
 // 提取自 TimeSeriesAnalysis.tsx Phase 6b 拆分
 
-import { TrendingDown, Droplets, FlaskConical, Trophy, BarChartHorizontal, BarChart3, Activity, GitCompare } from 'lucide-react';
+import { TrendingDown, Droplets, FlaskConical, Trophy, BarChartHorizontal, BarChart3, Activity, GitCompare, Calculator } from 'lucide-react';
 import { cityExploitationYearly } from '../data/exploitation';
 
 export const CITY_COLORS: Record<string, string> = {
@@ -62,6 +62,7 @@ export const TABS = [
   { key: 'correlation', label: '综合关联', icon: GitCompare, description: '开采-水位-水质-沉降四维关联分析' },
   { key: 'governance', label: '治理成效', icon: Trophy, description: '2014→2024年超采治理综合成效评估' },
   { key: 'regional', label: '区域对比', icon: BarChartHorizontal, description: '山区/山前/中部/滨海四区多维对比' },
+  { key: 'calculator', label: '序列分析', icon: Calculator, description: '时间序列统计分析与预测' },
 ] as const;
 
 export type TabKey = typeof TABS[number]['key'];
