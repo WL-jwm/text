@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Database, Map, BookOpen, Droplets, Search, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Database, Map, BookOpen, Droplets, Search, Wifi, WifiOff, RefreshCw, Calculator } from 'lucide-react';
 import {
   aquiferGroups as localAquiferGroups, lithologyMu as localLithologyMu,
   infiltrationCoeff as localInfiltrationCoeff, permeability as localPermeability,
@@ -19,6 +19,7 @@ import { HydroZoneMapTab } from '../components/hydro-zone-params/HydroZoneMapTab
 import { HydroZoneReferenceTab } from '../components/hydro-zone-params/HydroZoneReferenceTab';
 import { HydroZoneSpringsTab } from '../components/hydro-zone-params/HydroZoneSpringsTab';
 import { HydroZoneQueryTab } from '../components/hydro-zone-params/HydroZoneQueryTab';
+import { NumericalModelCalculatorTab } from '../components/hydro-zone-params/NumericalModelCalculatorTab';
 import {
   getPermeabilityData, getLithologyMuData,
   getAquiferGroupsData, getInfiltrationData, getDispersivityData,
@@ -31,6 +32,7 @@ const TABS = [
   { key: 'reference', label: '经典参考', icon: BookOpen },
   { key: 'springs', label: '历史泉水', icon: Droplets },
   { key: 'query', label: '参数查询', icon: Search },
+  { key: 'calculator', label: '数值模拟', icon: Calculator },
 ];
 
 export function HydroZoneParams() {
@@ -298,6 +300,8 @@ export function HydroZoneParams() {
           searchResults={searchResults}
         />
       )}
+
+      {activeTab === 'calculator' && <NumericalModelCalculatorTab />}
 
       <DataSourceNote
         source={serviceStatus === 'remote' ? '参数共享微服务 | 314条记录 | 18个类别' : '1999基础文献 | 附件参数表 + 地下水系统分区'}
