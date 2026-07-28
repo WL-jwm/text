@@ -1,13 +1,14 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, ComposedChart, Line, AreaChart, Area } from 'recharts';
-import { Sprout, MapPin, AlertTriangle, TrendingDown, Leaf, Beaker, Wheat, Layers, BookOpen } from 'lucide-react';
+import { Sprout, MapPin, AlertTriangle, TrendingDown, Leaf, Beaker, Wheat, Layers, BookOpen, Calculator } from 'lucide-react';
 import { salineSoilDistribution, salineSoilTypes, salineSoilMeasures, salineSoilGenesis, salineSoilZoning, salineSoilHistory, salineWheatData, salineSoilCaseStudies, salineWaterSoilRelation } from '../data/salineSoil';
 import { specificYieldInfiltration, resistivityMineralization } from '../data/hydrogeologyReference';
 import { TechCard, StatCard, TechTable, ChartTooltip, DataSourceNote, CHART_COLORS } from '../components/UI';
 import { CrossLinkPanel } from '../components/CrossLink';
 import { LazyChartCard } from '../components/LazyChartCard';
 import { FilterableTechTable } from '../components/FilterableTechTable';
+import { SoilSalinizationCalculatorTab } from '../components/saline-soil/SoilSalinizationCalculatorTab';
 import { ChartExport } from '../components/ChartExport';
 
 import { usePageCommons } from '../hooks/usePageCommons'
@@ -18,6 +19,7 @@ const TABS = [
   { key: 'treatment', label: '防治措施', icon: Leaf },
   { key: 'history', label: '治理成效', icon: TrendingDown },
   { key: 'classic', label: '经典参数', icon: BookOpen },
+  { key: 'calculator', label: '盐渍化评价', icon: Calculator },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -349,6 +351,8 @@ export function SalineSoil() {
           <DataSourceNote source="《河北省水文地质工程地质》| 出水率+入渗系数+物探参数" version="经典参数" />
         </div>
       )}
+
+      {activeTab === 'calculator' && <SoilSalinizationCalculatorTab />}
 
       <DataSourceNote source="1999基础文献 + 第三次全国土壤普查(2024) | 第十三章" version="v2.0" />
       <CrossLinkPanel currentPath="/saline-soil" />
