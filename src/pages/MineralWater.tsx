@@ -14,11 +14,12 @@ import { FilterableTechTable } from '../components/FilterableTechTable';
 import { ChartExport } from '../components/ChartExport';
 
 import { usePageCommons } from '../hooks/usePageCommons'
+import { MineralWaterCalculatorTab } from '../components/mineral-water/MineralWaterCalculatorTab';
 import { CrossLinkPanel } from '../components/CrossLink';
 // 注册报告生成器
 // ── Tab 定义 ──
-const tabs = ['产地分布', '水质类型', '标准对比', '开发现状'];
-const [SITES, TYPES, STANDARDS, DEVELOPMENT] = tabs;
+const tabs = ['产地分布', '水质类型', '标准对比', '开发现状', '水质评价'];
+const [SITES, TYPES, STANDARDS, DEVELOPMENT, CALCULATOR] = tabs;
 
 export function MineralWater() {
 
@@ -320,6 +321,8 @@ export function MineralWater() {
       <DataSourceNote source="2024年河北省矿泉水产业发展报告" version="产业概况" />
         </div>
       )}
+
+      {activeTab === CALCULATOR && <MineralWaterCalculatorTab />}
 
       <SectionTitle icon={BookOpen} badge="经典参考">天然热泉与矿泉资源</SectionTitle>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
