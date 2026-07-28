@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
-import { FlaskConical, AlertTriangle, BookOpen, Layers } from 'lucide-react';
+import { FlaskConical, AlertTriangle, BookOpen, Layers, Calculator } from 'lucide-react';
 import {
   groundwaterBackground, cityExceedanceFactors, waterQualityStandard,
 } from '../data/backgroundValues';
@@ -14,13 +14,15 @@ import { BackgroundQueryTab } from './groundwater/BackgroundQueryTab';
 import { BackgroundCompareTab } from './groundwater/BackgroundCompareTab';
 import { BackgroundExceedTab } from './groundwater/BackgroundExceedTab';
 import { BackgroundStandardTab } from './groundwater/BackgroundStandardTab';
+import { BackgroundValueCalculatorTab } from '../components/groundwater-background/BackgroundValueCalculatorTab';
 
-type TabKey = 'query' | 'compare' | 'exceed' | 'standard';
+type TabKey = 'query' | 'compare' | 'exceed' | 'standard' | 'calculator';
 const TABS: { key: TabKey; label: string; icon: typeof FlaskConical }[] = [
   { key: 'query', label: '背景值查询', icon: FlaskConical },
   { key: 'compare', label: '分区对比', icon: Layers },
   { key: 'exceed', label: '超标因子', icon: AlertTriangle },
   { key: 'standard', label: '标准对照', icon: BookOpen },
+  { key: 'calculator', label: '背景值统计', icon: Calculator },
 ];
 
 export function GroundwaterBackground() {
@@ -159,6 +161,8 @@ export function GroundwaterBackground() {
       {activeTab === 'standard' && (
         <BackgroundStandardTab />
       )}
+
+      {activeTab === 'calculator' && <BackgroundValueCalculatorTab />}
 
       <ExportProgressDialog
         open={exportOpen}
