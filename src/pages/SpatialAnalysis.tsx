@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState } from 'react';
 import {
-  Layers, TrendingUp, MapPin, Zap, Globe,
+  Layers, TrendingUp, MapPin, Zap, Globe, Calculator,
   ChevronDown, ChevronRight, FileText,
 } from 'lucide-react';
 import { TechCard } from '../components/UI';
@@ -11,6 +11,7 @@ import { CorrelationTab } from './spatial/CorrelationTab';
 import { ZoneAnalysisTab } from './spatial/ZoneAnalysisTab';
 import { AnomalyTab } from './spatial/AnomalyTab';
 import { MoranITab } from './spatial/MoranITab';
+import { SpatialStatsCalculatorTab } from '../components/spatial-analysis/SpatialStatsCalculatorTab';
 
 // ═══════════════════════════════════════════════════════════════
 // 主页面组件
@@ -21,6 +22,7 @@ const TABS = [
   { key: 'zone', label: '分区特征', icon: MapPin },
   { key: 'anomaly', label: '异常检测', icon: Zap },
   { key: 'moran', label: "Moran's I", icon: Globe },
+  { key: 'calculator', label: '空间统计', icon: Calculator },
 ] as const;
 
 export function SpatialAnalysis() {
@@ -52,11 +54,11 @@ export function SpatialAnalysis() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-gw-text">空间分析</h2>
-            <p className="text-xs text-gw-muted">空间自相关 / 分区特征 / 异常检测 / Moran's I</p>
+            <p className="text-xs text-gw-muted">空间自相关 / 分区特征 / 异常检测 / Moran's I / 空间统计</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gw-muted">v4.9.0 | 4 Tab | Moran's I</span>
+          <span className="text-xs text-gw-muted">v5.0.0 | 5 Tab | Moran's I</span>
           <button
             onClick={() => setExportOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded text-[11px] bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/25 transition-colors"
@@ -88,6 +90,7 @@ export function SpatialAnalysis() {
       {activeTab === 'zone' && <ZoneAnalysisTab />}
       {activeTab === 'anomaly' && <AnomalyTab />}
       {activeTab === 'moran' && <MoranITab />}
+      {activeTab === 'calculator' && <SpatialStatsCalculatorTab />}
 
       {/* 报告导出对话框 */}
       {exportOpen && (
