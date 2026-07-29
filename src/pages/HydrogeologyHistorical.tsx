@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {
   Droplets, Mountain, Layers, Waves, HardHat, Zap, BookOpen,
-  Search,  Database,
+  Search,  Database, Calculator,
 } from 'lucide-react';
 import {
   historicalSprings, springStatsByRegion,
@@ -26,8 +26,9 @@ import { VirtualizedTable } from '../components/VirtualizedTable';
 import { usePageCommons } from '../hooks/usePageCommons'
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
 import { CrossLinkPanel } from '../components/CrossLink';
+import { HistoricalParamCalculatorTab } from '../components/hydrogeology-historical/HistoricalParamCalculatorTab';
 // 注册报告生成器
-type TabKey = 'springs' | 'aquifer' | 'runoff' | 'basin' | 'engineering' | 'geophysics' | 'stratigraphy';
+type TabKey = 'springs' | 'aquifer' | 'runoff' | 'basin' | 'engineering' | 'geophysics' | 'stratigraphy' | 'calculator';
 const TABS: { key: TabKey; label: string; icon; count?: number }[] = [
   { key: 'springs', label: '泉水数据库', icon: Droplets, count: historicalSprings.length },
   { key: 'aquifer', label: '含水层参数', icon: Layers },
@@ -36,6 +37,7 @@ const TABS: { key: TabKey; label: string; icon; count?: number }[] = [
   { key: 'engineering', label: '工程地质', icon: HardHat },
   { key: 'geophysics', label: '物探参数', icon: Zap },
   { key: 'stratigraphy', label: '地层柱状', icon: BookOpen },
+  { key: 'calculator', label: '参数推算', icon: Calculator },
 ];
 const REGION_COLORS: Record<string, string> = {
   '邯邢': '#ef4444', '石家庄': '#f59e0b', '唐山': '#3b82f6',
@@ -677,6 +679,8 @@ export function HydrogeologyHistorical() {
           </TechCard>
         </div>
       )}
+
+      {activeTab === 'calculator' && <HistoricalParamCalculatorTab />}
 
       <ExportProgressDialog
         open={exportOpen}
