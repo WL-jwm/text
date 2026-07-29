@@ -1,11 +1,11 @@
 /**
- * B-32 地下水管理决策支持器 Tab
+ * B-32 地下水管理决策支持器 Tab (优化版)
  *
  * 5大面板：
  *  1. 水资源配置优化 — 多水源多用户线性规划分配
  *  2. 压采方案评估 — 分阶段压采+替代水源+经济成本
  *  3. 生态水位保障 — 阈值+保障措施+达标率
- *  4. 风险预警决策 — 三级预警+响应措施矩阵
+ *  4. 风险预警决策 — 四级预警+响应措施矩阵
  *  5. 综合决策评价 — 多目标加权+方案排序
  */
 import React, { useState, useMemo } from 'react';
@@ -13,8 +13,11 @@ import {
   BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Line, ComposedChart,
 } from 'recharts';
-import { ClipboardList, BookOpen, AlertTriangle, Activity, Layers } from 'lucide-react';
-import { TechCard, StatCard, DataSourceNote } from '../UI';
+import {
+  ClipboardList, BookOpen, AlertTriangle, Activity, Layers,
+  Droplets, TrendingDown, Shield, Award, ArrowRight,
+} from 'lucide-react';
+import { TechCard, DataSourceNote } from '../UI';
 import { LazyChartCard } from '../LazyChartCard';
 import { FilterableTechTable } from '../FilterableTechTable';
 import {
@@ -31,21 +34,82 @@ const WARNING_COLORS: Record<string, string> = {
   '蓝色': '#3b82f6', '黄色': '#f59e0b', '橙色': '#f97316', '红色': '#ef4444',
 };
 
-const USER_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+const SOURCE_COLORS = ['#06b6d4', '#0ea5e9', '#6366f1', '#14b8a6', '#f43f5e'];
 
 function romanLevel(n: number): string { return 'Ⅰ'.repeat(n) + '类'; }
 
+/** 统一数字输入控件 */
+function InputCell({
+  label, value, onChange, unit, step,
+}: {
+  label: string; value: number; onChange: (v: number) => void; unit?: string; step?: number;
+}) {
+  return (
+    <div>
+      <label className="block text-[10px] text-gw-muted mb-0.5">{label}{unit ? ` (${unit})` : ''}</label>
+      <input
+        type="number" step={step ?? 1} value={value}
+        onChange={e => onChange(+e.target.value)}
+        className="w-full px-2.5 py-1.5 rounded-lg bg-gw-surface border border-gw-border/30 text-xs text-gw-text focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-colors"
+      />
+    </div>
+  );
+}
+
+/** 进度条组件 */
+function ProgressBar({ value, max, color }: { value: number; max: number; color: string }) {
+  const pct = Math.min(100, (value / max) * 100);
+  return (
+    <div className="h-1.5 rounded-full bg-gw-surface/60 overflow-hidden">
+      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: color }} />
+    </div>
+  );
+}
+
+/** 预警等级徽章 */
+function WarningBadge({ level }: { level: string }) {
+  const color = WARNING_COLORS[level] ?? '#64748b';
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold"
+      style={{ background: `${color}20`, color, border: `1px solid ${color}50` }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
+      {level}预警
+    </span>
+  );
+}
+
+/** 排名徽章 */
+function RankBadge({ rank }: { rank: number }) {
+  const colors = ['#f59e0b', '#94a3b8', '#b45309', '#64748b'];
+  const bg = rank <= 3 ? colors[rank - 1] : colors[3];
+  return (
+    <span
+      className="inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold text-white"
+      style={{ background: `${bg}` }}
+    >
+      {rank}
+    </span>
+  );
+}
+
+/** 满足率条件着色 */
+function satisfactionColor(rate: number): string {
+  if (rate >= 90) return '#10b981';
+  if (rate >= 70) return '#3b82f6';
+  if (rate >= 50) return '#f59e0b';
+  return '#ef4444';
+}
+
 export function DecisionSupportTab() {
-  // 水资源配置
   const [sources] = useState<WaterSource[]>(PRESET_SOURCES);
   const [users] = useState<WaterUser[]>(PRESET_USERS);
   const allocationResult = useMemo(() => calcWaterAllocation(sources, users), [sources, users]);
 
-  // 压采方案
   const [plans] = useState<ReductionPlan[]>(PRESET_REDUCTION_PLANS);
   const reductionResult = useMemo(() => calcReductionPlan(plans), [plans]);
 
-  // 生态水位
   const [ecoInput, setEcoInput] = useState<EcoLevelInput>({
     thresholdDepth: 20, currentDepth: 22, targetDepth: 18,
     monitoringWells: 50, compliantWells: 35,
@@ -54,7 +118,6 @@ export function DecisionSupportTab() {
   });
   const ecoResult = useMemo(() => calcEcoLevel(ecoInput), [ecoInput]);
 
-  // 风险预警
   const [warningInput, setWarningInput] = useState<WarningInput>({
     currentDepth: 28, yellowThreshold: 20, redThreshold: 25, emergencyThreshold: 30,
     monthlyChangeRate: 0.3, chloride: 180, chlorideRate: 5,
@@ -62,46 +125,31 @@ export function DecisionSupportTab() {
   });
   const warningResult = useMemo(() => calcWarningDecision(warningInput), [warningInput]);
 
-  // 综合决策
   const [options] = useState<DecisionOption[]>(PRESET_DECISION_OPTIONS);
   const decisionResult = useMemo(() => calcDecisionEvaluation(options), [options]);
 
-  // 水资源配置图数据
   const allocationBarData = useMemo(() => {
     return allocationResult.userSatisfaction.map(u => ({
-      name: u.user,
-      allocated: u.allocated,
-      demand: u.demand,
-      satisfaction: u.satisfaction,
+      name: u.user, allocated: u.allocated, demand: u.demand, satisfaction: u.satisfaction,
     }));
   }, [allocationResult]);
 
-  // 水源利用率图数据
   const sourceUtilData = useMemo(() => {
     return allocationResult.sourceRemainder.map(s => ({
-      name: s.source,
-      utilization: s.utilization,
-      remainder: s.remainder,
+      name: s.source, utilization: s.utilization, remainder: s.remainder,
     }));
   }, [allocationResult]);
 
-  // 压采趋势图数据
   const reductionTrendData = useMemo(() => {
-    const cumulative = plans[0]?.currentExtraction ?? 0;
+    const base = plans[0]?.currentExtraction ?? 0;
     const data: { phase: string; extraction: number; target: number; alternative: number }[] = [];
-    data.push({ phase: '基准', extraction: cumulative, target: cumulative, alternative: 0 });
+    data.push({ phase: '基准', extraction: base, target: base, alternative: 0 });
     for (const p of plans) {
-      data.push({
-        phase: p.phase,
-        extraction: p.currentExtraction,
-        target: p.targetExtraction,
-        alternative: p.alternativeSupply,
-      });
+      data.push({ phase: p.phase, extraction: p.currentExtraction, target: p.targetExtraction, alternative: p.alternativeSupply });
     }
     return data;
   }, [plans]);
 
-  // 决策雷达图数据
   const decisionRadarData = useMemo(() => {
     return decisionResult.rankedOptions.slice(0, 4).map(opt => ({
       option: opt.name.replace('方案[ABCD]:', '').replace('方案', '').trim().slice(0, 8),
@@ -115,20 +163,88 @@ export function DecisionSupportTab() {
 
   return (
     <div className="space-y-4">
-      {/* 概览 */}
+      {/* ═══ 概览面板 ═══ */}
       <TechCard title="地下水管理决策支持器" badge="B-32" icon={ClipboardList}>
-        <p className="text-[11px] text-gw-muted mb-3">集成水资源配置优化、压采方案评估、生态水位保障、风险预警决策和综合方案评价，为地下水管理提供量化决策支持。</p>
+        <p className="text-[11px] text-gw-muted mb-3">
+          集成水资源配置优化、压采方案评估、生态水位保障、风险预警决策和综合方案评价，为地下水管理提供量化决策支持。
+        </p>
         <div className="grid grid-cols-5 gap-2">
-          <StatCard title="配置满足率" value={`${allocationResult.overallSatisfaction}%`} accent={allocationResult.overallSatisfaction >= 80 ? 'green' : 'amber'} />
-          <StatCard title="压采总量" value={reductionResult.totalReduction} unit="万m³" accent="orange" subtitle={`压采率${reductionResult.totalReductionRate}%`} />
-          <StatCard title="生态保障" value={ecoResult.overallScore} unit="分" accent={ecoResult.overallScore >= 60 ? 'green' : 'red'} />
-          <StatCard title="预警等级" value={warningResult.overallWarning} accent={warningResult.overallWarning === '红色' || warningResult.overallWarning === '橙色' ? 'red' : 'amber'} />
-          <StatCard title="最优方案" value={decisionResult.bestOption.split(':')[0]} accent="blue" subtitle={`评分${decisionResult.rankedOptions[0]?.totalScore ?? 0}`} />
+          <div className="p-2.5 rounded-xl bg-blue-500/8 border border-blue-500/15">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Droplets className="w-3.5 h-3.5 text-blue-400" />
+              <span className="text-[10px] text-gw-muted">配置满足率</span>
+            </div>
+            <p className="text-lg font-bold text-blue-400">{allocationResult.overallSatisfaction}%</p>
+            <div className="mt-1.5"><ProgressBar value={allocationResult.overallSatisfaction} max={100} color={satisfactionColor(allocationResult.overallSatisfaction)} /></div>
+          </div>
+          <div className="p-2.5 rounded-xl bg-orange-500/8 border border-orange-500/15">
+            <div className="flex items-center gap-1.5 mb-1">
+              <TrendingDown className="w-3.5 h-3.5 text-orange-400" />
+              <span className="text-[10px] text-gw-muted">压采总量</span>
+            </div>
+            <p className="text-lg font-bold text-orange-400">{reductionResult.totalReduction}<span className="text-[10px] text-gw-muted ml-0.5">万m³</span></p>
+            <p className="text-[10px] text-gw-muted mt-0.5">压采率 {reductionResult.totalReductionRate}%</p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-green-500/8 border border-green-500/15">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Shield className="w-3.5 h-3.5 text-green-400" />
+              <span className="text-[10px] text-gw-muted">生态保障</span>
+            </div>
+            <p className="text-lg font-bold text-green-400">{ecoResult.overallScore}<span className="text-[10px] text-gw-muted ml-0.5">/100</span></p>
+            <div className="mt-1.5"><ProgressBar value={ecoResult.overallScore} max={100} color="#10b981" /></div>
+          </div>
+          <div className="p-2.5 rounded-xl border" style={{ background: `${WARNING_COLORS[warningResult.overallWarning]}10`, borderColor: `${WARNING_COLORS[warningResult.overallWarning]}30` }}>
+            <div className="flex items-center gap-1.5 mb-1">
+              <AlertTriangle className="w-3.5 h-3.5" style={{ color: WARNING_COLORS[warningResult.overallWarning] }} />
+              <span className="text-[10px] text-gw-muted">预警等级</span>
+            </div>
+            <p className="text-lg font-bold" style={{ color: WARNING_COLORS[warningResult.overallWarning] }}>{warningResult.overallWarning}</p>
+            <p className="text-[10px] text-gw-muted mt-0.5">{warningResult.warningSignal.slice(0, 12)}…</p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-purple-500/8 border border-purple-500/15">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Award className="w-3.5 h-3.5 text-purple-400" />
+              <span className="text-[10px] text-gw-muted">最优方案</span>
+            </div>
+            <p className="text-sm font-bold text-purple-400 truncate">{decisionResult.bestOption.split(':')[0]}</p>
+            <p className="text-[10px] text-gw-muted mt-0.5">评分 {decisionResult.rankedOptions[0]?.totalScore ?? 0}</p>
+          </div>
         </div>
       </TechCard>
 
       {/* ═══ Panel 1: 水资源配置优化 ═══ */}
       <TechCard title="水资源配置优化" badge="配置" icon={Layers} className="border-blue-500/15">
+        {/* 水源→用户 流向概览 */}
+        <div className="mb-3 p-3 rounded-xl bg-gw-surface/30 border border-gw-border/20">
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
+            <div>
+              <p className="text-[10px] font-semibold text-gw-muted mb-1.5">水源 (供{allocationResult.totalAllocated}/{allocationResult.totalDemand}万m³)</p>
+              <div className="space-y-1">
+                {allocationResult.sourceRemainder.map((s, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-[10px] text-gw-text w-16 truncate">{s.source}</span>
+                    <div className="flex-1"><ProgressBar value={s.utilization} max={100} color={SOURCE_COLORS[i % SOURCE_COLORS.length]} /></div>
+                    <span className="text-[10px] text-gw-muted w-10 text-right">{s.utilization}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-gw-muted/50" />
+            <div>
+              <p className="text-[10px] font-semibold text-gw-muted mb-1.5">用户 (满足率{allocationResult.overallSatisfaction}%)</p>
+              <div className="space-y-1">
+                {allocationResult.userSatisfaction.map((u, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-[10px] text-gw-text w-16 truncate">{u.user}</span>
+                    <div className="flex-1"><ProgressBar value={u.satisfaction} max={100} color={satisfactionColor(u.satisfaction)} /></div>
+                    <span className="text-[10px] font-mono w-10 text-right" style={{ color: satisfactionColor(u.satisfaction) }}>{u.satisfaction}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
             <p className="text-[11px] font-semibold text-gw-text mb-1">水源列表</p>
@@ -147,8 +263,8 @@ export function DecisionSupportTab() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <LazyChartCard title="用户供水满足率" height={260}>
-            <ResponsiveContainer width="100%" height={260}>
+          <LazyChartCard title="用户供水满足率" height={240}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={allocationBarData} margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                 <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 10 }} angle={-15} textAnchor="end" height={50} />
@@ -160,15 +276,15 @@ export function DecisionSupportTab() {
             </ResponsiveContainer>
           </LazyChartCard>
 
-          <LazyChartCard title="水源利用率" height={260}>
-            <ResponsiveContainer width="100%" height={260}>
+          <LazyChartCard title="水源利用率" height={240}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={sourceUtilData} margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                 <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 10 }} angle={-15} textAnchor="end" height={50} />
                 <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} unit="%" />
                 <Tooltip {...TOOLTIP_STYLE} />
                 <Bar dataKey="utilization" name="利用率" radius={[4, 4, 0, 0]}>
-                  {sourceUtilData.map((_, i) => <Cell key={i} fill={USER_COLORS[i % USER_COLORS.length]} />)}
+                  {sourceUtilData.map((_, i) => <Cell key={i} fill={SOURCE_COLORS[i % SOURCE_COLORS.length]} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -185,7 +301,10 @@ export function DecisionSupportTab() {
         {allocationResult.notes.length > 0 && (
           <div className="mt-2 space-y-1">
             {allocationResult.notes.map((n, i) => (
-              <p key={i} className="text-[10px] text-amber-400">⚠ {n}</p>
+              <div key={i} className="flex items-start gap-1.5 p-1.5 rounded-lg bg-amber-500/8 border border-amber-500/12">
+                <AlertTriangle className="w-3 h-3 text-amber-400 flex-shrink-0 mt-0.5" />
+                <p className="text-[10px] text-amber-400">{n}</p>
+              </div>
             ))}
           </div>
         )}
@@ -193,8 +312,8 @@ export function DecisionSupportTab() {
 
       {/* ═══ Panel 2: 压采方案评估 ═══ */}
       <TechCard title="压采方案评估" badge="压采" icon={Activity} className="border-orange-500/15">
-        <LazyChartCard title="分阶段压采趋势" height={260}>
-          <ResponsiveContainer width="100%" height={260}>
+        <LazyChartCard title="分阶段压采趋势" height={240}>
+          <ResponsiveContainer width="100%" height={240}>
             <ComposedChart data={reductionTrendData} margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
               <XAxis dataKey="phase" tick={{ fill: '#94a3b8', fontSize: 11 }} />
@@ -208,10 +327,24 @@ export function DecisionSupportTab() {
         </LazyChartCard>
 
         <div className="grid grid-cols-4 gap-2 mt-3">
-          <StatCard title="总压采量" value={reductionResult.totalReduction} unit="万m³/yr" accent="orange" />
-          <StatCard title="压采率" value={`${reductionResult.totalReductionRate}%`} accent="red" />
-          <StatCard title="总替代成本" value={reductionResult.totalAlternativeCost} unit="万元" accent="amber" />
-          <StatCard title="综合评分" value={reductionResult.overallScore} unit="/100" accent={reductionResult.overallScore >= 70 ? 'green' : 'amber'} />
+          <div className="p-2.5 rounded-xl bg-orange-500/8 border border-orange-500/15">
+            <p className="text-[10px] text-gw-muted mb-0.5">总压采量</p>
+            <p className="text-base font-bold text-orange-400">{reductionResult.totalReduction}<span className="text-[10px] text-gw-muted ml-0.5">万m³/yr</span></p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-red-500/8 border border-red-500/15">
+            <p className="text-[10px] text-gw-muted mb-0.5">压采率</p>
+            <p className="text-base font-bold text-red-400">{reductionResult.totalReductionRate}%</p>
+            <div className="mt-1"><ProgressBar value={reductionResult.totalReductionRate} max={100} color="#ef4444" /></div>
+          </div>
+          <div className="p-2.5 rounded-xl bg-amber-500/8 border border-amber-500/15">
+            <p className="text-[10px] text-gw-muted mb-0.5">总替代成本</p>
+            <p className="text-base font-bold text-amber-400">{reductionResult.totalAlternativeCost}<span className="text-[10px] text-gw-muted ml-0.5">万元</span></p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-green-500/8 border border-green-500/15">
+            <p className="text-[10px] text-gw-muted mb-0.5">综合评分</p>
+            <p className="text-base font-bold text-green-400">{reductionResult.overallScore}<span className="text-[10px] text-gw-muted ml-0.5">/100</span></p>
+            <div className="mt-1"><ProgressBar value={reductionResult.overallScore} max={100} color="#10b981" /></div>
+          </div>
         </div>
 
         <div className="mt-3">
@@ -223,63 +356,82 @@ export function DecisionSupportTab() {
 
         <div className="mt-2 space-y-1">
           {reductionResult.recommendations.map((r, i) => (
-            <p key={i} className="text-[10px] text-gw-muted">• {r}</p>
+            <div key={i} className="flex items-start gap-1.5">
+              <span className="text-[10px] text-orange-400 mt-0.5">▸</span>
+              <p className="text-[10px] text-gw-muted">{r}</p>
+            </div>
           ))}
         </div>
       </TechCard>
 
       {/* ═══ Panel 3: 生态水位保障 ═══ */}
-      <TechCard title="生态水位保障" badge="生态" icon={Layers} className="border-green-500/15">
-        <div className="grid grid-cols-2 gap-3">
+      <TechCard title="生态水位保障" badge="生态" icon={Shield} className="border-green-500/15">
+        <div className="grid grid-cols-2 gap-4">
+          {/* 左侧输入 */}
           <div className="space-y-2">
-            <label className="block text-[11px] text-gw-muted">生态水位埋深阈值 (m)</label>
-            <input type="number" value={ecoInput.thresholdDepth} onChange={e => setEcoInput({ ...ecoInput, thresholdDepth: +e.target.value })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-            <label className="block text-[11px] text-gw-muted">当前水位埋深 (m)</label>
-            <input type="number" value={ecoInput.currentDepth} onChange={e => setEcoInput({ ...ecoInput, currentDepth: +e.target.value })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-            <label className="block text-[11px] text-gw-muted">目标水位埋深 (m)</label>
-            <input type="number" value={ecoInput.targetDepth} onChange={e => setEcoInput({ ...ecoInput, targetDepth: +e.target.value })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-            <label className="block text-[11px] text-gw-muted">监测井数 / 达标井数</label>
-            <div className="flex gap-2">
-              <input type="number" value={ecoInput.monitoringWells} onChange={e => setEcoInput({ ...ecoInput, monitoringWells: +e.target.value })}
-                className="w-1/2 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-              <input type="number" value={ecoInput.compliantWells} onChange={e => setEcoInput({ ...ecoInput, compliantWells: +e.target.value })}
-                className="w-1/2 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
+            <p className="text-[11px] font-semibold text-gw-text mb-1 flex items-center gap-1">
+              <Droplets className="w-3.5 h-3.5 text-green-400" /> 水位参数
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <InputCell label="阈值埋深" value={ecoInput.thresholdDepth} onChange={v => setEcoInput({ ...ecoInput, thresholdDepth: v })} unit="m" />
+              <InputCell label="当前埋深" value={ecoInput.currentDepth} onChange={v => setEcoInput({ ...ecoInput, currentDepth: v })} unit="m" />
+              <InputCell label="目标埋深" value={ecoInput.targetDepth} onChange={v => setEcoInput({ ...ecoInput, targetDepth: v })} unit="m" />
             </div>
-            <label className="block text-[11px] text-gw-muted">年回补量 / 年开采量 (万m³)</label>
-            <div className="flex gap-2">
-              <input type="number" value={ecoInput.annualRecharge} onChange={e => setEcoInput({ ...ecoInput, annualRecharge: +e.target.value })}
-                className="w-1/2 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-              <input type="number" value={ecoInput.annualExtraction} onChange={e => setEcoInput({ ...ecoInput, annualExtraction: +e.target.value })}
-                className="w-1/2 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
+            <p className="text-[11px] font-semibold text-gw-text mt-2 mb-1 flex items-center gap-1">
+              <Activity className="w-3.5 h-3.5 text-green-400" /> 监测与补给
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <InputCell label="监测井数" value={ecoInput.monitoringWells} onChange={v => setEcoInput({ ...ecoInput, monitoringWells: v })} unit="口" />
+              <InputCell label="达标井数" value={ecoInput.compliantWells} onChange={v => setEcoInput({ ...ecoInput, compliantWells: v })} unit="口" />
+              <InputCell label="年回补量" value={ecoInput.annualRecharge} onChange={v => setEcoInput({ ...ecoInput, annualRecharge: v })} unit="万m³" />
+              <InputCell label="年开采量" value={ecoInput.annualExtraction} onChange={v => setEcoInput({ ...ecoInput, annualExtraction: v })} unit="万m³" />
             </div>
-            <label className="block text-[11px] text-gw-muted">含水层类型</label>
-            <select value={ecoInput.aquiferType} onChange={e => setEcoInput({ ...ecoInput, aquiferType: e.target.value as '浅层' | '深层' })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text">
-              <option value="浅层">浅层</option>
-              <option value="深层">深层</option>
-            </select>
+            <div>
+              <label className="block text-[10px] text-gw-muted mb-0.5">含水层类型</label>
+              <select value={ecoInput.aquiferType} onChange={e => setEcoInput({ ...ecoInput, aquiferType: e.target.value as '浅层' | '深层' })}
+                className="w-full px-2.5 py-1.5 rounded-lg bg-gw-surface border border-gw-border/30 text-xs text-gw-text focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 transition-colors">
+                <option value="浅层">浅层</option>
+                <option value="深层">深层</option>
+              </select>
+            </div>
           </div>
 
+          {/* 右侧结果 */}
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <StatCard title="达标率" value={`${ecoResult.complianceRate}%`} accent={ecoResult.complianceRate >= 80 ? 'green' : 'amber'} />
-              <StatCard title="水位差距" value={ecoResult.depthGap} unit="m" accent={ecoResult.depthGap <= 0 ? 'green' : 'red'} />
-              <StatCard title="补采比" value={ecoResult.rechargeExtractionRatio} accent={ecoResult.rechargeExtractionRatio >= 1 ? 'green' : 'red'} />
-              <StatCard title="预测达标" value={ecoResult.estimatedYears > 0 ? `${ecoResult.estimatedYears}年` : '已达标'} accent="blue" />
+              <div className="p-2.5 rounded-xl bg-gw-surface/40 border border-gw-border/20">
+                <p className="text-[10px] text-gw-muted">达标率</p>
+                <p className="text-base font-bold" style={{ color: satisfactionColor(ecoResult.complianceRate) }}>{ecoResult.complianceRate}%</p>
+                <div className="mt-1"><ProgressBar value={ecoResult.complianceRate} max={100} color={satisfactionColor(ecoResult.complianceRate)} /></div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-gw-surface/40 border border-gw-border/20">
+                <p className="text-[10px] text-gw-muted">水位差距</p>
+                <p className="text-base font-bold" style={{ color: ecoResult.depthGap <= 0 ? '#10b981' : '#ef4444' }}>{ecoResult.depthGap > 0 ? '+' : ''}{ecoResult.depthGap}m</p>
+                <p className="text-[9px] text-gw-muted">当前 → 目标</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-gw-surface/40 border border-gw-border/20">
+                <p className="text-[10px] text-gw-muted">补采比</p>
+                <p className="text-base font-bold" style={{ color: ecoResult.rechargeExtractionRatio >= 1 ? '#10b981' : '#ef4444' }}>{ecoResult.rechargeExtractionRatio}</p>
+                <p className="text-[9px] text-gw-muted">{ecoResult.rechargeExtractionRatio >= 1 ? '正平衡' : '负平衡'}</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-gw-surface/40 border border-gw-border/20">
+                <p className="text-[10px] text-gw-muted">预测达标</p>
+                <p className="text-base font-bold text-blue-400">{ecoResult.estimatedYears > 0 ? `${ecoResult.estimatedYears}年` : '已达标'}</p>
+              </div>
             </div>
-            <div className="p-2 rounded-lg bg-green-500/8 border border-green-500/15">
+
+            <div className="p-2.5 rounded-xl bg-green-500/8 border border-green-500/15">
               <p className="text-[11px] font-semibold text-green-400">{ecoResult.level}</p>
-              <p className="text-[10px] text-gw-muted">综合保障评分: {ecoResult.overallScore}/100</p>
+              <p className="text-[10px] text-gw-muted mt-0.5">综合保障评分: {ecoResult.overallScore}/100</p>
             </div>
+
             <FilterableTechTable
               headers={['指标', '值', '评分', '判定']}
               rows={ecoResult.details.map(d => [d.indicator, d.value, d.score, d.assessment])}
             />
-            <div className="space-y-1">
-              <p className="text-[11px] font-semibold text-gw-text">保障措施</p>
+
+            <div>
+              <p className="text-[11px] font-semibold text-gw-text mb-1">保障措施</p>
               <FilterableTechTable
                 headers={['措施', '优先级', '效果', '时间线']}
                 rows={ecoResult.measures.map(m => [m.measure, m.priority, m.effect, m.timeline])}
@@ -291,45 +443,65 @@ export function DecisionSupportTab() {
 
       {/* ═══ Panel 4: 风险预警决策 ═══ */}
       <TechCard title="风险预警决策" badge="预警" icon={AlertTriangle} className="border-red-500/15">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
+          {/* 左侧输入 */}
           <div className="space-y-2">
-            <label className="block text-[11px] text-gw-muted">当前水位埋深 (m)</label>
-            <input type="number" step="0.1" value={warningInput.currentDepth} onChange={e => setWarningInput({ ...warningInput, currentDepth: +e.target.value })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-            <label className="block text-[11px] text-gw-muted">黄色警戒 / 红色预警 / 极限水位 (m)</label>
-            <div className="flex gap-2">
-              <input type="number" value={warningInput.yellowThreshold} onChange={e => setWarningInput({ ...warningInput, yellowThreshold: +e.target.value })}
-                className="w-1/3 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-              <input type="number" value={warningInput.redThreshold} onChange={e => setWarningInput({ ...warningInput, redThreshold: +e.target.value })}
-                className="w-1/3 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-              <input type="number" value={warningInput.emergencyThreshold} onChange={e => setWarningInput({ ...warningInput, emergencyThreshold: +e.target.value })}
-                className="w-1/3 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
+            <p className="text-[11px] font-semibold text-gw-text mb-1 flex items-center gap-1">
+              <TrendingDown className="w-3.5 h-3.5 text-red-400" /> 水位预警参数
+            </p>
+            <InputCell label="当前水位埋深" value={warningInput.currentDepth} onChange={v => setWarningInput({ ...warningInput, currentDepth: v })} unit="m" step={0.1} />
+            <div className="grid grid-cols-3 gap-2">
+              <InputCell label="黄色警戒" value={warningInput.yellowThreshold} onChange={v => setWarningInput({ ...warningInput, yellowThreshold: v })} unit="m" />
+              <InputCell label="红色预警" value={warningInput.redThreshold} onChange={v => setWarningInput({ ...warningInput, redThreshold: v })} unit="m" />
+              <InputCell label="极限水位" value={warningInput.emergencyThreshold} onChange={v => setWarningInput({ ...warningInput, emergencyThreshold: v })} unit="m" />
             </div>
-            <label className="block text-[11px] text-gw-muted">水位月变化率 (m/月)</label>
-            <input type="number" step="0.1" value={warningInput.monthlyChangeRate} onChange={e => setWarningInput({ ...warningInput, monthlyChangeRate: +e.target.value })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-            <label className="block text-[11px] text-gw-muted">Cl⁻浓度 (mg/L) / 月变化率 (mg/L/月)</label>
-            <div className="flex gap-2">
-              <input type="number" value={warningInput.chloride} onChange={e => setWarningInput({ ...warningInput, chloride: +e.target.value })}
-                className="w-1/2 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
-              <input type="number" step="0.1" value={warningInput.chlorideRate} onChange={e => setWarningInput({ ...warningInput, chlorideRate: +e.target.value })}
-                className="w-1/2 px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text" />
+            <InputCell label="水位月变化率" value={warningInput.monthlyChangeRate} onChange={v => setWarningInput({ ...warningInput, monthlyChangeRate: v })} unit="m/月" step={0.1} />
+
+            <p className="text-[11px] font-semibold text-gw-text mt-2 mb-1 flex items-center gap-1">
+              <Droplets className="w-3.5 h-3.5 text-red-400" /> 水质与开采
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <InputCell label="Cl⁻浓度" value={warningInput.chloride} onChange={v => setWarningInput({ ...warningInput, chloride: v })} unit="mg/L" />
+              <InputCell label="Cl⁻月变化率" value={warningInput.chlorideRate} onChange={v => setWarningInput({ ...warningInput, chlorideRate: v })} unit="mg/L/月" step={0.1} />
             </div>
-            <label className="block text-[11px] text-gw-muted">区域开采状态</label>
-            <select value={warningInput.extractionStatus} onChange={e => setWarningInput({ ...warningInput, extractionStatus: e.target.value as WarningInput['extractionStatus'] })}
-              className="w-full px-2 py-1.5 rounded bg-gw-surface border border-gw-border/30 text-xs text-gw-text">
-              <option value="正常">正常</option>
-              <option value="超采">超采</option>
-              <option value="严重超采">严重超采</option>
-            </select>
+            <div>
+              <label className="block text-[10px] text-gw-muted mb-0.5">区域开采状态</label>
+              <select value={warningInput.extractionStatus} onChange={e => setWarningInput({ ...warningInput, extractionStatus: e.target.value as WarningInput['extractionStatus'] })}
+                className="w-full px-2.5 py-1.5 rounded-lg bg-gw-surface border border-gw-border/30 text-xs text-gw-text focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-colors">
+                <option value="正常">正常</option>
+                <option value="超采">超采</option>
+                <option value="严重超采">严重超采</option>
+              </select>
+            </div>
           </div>
 
+          {/* 右侧结果 */}
           <div className="space-y-3">
-            <div className="p-3 rounded-lg border" style={{ background: `${WARNING_COLORS[warningResult.overallWarning]}15`, borderColor: `${WARNING_COLORS[warningResult.overallWarning]}40` }}>
-              <p className="text-sm font-bold" style={{ color: WARNING_COLORS[warningResult.overallWarning] }}>
-                {warningResult.overallWarning}预警
-              </p>
-              <p className="text-[11px] text-gw-muted mt-0.5">{warningResult.warningSignal}</p>
+            {/* 预警信号大色块 */}
+            <div
+              className="p-4 rounded-xl border-2 text-center"
+              style={{
+                background: `${WARNING_COLORS[warningResult.overallWarning]}12`,
+                borderColor: `${WARNING_COLORS[warningResult.overallWarning]}50`,
+              }}
+            >
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <AlertTriangle className="w-5 h-5" style={{ color: WARNING_COLORS[warningResult.overallWarning] }} />
+                <WarningBadge level={warningResult.overallWarning} />
+              </div>
+              <p className="text-[11px] text-gw-muted">{warningResult.warningSignal}</p>
+            </div>
+
+            {/* 子预警指标卡片 */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="p-2 rounded-lg border" style={{ background: `${WARNING_COLORS[warningResult.waterLevelWarning]}10`, borderColor: `${WARNING_COLORS[warningResult.waterLevelWarning]}30` }}>
+                <p className="text-[10px] text-gw-muted">水位预警</p>
+                <p className="text-sm font-bold" style={{ color: WARNING_COLORS[warningResult.waterLevelWarning] }}>{warningResult.waterLevelWarning}</p>
+              </div>
+              <div className="p-2 rounded-lg border" style={{ background: `${WARNING_COLORS[warningResult.waterQualityWarning]}10`, borderColor: `${WARNING_COLORS[warningResult.waterQualityWarning]}30` }}>
+                <p className="text-[10px] text-gw-muted">水质预警</p>
+                <p className="text-sm font-bold" style={{ color: WARNING_COLORS[warningResult.waterQualityWarning] }}>{warningResult.waterQualityWarning}</p>
+              </div>
             </div>
 
             <FilterableTechTable
@@ -337,8 +509,8 @@ export function DecisionSupportTab() {
               rows={warningResult.details.map(d => [d.indicator, d.value, d.warning, d.assessment])}
             />
 
-            <div className="space-y-1">
-              <p className="text-[11px] font-semibold text-gw-text">响应措施矩阵</p>
+            <div>
+              <p className="text-[11px] font-semibold text-gw-text mb-1">响应措施矩阵</p>
               <FilterableTechTable
                 headers={['等级', '措施', '责任单位', '时限']}
                 rows={warningResult.responseMeasures.map(m => [m.level, m.measure, m.responsible, m.timeline])}
@@ -349,28 +521,60 @@ export function DecisionSupportTab() {
       </TechCard>
 
       {/* ═══ Panel 5: 综合决策评价 ═══ */}
-      <TechCard title="综合决策评价（多目标加权）" badge="综合" icon={ClipboardList} className="border-purple-500/15">
-        <LazyChartCard title="方案对比雷达图" height={320}>
-          <ResponsiveContainer width="100%" height={320}>
-            <RadarChart data={[
-              { criterion: '水资源保障', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.水资源保障])) },
-              { criterion: '生态效益', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.生态效益])) },
-              { criterion: '经济可行性', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.经济可行性])) },
-              { criterion: '技术可行性', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.技术可行性])) },
-              { criterion: '社会接受度', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.社会接受度])) },
-            ]} margin={{ top: 10, right: 40, bottom: 10, left: 40 }}>
-              <PolarGrid stroke="rgba(255,255,255,0.1)" />
-              <PolarAngleAxis dataKey="criterion" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-              <PolarRadiusAxis domain={[0, 100]} tick={{ fill: '#64748b', fontSize: 10 }} />
-              {decisionRadarData.map((d, i) => {
-                const key = d.option;
-                const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
-                return <Radar key={key} name={key} dataKey={key} stroke={colors[i % 4]} fill={colors[i % 4]} fillOpacity={0.15} />;
-              })}
-              <Tooltip {...TOOLTIP_STYLE} />
-            </RadarChart>
-          </ResponsiveContainer>
-        </LazyChartCard>
+      <TechCard title="综合决策评价（多目标加权）" badge="综合" icon={Award} className="border-purple-500/15">
+        <div className="grid grid-cols-[1fr_1fr] gap-3">
+          <LazyChartCard title="方案对比雷达图" height={300}>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={[
+                { criterion: '水资源保障', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.水资源保障])) },
+                { criterion: '生态效益', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.生态效益])) },
+                { criterion: '经济可行性', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.经济可行性])) },
+                { criterion: '技术可行性', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.技术可行性])) },
+                { criterion: '社会接受度', ...Object.fromEntries(decisionRadarData.map(d => [d.option, d.社会接受度])) },
+              ]} margin={{ top: 10, right: 40, bottom: 10, left: 40 }}>
+                <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                <PolarAngleAxis dataKey="criterion" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <PolarRadiusAxis domain={[0, 100]} tick={{ fill: '#64748b', fontSize: 10 }} />
+                {decisionRadarData.map((d, i) => {
+                  const key = d.option;
+                  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+                  return <Radar key={key} name={key} dataKey={key} stroke={colors[i % 4]} fill={colors[i % 4]} fillOpacity={0.15} />;
+                })}
+                <Tooltip {...TOOLTIP_STYLE} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </LazyChartCard>
+
+          {/* 方案排名卡片 */}
+          <div className="space-y-2">
+            {decisionResult.rankedOptions.map((opt) => {
+              const colors = ['#f59e0b', '#94a3b8', '#b45309', '#64748b'];
+              const accent = opt.rank <= 3 ? colors[opt.rank - 1] : colors[3];
+              return (
+                <div
+                  key={opt.name}
+                  className="p-2.5 rounded-xl border transition-all"
+                  style={{
+                    background: opt.rank === 1 ? `${accent}10` : 'rgba(255,255,255,0.02)',
+                    borderColor: opt.rank === 1 ? `${accent}40` : 'rgba(255,255,255,0.08)',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <RankBadge rank={opt.rank} />
+                    <span className="text-xs font-semibold text-gw-text flex-1">{opt.name}</span>
+                    <span className="text-sm font-bold" style={{ color: accent }}>{opt.totalScore}</span>
+                  </div>
+                  <div className="mb-1"><ProgressBar value={opt.totalScore} max={100} color={accent} /></div>
+                  <div className="flex items-center gap-3 text-[10px] text-gw-muted">
+                    <span>投资 {opt.investment}万</span>
+                    <span>周期 {opt.period}年</span>
+                  </div>
+                  <p className="text-[10px] text-gw-muted mt-1">{opt.recommendation}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="mt-3">
           <FilterableTechTable
@@ -390,7 +594,8 @@ export function DecisionSupportTab() {
           <div className="space-y-2">
             <p className="text-[11px] font-semibold text-gw-text">综合建议</p>
             {decisionResult.recommendations.map((r, i) => (
-              <div key={i} className="p-2 rounded-lg bg-purple-500/8 border border-purple-500/12">
+              <div key={i} className="flex items-start gap-1.5 p-2 rounded-lg bg-purple-500/8 border border-purple-500/12">
+                <span className="text-[10px] text-purple-400 font-bold mt-0.5">{i + 1}.</span>
                 <p className="text-[10px] text-gw-muted">{r}</p>
               </div>
             ))}
@@ -401,24 +606,24 @@ export function DecisionSupportTab() {
       {/* ═══ Panel 6: 方法参考 ═══ */}
       <TechCard title="方法参考" icon={BookOpen}>
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg bg-gw-surface/50 border border-gw-border/20">
-            <p className="text-xs font-semibold text-gw-text mb-1">水资源配置优化</p>
+          <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/12">
+            <p className="text-xs font-semibold text-blue-400 mb-1">水资源配置优化</p>
             <p className="text-[10px] text-gw-muted">多水源多用户线性规划分配，按用户优先级排序，每个用户内部按水源成本从低到高分配。保证最低供水保障量，水质等级需匹配用户要求。</p>
           </div>
-          <div className="p-3 rounded-lg bg-gw-surface/50 border border-gw-border/20">
-            <p className="text-xs font-semibold text-gw-text mb-1">压采方案评估</p>
+          <div className="p-3 rounded-xl bg-orange-500/5 border border-orange-500/12">
+            <p className="text-xs font-semibold text-orange-400 mb-1">压采方案评估</p>
             <p className="text-[10px] text-gw-muted">分阶段计算压采量、替代水量、经济成本和缺口。生态效益(60%权重) + 经济可行性(40%权重)综合评分。替代水成本越低，经济可行性越高。</p>
           </div>
-          <div className="p-3 rounded-lg bg-gw-surface/50 border border-gw-border/20">
-            <p className="text-xs font-semibold text-gw-text mb-1">生态水位保障</p>
+          <div className="p-3 rounded-xl bg-green-500/5 border border-green-500/12">
+            <p className="text-xs font-semibold text-green-400 mb-1">生态水位保障</p>
             <p className="text-[10px] text-gw-muted">三指标加权: 达标率(35%) + 水位差距(35%) + 补采比(30%)。深层含水层额外0.85倍折减。根据补采比估算水位恢复年限。</p>
           </div>
-          <div className="p-3 rounded-lg bg-gw-surface/50 border border-gw-border/20">
-            <p className="text-xs font-semibold text-gw-text mb-1">风险预警决策</p>
+          <div className="p-3 rounded-xl bg-red-500/5 border border-red-500/12">
+            <p className="text-xs font-semibold text-red-400 mb-1">风险预警决策</p>
             <p className="text-[10px] text-gw-muted">四级预警(蓝/黄/橙/红)，基于水位埋深、Cl⁻浓度、变化速率和开采状态综合判定。不同级别对应差异化的响应措施矩阵和责任分工。</p>
           </div>
         </div>
-        <DataSourceNote source="基于河北省地下水管理实践及南水北调受水区配置方案整理" version="B-32 v1.0" />
+        <DataSourceNote source="基于河北省地下水管理实践及南水北调受水区配置方案整理" version="B-32 v1.1" />
       </TechCard>
     </div>
   );
