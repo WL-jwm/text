@@ -31,10 +31,18 @@ const TOOLTIP_STYLE = {
 };
 
 const WARNING_COLORS: Record<string, string> = {
-  '蓝色': '#3b82f6', '黄色': '#f59e0b', '橙色': '#f97316', '红色': '#ef4444',
+  '蓝色': '#2563eb', '黄色': '#eab308', '橙色': '#ea580c', '红色': '#dc2626',
 };
 
 const SOURCE_COLORS = ['#06b6d4', '#0ea5e9', '#6366f1', '#14b8a6', '#f43f5e'];
+
+/** 预警级别渐变色 (from → to) */
+const WARNING_GRADIENTS: Record<string, [string, string]> = {
+  '蓝色': ['#1e3a5f', '#1a2f4a'],
+  '黄色': ['#422006', '#3a1d05'],
+  '橙色': ['#431407', '#3a1206'],
+  '红色': ['#450a0a', '#3c0808'],
+};
 
 function romanLevel(n: number): string { return 'Ⅰ'.repeat(n) + '类'; }
 
@@ -71,10 +79,10 @@ function WarningBadge({ level }: { level: string }) {
   const color = WARNING_COLORS[level] ?? '#64748b';
   return (
     <span
-      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold"
-      style={{ background: `${color}20`, color, border: `1px solid ${color}50` }}
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold"
+      style={{ background: `${color}25`, color, border: `1px solid ${color}60`, boxShadow: `0 0 12px ${color}30` }}
     >
-      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
+      <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
       {level}预警
     </span>
   );
@@ -193,7 +201,11 @@ export function DecisionSupportTab() {
             <p className="text-lg font-bold text-green-400">{ecoResult.overallScore}<span className="text-[10px] text-gw-muted ml-0.5">/100</span></p>
             <div className="mt-1.5"><ProgressBar value={ecoResult.overallScore} max={100} color="#10b981" /></div>
           </div>
-          <div className="p-2.5 rounded-xl border" style={{ background: `${WARNING_COLORS[warningResult.overallWarning]}10`, borderColor: `${WARNING_COLORS[warningResult.overallWarning]}30` }}>
+          <div className="p-2.5 rounded-xl border-2 relative overflow-hidden" style={{
+            background: `linear-gradient(135deg, ${WARNING_GRADIENTS[warningResult.overallWarning]?.[0] ?? '#1e293b'} 0%, ${WARNING_GRADIENTS[warningResult.overallWarning]?.[1] ?? '#0f172a'} 100%)`,
+            borderColor: `${WARNING_COLORS[warningResult.overallWarning]}40`,
+          }}>
+            <div className="absolute left-0 top-0 bottom-0 w-1" style={{ background: WARNING_COLORS[warningResult.overallWarning] }} />
             <div className="flex items-center gap-1.5 mb-1">
               <AlertTriangle className="w-3.5 h-3.5" style={{ color: WARNING_COLORS[warningResult.overallWarning] }} />
               <span className="text-[10px] text-gw-muted">预警等级</span>
@@ -442,12 +454,12 @@ export function DecisionSupportTab() {
       </TechCard>
 
       {/* ═══ Panel 4: 风险预警决策 ═══ */}
-      <TechCard title="风险预警决策" badge="预警" icon={AlertTriangle} className="border-red-500/15">
+      <TechCard title="风险预警决策" badge="预警" icon={AlertTriangle} className="border-amber-500/20">
         <div className="grid grid-cols-2 gap-4">
           {/* 左侧输入 */}
           <div className="space-y-2">
             <p className="text-[11px] font-semibold text-gw-text mb-1 flex items-center gap-1">
-              <TrendingDown className="w-3.5 h-3.5 text-red-400" /> 水位预警参数
+              <TrendingDown className="w-3.5 h-3.5 text-amber-400" /> 水位预警参数
             </p>
             <InputCell label="当前水位埋深" value={warningInput.currentDepth} onChange={v => setWarningInput({ ...warningInput, currentDepth: v })} unit="m" step={0.1} />
             <div className="grid grid-cols-3 gap-2">
@@ -458,7 +470,7 @@ export function DecisionSupportTab() {
             <InputCell label="水位月变化率" value={warningInput.monthlyChangeRate} onChange={v => setWarningInput({ ...warningInput, monthlyChangeRate: v })} unit="m/月" step={0.1} />
 
             <p className="text-[11px] font-semibold text-gw-text mt-2 mb-1 flex items-center gap-1">
-              <Droplets className="w-3.5 h-3.5 text-red-400" /> 水质与开采
+              <Droplets className="w-3.5 h-3.5 text-amber-400" /> 水质与开采
             </p>
             <div className="grid grid-cols-2 gap-2">
               <InputCell label="Cl⁻浓度" value={warningInput.chloride} onChange={v => setWarningInput({ ...warningInput, chloride: v })} unit="mg/L" />
@@ -467,7 +479,7 @@ export function DecisionSupportTab() {
             <div>
               <label className="block text-[10px] text-gw-muted mb-0.5">区域开采状态</label>
               <select value={warningInput.extractionStatus} onChange={e => setWarningInput({ ...warningInput, extractionStatus: e.target.value as WarningInput['extractionStatus'] })}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-gw-surface border border-gw-border/30 text-xs text-gw-text focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-colors">
+                className="w-full px-2.5 py-1.5 rounded-lg bg-gw-surface border border-gw-border/30 text-xs text-gw-text focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-colors">
                 <option value="正常">正常</option>
                 <option value="超采">超采</option>
                 <option value="严重超采">严重超采</option>
@@ -479,13 +491,15 @@ export function DecisionSupportTab() {
           <div className="space-y-3">
             {/* 预警信号大色块 */}
             <div
-              className="p-4 rounded-xl border-2 text-center"
+              className="p-4 rounded-xl border-2 text-center relative overflow-hidden"
               style={{
-                background: `${WARNING_COLORS[warningResult.overallWarning]}12`,
-                borderColor: `${WARNING_COLORS[warningResult.overallWarning]}50`,
+                background: `linear-gradient(135deg, ${WARNING_GRADIENTS[warningResult.overallWarning]?.[0] ?? '#1e293b'} 0%, ${WARNING_GRADIENTS[warningResult.overallWarning]?.[1] ?? '#0f172a'} 100%)`,
+                borderColor: `${WARNING_COLORS[warningResult.overallWarning]}60`,
+                boxShadow: `0 0 20px ${WARNING_COLORS[warningResult.overallWarning]}15, inset 0 1px 0 ${WARNING_COLORS[warningResult.overallWarning]}20`,
               }}
             >
-              <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="absolute left-0 top-0 bottom-0 w-1" style={{ background: WARNING_COLORS[warningResult.overallWarning] }} />
+              <div className="flex items-center justify-center gap-2 mb-1.5">
                 <AlertTriangle className="w-5 h-5" style={{ color: WARNING_COLORS[warningResult.overallWarning] }} />
                 <WarningBadge level={warningResult.overallWarning} />
               </div>
@@ -494,11 +508,11 @@ export function DecisionSupportTab() {
 
             {/* 子预警指标卡片 */}
             <div className="grid grid-cols-2 gap-2">
-              <div className="p-2 rounded-lg border" style={{ background: `${WARNING_COLORS[warningResult.waterLevelWarning]}10`, borderColor: `${WARNING_COLORS[warningResult.waterLevelWarning]}30` }}>
+              <div className="p-2 rounded-lg border-l-2 border-y border-r border-gw-border/20" style={{ borderLeftColor: WARNING_COLORS[warningResult.waterLevelWarning], background: `${WARNING_COLORS[warningResult.waterLevelWarning]}08` }}>
                 <p className="text-[10px] text-gw-muted">水位预警</p>
                 <p className="text-sm font-bold" style={{ color: WARNING_COLORS[warningResult.waterLevelWarning] }}>{warningResult.waterLevelWarning}</p>
               </div>
-              <div className="p-2 rounded-lg border" style={{ background: `${WARNING_COLORS[warningResult.waterQualityWarning]}10`, borderColor: `${WARNING_COLORS[warningResult.waterQualityWarning]}30` }}>
+              <div className="p-2 rounded-lg border-l-2 border-y border-r border-gw-border/20" style={{ borderLeftColor: WARNING_COLORS[warningResult.waterQualityWarning], background: `${WARNING_COLORS[warningResult.waterQualityWarning]}08` }}>
                 <p className="text-[10px] text-gw-muted">水质预警</p>
                 <p className="text-sm font-bold" style={{ color: WARNING_COLORS[warningResult.waterQualityWarning] }}>{warningResult.waterQualityWarning}</p>
               </div>
@@ -618,8 +632,8 @@ export function DecisionSupportTab() {
             <p className="text-xs font-semibold text-green-400 mb-1">生态水位保障</p>
             <p className="text-[10px] text-gw-muted">三指标加权: 达标率(35%) + 水位差距(35%) + 补采比(30%)。深层含水层额外0.85倍折减。根据补采比估算水位恢复年限。</p>
           </div>
-          <div className="p-3 rounded-xl bg-red-500/5 border border-red-500/12">
-            <p className="text-xs font-semibold text-red-400 mb-1">风险预警决策</p>
+          <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/12">
+            <p className="text-xs font-semibold text-amber-400 mb-1">风险预警决策</p>
             <p className="text-[10px] text-gw-muted">四级预警(蓝/黄/橙/红)，基于水位埋深、Cl⁻浓度、变化速率和开采状态综合判定。不同级别对应差异化的响应措施矩阵和责任分工。</p>
           </div>
         </div>
