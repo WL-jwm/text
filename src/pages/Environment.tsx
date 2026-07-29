@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useMemo, useCallback } from 'react';
-import { TrendingDown, AlertTriangle, ArrowDown, Shield, Activity, Droplets, CheckCircle2 } from 'lucide-react';
+import { TrendingDown, AlertTriangle, ArrowDown, Shield, Activity, Droplets, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { shallowCones2024, shallowTotal2024, deepCones2024, deepTotal2024, historicalCones, landSubsidence, landSubsidence2024, subsidenceRateTrend, envStatus2024, envProblems } from '../data/environment';
 import { StatCard, DataSourceNote } from '../components/UI';
 import { CrossLinkPanel } from '../components/CrossLink';
@@ -15,6 +15,7 @@ import { EnvironmentSubsidenceTab } from '../components/environment/EnvironmentS
 import { EnvironmentOverviewTab } from '../components/environment/EnvironmentOverviewTab';
 import { SubsidenceTab } from '../components/environment/SubsidenceTab';
 import { DrasticVulnerabilityTab } from '../components/environment/DrasticVulnerabilityTab';
+import { RiskAssessmentTab } from '../components/environment/RiskAssessmentTab';
 
 const TABS = [
   { key: 'shallow', label: '浅层漏斗', icon: TrendingDown },
@@ -23,6 +24,7 @@ const TABS = [
   { key: 'overview', label: '环境总览', icon: Shield },
   { key: 'subsidence_calc', label: '沉降分析', icon: ArrowDown },
   { key: 'drastic', label: '脆弱性评价', icon: Shield },
+  { key: 'risk', label: '风险评估', icon: ShieldAlert },
 ] as const;
 
 type TabKey = string;
@@ -136,6 +138,7 @@ export function Environment() {
       {activeTab === 'overview' && <EnvironmentOverviewTab />}
       {activeTab === 'subsidence_calc' && <SubsidenceTab />}
       {activeTab === 'drastic' && <DrasticVulnerabilityTab />}
+      {activeTab === 'risk' && <RiskAssessmentTab />}
 
       <DataSourceNote source="2024年12月浅层漏斗数据 + 1999基础文献" version="v3.1" />
       <CrossLinkPanel currentPath="/environment" />
