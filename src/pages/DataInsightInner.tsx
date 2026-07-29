@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { Suspense, useState } from 'react';
 import {
-  BarChart3, Droplets, MapPin, Layers, Users,
+  BarChart3, Droplets, MapPin, Layers, Users, Database,
 } from 'lucide-react';
 import { ChartExport } from '../components/ChartExport';
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
@@ -28,6 +28,7 @@ const SupplyStructureTab = React.lazy(() => import('../components/data-insight/S
 const CountyAnalysisTab = React.lazy(() => import('../components/data-insight/CountyAnalysisTab').then(m => ({ default: m.CountyAnalysisTab })));
 const RegionalCompareTab = React.lazy(() => import('../components/data-insight/RegionalCompareTab').then(m => ({ default: m.RegionalCompareTab })));
 const ResourceTab = React.lazy(() => import('../components/data-insight/ResourceTab').then(m => ({ default: m.ResourceTab })));
+const DataMiningTab = React.lazy(() => import('../components/data-insight/DataMiningTab').then(m => ({ default: m.DataMiningTab })));
 
 const TABS = [
   { key: 'overview', label: '资源-环境关联', icon: BarChart3 },
@@ -35,6 +36,7 @@ const TABS = [
   { key: 'county', label: '县级资源分析', icon: Users },
   { key: 'regional', label: '区域对比', icon: MapPin },
   { key: 'resource', label: '资源组合评估', icon: Layers },
+  { key: 'mining', label: '数据挖掘', icon: Database },
 ] as const;
 type TabKey = typeof TABS[number]['key'] | '';
 
@@ -162,6 +164,7 @@ export function DataInsightInner() {
           />
         </div>
       )}
+      {activeTab === 'mining' && <Suspense fallback={fallback}><DataMiningTab /></Suspense>}
     </div>
   );
 }
