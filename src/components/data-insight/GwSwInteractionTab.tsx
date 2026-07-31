@@ -12,7 +12,7 @@ import React, { useState, useMemo } from 'react';
 import {
   LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Cell, ReferenceLine, Legend, ComposedChart,
+  Cell, ReferenceLine, Legend, ComposedChart, Area,
 } from 'recharts';
 import {
   Waves, ArrowLeftRight, Thermometer, BookOpen,
