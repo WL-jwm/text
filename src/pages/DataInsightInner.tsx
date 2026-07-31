@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { Suspense, useState } from 'react';
 import {
-  BarChart3, Droplets, MapPin, Layers, Users, Database,
+  BarChart3, Droplets, MapPin, Layers, Users, Database, Waves,
 } from 'lucide-react';
 import { ChartExport } from '../components/ChartExport';
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
@@ -29,6 +29,7 @@ const CountyAnalysisTab = React.lazy(() => import('../components/data-insight/Co
 const RegionalCompareTab = React.lazy(() => import('../components/data-insight/RegionalCompareTab').then(m => ({ default: m.RegionalCompareTab })));
 const ResourceTab = React.lazy(() => import('../components/data-insight/ResourceTab').then(m => ({ default: m.ResourceTab })));
 const DataMiningTab = React.lazy(() => import('../components/data-insight/DataMiningTab').then(m => ({ default: m.DataMiningTab })));
+const GwSwInteractionTab = React.lazy(() => import('../components/data-insight/GwSwInteractionTab').then(m => ({ default: m.GwSwInteractionTab })));
 
 const TABS = [
   { key: 'overview', label: '资源-环境关联', icon: BarChart3 },
@@ -37,6 +38,7 @@ const TABS = [
   { key: 'regional', label: '区域对比', icon: MapPin },
   { key: 'resource', label: '资源组合评估', icon: Layers },
   { key: 'mining', label: '数据挖掘', icon: Database },
+  { key: 'interaction', label: 'GW-SW交互', icon: Waves },
 ] as const;
 type TabKey = typeof TABS[number]['key'] | '';
 
@@ -165,6 +167,7 @@ export function DataInsightInner() {
         </div>
       )}
       {activeTab === 'mining' && <Suspense fallback={fallback}><DataMiningTab /></Suspense>}
+      {activeTab === 'interaction' && <Suspense fallback={fallback}><GwSwInteractionTab /></Suspense>}
     </div>
   );
 }
