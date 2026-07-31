@@ -1,7 +1,7 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState } from 'react';
 import {
-  Layers, TrendingUp, MapPin, Zap, Globe, Calculator,
+  Layers, TrendingUp, MapPin, Zap, Globe, Calculator, Target,
   ChevronDown, ChevronRight, FileText,
 } from 'lucide-react';
 import { TechCard } from '../components/UI';
@@ -12,6 +12,7 @@ import { ZoneAnalysisTab } from './spatial/ZoneAnalysisTab';
 import { AnomalyTab } from './spatial/AnomalyTab';
 import { MoranITab } from './spatial/MoranITab';
 import { SpatialStatsCalculatorTab } from '../components/spatial-analysis/SpatialStatsCalculatorTab';
+import { MonitoringNetworkTab } from '../components/spatial-analysis/MonitoringNetworkTab';
 
 // ═══════════════════════════════════════════════════════════════
 // 主页面组件
@@ -23,6 +24,7 @@ const TABS = [
   { key: 'anomaly', label: '异常检测', icon: Zap },
   { key: 'moran', label: "Moran's I", icon: Globe },
   { key: 'calculator', label: '空间统计', icon: Calculator },
+  { key: 'monitoring', label: '监测网优化', icon: Target },
 ] as const;
 
 export function SpatialAnalysis() {
@@ -91,6 +93,7 @@ export function SpatialAnalysis() {
       {activeTab === 'anomaly' && <AnomalyTab />}
       {activeTab === 'moran' && <MoranITab />}
       {activeTab === 'calculator' && <SpatialStatsCalculatorTab />}
+      {activeTab === 'monitoring' && <MonitoringNetworkTab />}
 
       {/* 报告导出对话框 */}
       {exportOpen && (
