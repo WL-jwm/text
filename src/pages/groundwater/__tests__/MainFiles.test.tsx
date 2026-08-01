@@ -60,16 +60,23 @@ vi.mock('../../../hooks/usePageCommons', () => ({
 
 vi.mock('lucide-react', () => {
   const names = [
-    'Scale', 'Droplets', 'Activity', 'Shield', 'AlertTriangle',
-    'FlaskConical', 'BarChart3', 'Search', 'BookOpen', 'ChevronRight',
-    'Eye', 'MapPin', 'TrendingUp', 'Waves', 'Thermometer',
-    'Lock', 'Info', 'CheckCircle', 'XCircle', 'Download',
-    'FileText', 'Database', 'Layers', 'Grid3x3', 'Factory',
-    'CloudRain', 'Mountain', 'Building2', 'Siren', 'Target',
-    'Gauge', 'Compass', 'Route', 'ArrowDown', 'ArrowUp',
-    'ArrowRight', 'Filter', 'RefreshCw', 'Settings', 'X',
-    'Plus', 'Minus', 'ChevronDown', 'ExternalLink', 'Copy',
-    'MinusCircle', 'TrendingDown', 'Ban', 'CheckCircle2', 'Calculator',
+    'Activity', 'AlertCircle', 'AlertTriangle', 'ArrowDown', 'ArrowDownRight', 'ArrowDownToLine', 'ArrowLeft', 'ArrowLeftRight',
+    'ArrowRight', 'ArrowRightLeft', 'ArrowUpDown', 'ArrowUpRight', 'Atom', 'Award', 'Ban', 'BarChart3',
+    'BarChartHorizontal', 'Beaker', 'BellRing', 'BookMarked', 'BookOpen', 'Bookmark', 'Briefcase', 'Building',
+    'Building2', 'Calculator', 'Calendar', 'CalendarDays', 'Check', 'CheckCircle', 'CheckCircle2', 'ChevronDown',
+    'ChevronRight', 'ChevronUp', 'ClipboardList', 'Clock', 'CloudRain', 'Compass', 'Copy', 'CornerDownLeft',
+    'Crosshair', 'Database', 'Dice5', 'Download', 'Drill', 'Droplets', 'ExternalLink', 'Eye',
+    'EyeOff', 'Factory', 'FileCheck', 'FileSpreadsheet', 'FileText', 'FileWarning', 'Filter', 'Fish',
+    'Flame', 'FlaskConical', 'FolderOpen', 'Gauge', 'Gem', 'GitBranch', 'GitCompare', 'GitFork',
+    'GlassWater', 'Globe', 'Grid3X3', 'Grid3x3', 'HardHat', 'History', 'Home', 'Image',
+    'Info', 'Keyboard', 'Layers', 'LayoutGrid', 'Leaf', 'Loader2', 'Lock', 'Map',
+    'MapIcon', 'MapPin', 'Maximize2', 'Menu', 'MessageSquare', 'Minus', 'MinusCircle', 'Monitor',
+    'Moon', 'Mountain', 'Navigation', 'PanelLeft', 'PanelLeftClose', 'PieChart', 'Play', 'Plus',
+    'Radar', 'Radio', 'Recycle', 'RefreshCw', 'RotateCcw', 'Satellite', 'Save', 'Scale',
+    'Search', 'Settings', 'Shield', 'ShieldAlert', 'ShieldCheck', 'Sliders', 'Sparkles', 'Sprout',
+    'Sun', 'Table', 'Tag', 'Target', 'Thermometer', 'Timer', 'Trash2', 'TrendingDown',
+    'TrendingUp', 'Trophy', 'Upload', 'Users', 'Waves', 'Wheat', 'Wifi', 'WifiOff',
+    'Wind', 'Wrench', 'X', 'XCircle', 'Zap',
   ];
   const m: Record<string, () => null> = {};
   for (const n of names) m[n] = () => null;
