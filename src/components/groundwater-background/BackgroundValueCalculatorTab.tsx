@@ -10,7 +10,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, ReferenceLine, Cell, Legend,
+  ResponsiveContainer, ReferenceLine, Legend,
   LineChart, Line, ScatterChart, Scatter,
 } from 'recharts';
 import { Calculator, MapPin, AlertTriangle, TrendingDown } from 'lucide-react';
@@ -20,8 +20,8 @@ import { ChartExport } from '../ChartExport';
 import { FilterableTechTable } from '../FilterableTechTable';
 import {
   PRESET_FACTORS, PRESET_ZONES, PRESET_BACKGROUND_DATA,
-  STANDARD_LIMITS, PRESET_TREND_DATA,
-  calcBackgroundValue, calcAllZonesBackground,
+  STANDARD_LIMITS,
+  calcBackgroundValue,
   calcAllZoneCompare, calcAllExceedance, calcAllTrends,
   type BackgroundValueInput,
 } from '../../utils/backgroundValueCalculator';
@@ -331,7 +331,7 @@ function ExceedancePanel() {
 function TrendPanel() {
   const results = useMemo(() => calcAllTrends(), []);
 
-  const trendLineData = useMemo(() => {
+  const _trendLineData = useMemo(() => {
     // 合并所有因子的年份数据
     if (results.length === 0) return [];
     const years = results[0].years;

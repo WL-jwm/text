@@ -205,7 +205,7 @@ export function calcBackgroundValue(input: BackgroundValueInput): BackgroundValu
 
   // 方法2：格鲁布斯检验法
   const gCritical = grubbsCritical(n);
-  let grubbsSamples = [...samples];
+  const grubbsSamples = [...samples];
   let grubbsRemoved = 0;
   for (let iter = 0; iter < 5; iter++) {
     if (grubbsSamples.length < 3) break;

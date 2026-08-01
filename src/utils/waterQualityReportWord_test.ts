@@ -3,20 +3,16 @@
  * based on reportGenerator.ts
  */
 import {
-  type ReportConfig,
   type ReportSection,
-  buildTable,
-  buildParagraph,
   buildParagraphs,
-  generateAndDownload,
 } from '../services/reportGenerator';
-import type { SampleResult, SukalovResult } from './waterQualityCalculator';
+
 
 // ═══════════════════════════════════════════════════════
 // Section builders
 // ═══════════════════════════════════════════════════════
 
-function buildMethodSection(): ReportSection {
+function _buildMethodSection(): ReportSection {
   return {
     title: '\u4e00\u3001\u8bc4\u4ef7\u6807\u51c6\u4e0e\u65b9\u6cd5',
     level: 1,
