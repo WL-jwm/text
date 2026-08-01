@@ -8,6 +8,7 @@ import {
   CheckCircle2, XCircle, FileText,
 } from 'lucide-react';
 import { TechCard, DataSourceNote, CollapsiblePanel } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
 import { FilterableTechTable } from '../FilterableTechTable';
 import {
   COMPLIANCE_PRESETS, REGULATIONS, GB14848_STANDARDS,
@@ -47,6 +48,18 @@ function ComplianceCheckPanel() {
   
   return (
     <div className="space-y-4">
+      <PipelinePanel
+        moduleId="compliance"
+        onReceive={(dataType, payload) => {
+          if (dataType === 'waterQualityFactors' && payload.factors) {
+            const factors = payload.factors as { factor: string; value: number }[];
+            if (factors.length > 0) {
+              const factorList = factors.map(f => `${f.factor}: ${f.value} mg/L`).join(', ');
+              alert(`已接收水质数据(${factors.length}项因子):\n${factorList}\n\n请切换到合规检查的预设场景并手动更新水质数据。`);
+            }
+          }
+        }}
+      />
       <TechCard>
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs text-slate-400">预设场景:</span>

@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Calculator, Plus, Trash2, Beaker, AlertTriangle, CheckCircle, ArrowRight, FileSpreadsheet, FileText } from 'lucide-react';
 import { TechCard } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
+import { usePipeline } from '../../hooks/usePipeline';
 import { groundwaterQualityStandard } from '../../data/waterQuality';
 import {
   classifySample,
@@ -64,6 +66,7 @@ export function WaterQualityCalculatorTab() {
     { id: '1', name: '水样1', values: {}, sukalovInput: { ...EMPTY_SUKALOV_FORM }, sukalovResult: null },
   ]);
   const [results, setResults] = useState<SampleResult[]>([]);
+  const { publishData } = usePipeline('waterQuality');
   const [selectedSukalovSample, setSelectedSukalovSample] = useState<string>('1');
 
   const factors = groundwaterQualityStandard.evaluationFactors as EvaluationFactor[];
@@ -99,7 +102,18 @@ export function WaterQualityCalculatorTab() {
       computed.push(result);
     }
     setResults(computed);
-  }, [samples, factors]);
+    // 发布到数据总线
+    const factorsData = samples.map(s => ({
+      sampleName: s.name,
+      factors: Object.entries(s.values)
+        .filter(([, v]) => v !== '' && !isNaN(Number(v)))
+        .map(([name, v]) => ({ factor: name, value: Number(v) }))
+        .filter(f => f.value > 0),
+    })).flatMap(s => s.factors);
+    if (factorsData.length > 0) {
+      publishData('waterQualityFactors', `水质评价结果(${samples.length}个水样)`, { factors: factorsData, sampleCount: samples.length });
+    }
+  }, [samples, factors, publishData]);
 
   // ── 苏卡列夫计算 ──
 
@@ -527,6 +541,18 @@ export function WaterQualityCalculatorTab() {
           )}
         </div>
       )}
+      <PipelinePanel moduleId="waterQuality" onPublish={() => {
+        const factorsData = samples.map(s => ({
+          sampleName: s.name,
+          factors: Object.entries(s.values)
+            .filter(([, v]) => v !== '' && !isNaN(Number(v)))
+            .map(([name, v]) => ({ factor: name, value: Number(v) }))
+            .filter(f => f.value > 0),
+        })).flatMap(s => s.factors);
+        if (factorsData.length > 0) {
+          publishData('waterQualityFactors', `水质评价结果(${samples.length}个水样)`, { factors: factorsData, sampleCount: samples.length });
+        }
+      }} />
     </div>
   );
 }

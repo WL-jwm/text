@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useEffect } from 'react';
-import { Database, Upload, BookMarked, Shield, Layers, Activity, Scale } from 'lucide-react';
+import { Database, Upload, BookMarked, Shield, Layers, Activity, Scale, Share2 } from 'lucide-react';
 import { SectionTitle, StatCard } from '../components/UI';
 const DataImportPanel = React.lazy(() => import('../components/DataImportPanel').then(m => ({ default: m.DataImportPanel })));
 const AnnotationsPanel = React.lazy(() => import('../components/AnnotationsPanel').then(m => ({ default: m.AnnotationsPanel })));
@@ -9,8 +9,9 @@ const DataValidationPanel = React.lazy(() => import('../components/DataValidatio
 const DataQualityDashboard = React.lazy(() => import('../components/DataQualityDashboard').then(m => ({ default: m.DataQualityDashboard })));
 import { useAppStore } from '../store/useAppStore';
 import { ComplianceCheckerTab } from '../components/workspace/ComplianceCheckerTab';
+import { PipelineDashboard } from '../components/workspace/PipelineDashboard';
 
-type TabKey = 'import' | 'annotations' | 'bookmarks' | 'validation' | 'quality' | 'compliance';
+type TabKey = 'import' | 'annotations' | 'bookmarks' | 'validation' | 'quality' | 'compliance' | 'pipeline';
 
 const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string }[] = [
   { key: 'import', label: '数据导入', icon: Upload, desc: 'CSV/JSON文件导入、解析、预览' },
@@ -19,6 +20,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string 
   { key: 'validation', label: '数据校验', icon: Shield, desc: '字段校验、类型检查、范围验证' },
   { key: 'quality', label: '质量仪表盘', icon: Activity, desc: '全平台数据完整性扫描与跨模块一致性校验' },
   { key: 'compliance', label: '合规检查', icon: Scale, desc: '地下水法规标准合规性自动检查' },
+  { key: 'pipeline', label: '数据流', icon: Share2, desc: '跨模块数据联动与数据总线管理' },
 ];
 
 export function Workspace() {
@@ -123,6 +125,7 @@ export function Workspace() {
         {activeTab === 'validation' && <DataValidationPanel />}
         {activeTab === 'quality' && <DataQualityDashboard />}
         {activeTab === 'compliance' && <ComplianceCheckerTab />}
+        {activeTab === 'pipeline' && <PipelineDashboard />}
       </div>
 
       {/* 存储说明 */}
