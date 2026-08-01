@@ -14,6 +14,8 @@ import {
 } from 'recharts';
 import { FlaskConical, Calculator, MapPin, BookOpen, Beaker } from 'lucide-react';
 import { TechCard, StatCard, DataSourceNote } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
+import { usePipeline } from '../../hooks/usePipeline';
 import { LazyChartCard } from '../LazyChartCard';
 import { ChartExport } from '../ChartExport';
 import { FilterableTechTable } from '../FilterableTechTable';
@@ -126,6 +128,7 @@ function PiperDiagramSVG({ result }: { result: HydrochemAnalysisResult | null })
 // ── 面板1: 计算器 ──
 
 function CalculatorPanel() {
+  const { publishData } = usePipeline('hydrochem');
   const [Ca, setCa] = useState(68);
   const [Mg, setMg] = useState(24);
   const [NaK, setNaK] = useState(18);
@@ -251,6 +254,19 @@ function CalculatorPanel() {
           ))}
         </div>
       </TechCard>
+      <PipelinePanel moduleId="hydrochem" onPublish={() => {
+        const ions = [
+          { factor: '钙(Ca)', value: Ca },
+          { factor: '镁(Mg)', value: Mg },
+          { factor: '钠钾(Na+K)', value: NaK },
+          { factor: '碳酸氢根(HCO3)', value: HCO3 },
+          { factor: '硫酸根(SO4)', value: SO4 },
+          { factor: '氯离子(Cl)', value: Cl },
+        ].filter(f => f.value > 0);
+        if (ions.length > 0) {
+          publishData('ionConcentrations', `水化学离子(${ions.length}项)`, { ions, Ca, Mg, NaK, HCO3, SO4, Cl, pH });
+        }
+      }} />
     </div>
   );
 }

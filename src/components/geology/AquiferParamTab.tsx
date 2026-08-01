@@ -7,6 +7,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { TechCard, StatCard } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
+import { usePipeline } from '../../hooks/usePipeline';
 import { LazyChartCard } from '../LazyChartCard';
 import {
   calcDarcy, calcWellParams, calcStorage,
@@ -48,6 +50,7 @@ function NumInput({
 // ── 达西公式计算面板 ──
 
 function DarcyPanel() {
+  const { publishData } = usePipeline('aquiferParam');
   const [q, setQ] = useState(0);
   const [k, setK] = useState(10);
   const [i, setI] = useState(0.01);
@@ -96,6 +99,17 @@ function DarcyPanel() {
           <span className="text-[10px] text-emerald-400">{'\u8ba1\u7b97\u7ed3\u679c: Q = '}{fmtVal(result.flowRateQ)}{' m\u00b3/d | K = '}{fmtVal(result.hydraulicK)}{' m/d | I = '}{fmtVal(result.hydraulicGradientI)}{' | A = '}{fmtVal(result.crossSectionA)}{' m\u00b2'}</span>
         </div>
       )}
+      <PipelinePanel moduleId="aquiferParam" onPublish={() => {
+        const params: Record<string, unknown> = {};
+        if (result?.hydraulicK) params.hydraulicConductivity = result.hydraulicK;
+        if (k) params.hydraulicConductivity = k;
+        if (result?.hydraulicGradientI) params.hydraulicGradient = result.hydraulicGradientI;
+        if (i) params.hydraulicGradient = i;
+        if (result?.crossSectionA) params.crossSectionArea = result.crossSectionA;
+        if (Object.keys(params).length > 0) {
+          publishData('aquiferParams', `含水层参数(K=${params.hydraulicConductivity ?? 'N/A'})`, params, '达西公式面板');
+        }
+      }} />
     </TechCard>
   );
 }

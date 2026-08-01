@@ -21,6 +21,8 @@ import {
   AreaChart, Area,
 } from 'recharts';
 import { TechCard, StatCard } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
+import { usePipeline } from '../../hooks/usePipeline';
 import { LazyChartCard } from '../LazyChartCard';
 import { ChartExport } from '../ChartExport';
 import {
@@ -666,6 +668,7 @@ export function BalanceCalculatorTab() {
 
   // 计算结果
   const results = useMemo(() => inputs.map(calcBalance), [inputs]);
+  const { publishData } = usePipeline('balance');
   const summary = useMemo(() => calcBalanceSummary(results), [results]);
 
   // 更新单个字段
@@ -904,6 +907,19 @@ export function BalanceCalculatorTab() {
         {/* 第五行: 补给结构热力表(新增) */}
         <RechargeHeatmapTable results={results} />
       </div>
+      <PipelinePanel moduleId="balance" onPublish={() => {
+        if (results.length > 0) {
+          const totalRecharge = results.reduce((s, r) => s + (r.totalRecharge || 0), 0);
+          const totalDischarge = results.reduce((s, r) => s + (r.totalDischarge || 0), 0);
+          const balance = totalRecharge - totalDischarge;
+          publishData('balanceResult', `均衡计算(${results.length}个分区)`, {
+            recharge: Math.round(totalRecharge * 100) / 100,
+            discharge: Math.round(totalDischarge * 100) / 100,
+            balance: Math.round(balance * 100) / 100,
+            zoneCount: results.length,
+          }, `${results.length}个分区`);
+        }
+      }} />
     </div>
   );
 }

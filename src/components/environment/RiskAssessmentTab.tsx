@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import { ShieldAlert, BookOpen, AlertTriangle, ArrowDown, Waves } from 'lucide-react';
 import { TechCard, StatCard, DataSourceNote } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
 import { LazyChartCard } from '../LazyChartCard';
 import { FilterableTechTable } from '../FilterableTechTable';
 import {
@@ -426,7 +427,15 @@ export function RiskAssessmentTab() {
             <p className="text-[10px] text-gw-muted">三指标加权: 距海岸距离(30%) + Cl⁻浓度及趋势(35%) + 水力梯度(35%)。Cl⁻&gt;250mg/L为入侵阈值，趋势变化率&gt;1.5加重一级。</p>
           </div>
         </div>
-        <DataSourceNote source="基于DRASTIC模型标准+河北省水文地质分区特征整理" version="B-31 v1.0" />
+        <PipelinePanel moduleId="riskAssessment" onReceive={(dataType, payload) => {
+        if (dataType === 'drasticResult') {
+          alert(`已接收DRASTIC脆弱性结果:\n指数=${payload.drasticIndex}, 等级=${payload.level}\n\n请据此调整风险评估的污染风险维度参数。`);
+        } else if (dataType === 'waterQualityFactors') {
+          const factors = (payload as { factors?: unknown[] }).factors;
+          if (factors) alert(`已接收水质评价数据(${factors.length}项因子)\n\n请据此调整风险评估的水质维度。`);
+        }
+      }} />
+      <DataSourceNote source="基于DRASTIC模型标准+河北省水文地质分区特征整理" version="B-31 v1.0" />
       </TechCard>
     </div>
   );

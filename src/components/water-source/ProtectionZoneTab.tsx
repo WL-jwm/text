@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import { Shield, Calculator, MapPin, BookOpen, Layers } from 'lucide-react';
 import { TechCard, StatCard, DataSourceNote } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
 import { LazyChartCard } from '../LazyChartCard';
 import { ChartExport } from '../ChartExport';
 import { FilterableTechTable } from '../FilterableTechTable';
@@ -121,6 +122,14 @@ function ZoneConcentricSVG({ result }: { result: ProtectionZoneResult | null }) 
           </span>
         ))}
       </div>
+      <PipelinePanel moduleId="protectionZone" onReceive={(dataType, payload) => {
+        if (dataType === 'aquiferParams') {
+          const parts: string[] = [];
+          if (payload.hydraulicConductivity) parts.push(`K=${payload.hydraulicConductivity} m/d`);
+          if (payload.hydraulicGradient) parts.push(`I=${payload.hydraulicGradient}`);
+          if (parts.length > 0) alert(`已接收含水层参数:\n${parts.join(', ')}\n\n请手动更新保护区划分参数。`);
+        }
+      }} />
     </div>
   );
 }
@@ -265,6 +274,14 @@ function CalculatorPanel() {
           </table>
         </div>
       </TechCard>
+      <PipelinePanel moduleId="protectionZone" onReceive={(dataType, payload) => {
+        if (dataType === 'aquiferParams') {
+          const parts: string[] = [];
+          if (payload.hydraulicConductivity) parts.push(`K=${payload.hydraulicConductivity} m/d`);
+          if (payload.hydraulicGradient) parts.push(`I=${payload.hydraulicGradient}`);
+          if (parts.length > 0) alert(`已接收含水层参数:\n${parts.join(', ')}\n\n请手动更新保护区划分参数。`);
+        }
+      }} />
     </div>
   );
 }
@@ -364,6 +381,14 @@ function PresetSourcesPanel() {
           </ResponsiveContainer>
         </LazyChartCard>
       </div>
+      <PipelinePanel moduleId="protectionZone" onReceive={(dataType, payload) => {
+        if (dataType === 'aquiferParams') {
+          const parts: string[] = [];
+          if (payload.hydraulicConductivity) parts.push(`K=${payload.hydraulicConductivity} m/d`);
+          if (payload.hydraulicGradient) parts.push(`I=${payload.hydraulicGradient}`);
+          if (parts.length > 0) alert(`已接收含水层参数:\n${parts.join(', ')}\n\n请手动更新保护区划分参数。`);
+        }
+      }} />
     </div>
   );
 }
@@ -464,6 +489,14 @@ export function ProtectionZoneTab() {
       {activeSubTab === 'medium' && <MediumParamPanel />}
 
       <DataSourceNote source="HJ/T 338-2007 饮用水水源保护区划分技术规范 | 河北省重要水源地资料" />
+      <PipelinePanel moduleId="protectionZone" onReceive={(dataType, payload) => {
+        if (dataType === 'aquiferParams') {
+          const parts: string[] = [];
+          if (payload.hydraulicConductivity) parts.push(`K=${payload.hydraulicConductivity} m/d`);
+          if (payload.hydraulicGradient) parts.push(`I=${payload.hydraulicGradient}`);
+          if (parts.length > 0) alert(`已接收含水层参数:\n${parts.join(', ')}\n\n请手动更新保护区划分参数。`);
+        }
+      }} />
     </div>
   );
 }

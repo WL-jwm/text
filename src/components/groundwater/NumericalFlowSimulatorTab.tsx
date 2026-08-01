@@ -20,6 +20,7 @@ import {
   Activity, Droplets, Gauge, MapPin, ArrowRight, Layers,
 } from 'lucide-react';
 import { TechCard, DataSourceNote, CollapsiblePanel } from '../UI';
+import { PipelinePanel } from '../PipelinePanel';
 import { FilterableTechTable } from '../FilterableTechTable';
 import {
   PRESET_MODEL_AREAS, PRESET_OBSERVATION_POINTS, PRESET_SCENARIOS,
@@ -1036,6 +1037,16 @@ function ReferencePanel() {
         </div>
       </CollapsiblePanel>
 
+      <PipelinePanel moduleId="numericalSim" onReceive={(dataType, payload) => {
+        if (dataType === 'aquiferParams') {
+          const parts: string[] = [];
+          if (payload.hydraulicConductivity) parts.push(`K=${payload.hydraulicConductivity} m/d`);
+          if (payload.hydraulicGradient) parts.push(`I=${payload.hydraulicGradient}`);
+          if (parts.length > 0) alert(`已接收含水层参数:\n${parts.join(', ')}\n\n请在模型设置中手动更新对应参数。`);
+        } else if (dataType === 'balanceResult') {
+          if (payload.balance !== undefined) alert(`已接收均衡结果:\n补给=${payload.recharge} \u4e07m\u00b3, 排泄=${payload.discharge} \u4e07m\u00b3, 均衡差=${payload.balance} \u4e07m\u00b3\n\n请据此调整模拟边界条件。`);
+        }
+      }} />
       <DataSourceNote source="MODFLOW 2005 用户指南 | 薛禹群《地下水数值模拟》| 河北省水文地质图集 | 河北省地下水超采区评价报告(2022)" />
     </div>
   );
