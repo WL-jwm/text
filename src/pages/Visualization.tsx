@@ -9,19 +9,21 @@
  */
 
 import { useState } from 'react';
-import { Map, Layers3, FlaskConical, LayoutDashboard } from 'lucide-react';
+import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass } from 'lucide-react';
 import { EnhancedMap } from '../components/visualization/EnhancedMap';
 import { AquiferProfile3D } from '../components/visualization/AquiferProfile3D';
 import { InteractivePiperDiagram } from '../components/visualization/InteractivePiperDiagram';
 import { ComprehensiveDashboard } from '../components/visualization/ComprehensiveDashboard';
+import { GroundwaterAgeViz } from '../components/visualization/GroundwaterAgeViz';
 
-type VizTab = 'map' | 'profile' | 'piper' | 'dashboard';
+type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age';
 
 const TABS: { key: VizTab; label: string; icon: typeof Map; description: string }[] = [
   { key: 'map', label: '交互式地图', icon: Map, description: '多图层等值线 / 城市详情 / 全屏模式' },
   { key: 'profile', label: '含水层剖面', icon: Layers3, description: '多层结构 / 水头曲线 / 钻孔详情' },
   { key: 'piper', label: 'Piper三线图', icon: FlaskConical, description: '多水样叠加 / 水化学分区 / 实时编辑' },
   { key: 'dashboard', label: '综合仪表盘', icon: LayoutDashboard, description: '关键指标 / 雷达图 / 风险排行' },
+  { key: 'age', label: '地下水年龄', icon: Hourglass, description: '14C年龄剖面 / δD-δ18O散点 / 氚衰减 / 年龄分级' },
 ];
 
 export function Visualization() {
@@ -62,6 +64,7 @@ export function Visualization() {
         {activeTab === 'profile' && <AquiferProfile3D />}
         {activeTab === 'piper' && <InteractivePiperDiagram />}
         {activeTab === 'dashboard' && <ComprehensiveDashboard />}
+        {activeTab === 'age' && <GroundwaterAgeViz />}
       </div>
     </div>
   );
