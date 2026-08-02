@@ -49,6 +49,7 @@ const GroundwaterBalance = React.lazy(() => import('./pages/GroundwaterBalance')
 const GroundwaterBackground = React.lazy(() => import('./pages/GroundwaterBackground').then(m => ({ default: m.GroundwaterBackground })));
 const TimeSeriesAnalysis = React.lazy(() => import('./pages/TimeSeriesAnalysis').then(m => ({ default: m.TimeSeriesAnalysis })));
 const SpatialAnalysis = React.lazy(() => import('./pages/SpatialAnalysis').then(m => ({ default: m.SpatialAnalysis })));
+const Visualization = React.lazy(() => import('./pages/Visualization').then(m => ({ default: m.Visualization })));
 
 // PageLoader 已提取到 PageTransition 组件中
 
@@ -101,6 +102,7 @@ const navGroups = [
       { path: '/data-insight', label: '数据洞察', icon: BarChart3, description: '跨模块关联分析 / 区域对比' },
       { path: '/time-series', label: '时间序列', icon: TrendingDown, description: '2014-2024年多维度变化趋势' },
       { path: '/spatial', label: '空间分析', icon: Layers, description: '多维度自相关 / 分区特征 / 异常检测' },
+      { path: '/visualization', label: '可视化中心', icon: BarChart3, description: '交互地图 / 含水层剖面 / Piper三线图 / 仪表盘' },
     ],
   },
   {
@@ -425,6 +427,7 @@ export default function App() {
                   <Route path="/data-insight" element={<ErrorBoundary><DataInsight /></ErrorBoundary>} />
                   <Route path="/time-series" element={<ErrorBoundary><TimeSeriesAnalysis /></ErrorBoundary>} />
                   <Route path="/spatial" element={<ErrorBoundary><SpatialAnalysis /></ErrorBoundary>} />
+                  <Route path="/visualization" element={<ErrorBoundary><Visualization /></ErrorBoundary>} />
                   <Route path="/system-zoning" element={<ErrorBoundary><SystemZoning /></ErrorBoundary>} />
                   <Route path="/workspace" element={<ErrorBoundary><Workspace /></ErrorBoundary>} />
                   <Route path="/county-compare" element={<ErrorBoundary><CountyWaterCompare /></ErrorBoundary>} />

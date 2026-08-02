@@ -29,6 +29,7 @@ const routeDefinitions: Array<{ path: string; lazyComponent: string }> = [
   { path: '/data-insight', lazyComponent: 'DataInsight' },
   { path: '/time-series', lazyComponent: 'TimeSeriesAnalysis' },
   { path: '/spatial', lazyComponent: 'SpatialAnalysis' },
+  { path: '/visualization', lazyComponent: 'Visualization' },
   { path: '/system-zoning', lazyComponent: 'SystemZoning' },
   { path: '/workspace', lazyComponent: 'Workspace' },
   { path: '/county-compare', lazyComponent: 'CountyWaterCompare' },
@@ -64,6 +65,7 @@ const navItemPaths: string[] = [
   '/data-insight',
   '/time-series',
   '/spatial',
+  '/visualization',
   '/workspace',
   '/changelog',
 ];
@@ -75,7 +77,7 @@ describe('路由一致性测试', () => {
     it('应有29个路由定义(27个页面 + 首页 + 通配符)', () => {
       // 27 routes + '*' catch-all + 首页('/')
       // routeDefinitions 不含 '*', 27 routes including '/'
-      expect(routeDefinitions.length).toBe(28);
+      expect(routeDefinitions.length).toBe(29);
     });
 
     it('每个路由path应唯一', () => {
@@ -196,14 +198,14 @@ describe('路由一致性测试', () => {
       expect(expectedGroups.length).toBe(6);
     });
 
-    it('每个分组应包含2-11个导航项', () => {
-      // 各分组实际数量：基础数据4 + 水文地质4 + 资源环境11 + 专题资源4 + 综合分析3 + 系统2 = 28
+    it('每个分组应包含2-12个导航项', () => {
+      // 各分组实际数量：基础数据4 + 水文地质4 + 资源环境11 + 专题资源4 + 综合分析4 + 系统2 = 29
       expect(navItemPaths.length).toBe(routeDefinitions.length);
     });
 
-    it('导航总数应为28(nav)+2(hidden)=30总页面', () => {
-      expect(navItemPaths.length).toBe(28);
-      expect(routeDefinitions.length).toBe(28);
+    it('导航总数应为29(nav)+2(hidden)=31总页面', () => {
+      expect(navItemPaths.length).toBe(29);
+      expect(routeDefinitions.length).toBe(29);
     });
   });
 });

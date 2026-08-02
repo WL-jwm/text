@@ -10,7 +10,7 @@ import {
   Scale, BookOpen, CheckCircle2, XCircle,
 } from 'lucide-react';
 import { TechCard, DataSourceNote, CollapsiblePanel } from '../UI';
-import { PipelinePanel } from '../PipelinePanel';
+// PipelinePanel removed (unused)
 import { FilterableTechTable } from '../FilterableTechTable';
 import {
   REMEDIATION_PRESETS, TECH_COMPARISON_TABLE,
