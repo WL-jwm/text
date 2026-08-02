@@ -1,7 +1,7 @@
 /**
  * Visualization — 可视化中心
  *
- * 汇集 V-01~V-04 可视化升级组件 + E-01~E-04 专业扩展 + F-01 实时数据：
+ * 汇集 V-01~V-04 可视化升级 + E-01~E-04 专业扩展 + F-01 实时数据 + F-02 3D可视化：
  *   - V-01 交互式地图（EnhancedMap）
  *   - V-02 含水层剖面（AquiferProfile3D）
  *   - V-03 交互式Piper三线图（InteractivePiperDiagram）
@@ -11,10 +11,12 @@
  *   - E-03 多层耦合（MultiLayerCouplingViz）
  *   - E-04 实时监测（RealtimeMonitoringViz）
  *   - F-01 实时数据接入（RealtimeDashboard）
+ *   - F-02a 3D含水层剖面（AquiferProfile3DWebGL）
+ *   - F-02b 3D多层耦合（MultiLayerCoupling3D）
  */
 
 import { useState } from 'react';
-import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass, CloudRain, GitBranch, Activity, Radio } from 'lucide-react';
+import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass, CloudRain, GitBranch, Activity, Radio, Box, Boxes } from 'lucide-react';
 import { EnhancedMap } from '../components/visualization/EnhancedMap';
 import { AquiferProfile3D } from '../components/visualization/AquiferProfile3D';
 import { InteractivePiperDiagram } from '../components/visualization/InteractivePiperDiagram';
@@ -24,11 +26,13 @@ import { VadoseZoneViz } from '../components/visualization/VadoseZoneViz';
 import { MultiLayerCouplingViz } from '../components/visualization/MultiLayerCouplingViz';
 import { RealtimeMonitoringViz } from '../components/visualization/RealtimeMonitoringViz';
 import { RealtimeDashboard } from '../components/realtime/RealtimeDashboard';
+import { AquiferProfile3DWebGL } from '../components/visualization/AquiferProfile3DWebGL';
+import { MultiLayerCoupling3D } from '../components/visualization/MultiLayerCoupling3D';
 import { VizExportBar } from '../components/visualization/VizExportBar';
 import { ResponsiveVizPanel } from '../components/visualization/ResponsiveVizPanel';
 import { useIsMobile } from '../hooks/useMediaQuery';
 
-type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling' | 'monitoring' | 'realtime';
+type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling' | 'monitoring' | 'realtime' | 'profile3d' | 'coupling3d';
 
 const TABS: { key: VizTab; label: string; icon: typeof Map; description: string }[] = [
   { key: 'map', label: '交互式地图', icon: Map, description: '多图层等值线 / 城市详情 / 全屏模式' },
@@ -40,6 +44,8 @@ const TABS: { key: VizTab; label: string; icon: typeof Map; description: string 
   { key: 'coupling', label: '多层耦合', icon: GitBranch, description: '含水层系统剖面 / 越流流图 / 分层开采对比 / 水位恢复' },
   { key: 'monitoring', label: '实时监测', icon: Activity, description: '监测站网 / 水位动态 / 沉降热力 / 水质演变 / 预警面板' },
   { key: 'realtime', label: '实时数据', icon: Radio, description: '4通道实时轮询 / 自动刷新 / 预警推送 / 数据流' },
+  { key: 'profile3d', label: '3D剖面', icon: Box, description: 'Three.js立体含水层 / 水头曲面 / 钻孔标注 / 旋转缩放' },
+  { key: 'coupling3d', label: '3D耦合', icon: Boxes, description: 'Three.js多层耦合 / 越流粒子动画 / 开采井3D / 补给方向' },
 ];
 
 export function Visualization() {
@@ -57,7 +63,12 @@ export function Visualization() {
     coupling: { id: 'multi-layer-coupling', title: '多层耦合' },
     monitoring: { id: 'realtime-monitoring', title: '实时监测' },
     realtime: { id: 'realtime-dashboard', title: '实时数据' },
+    profile3d: { id: '3d-aquifer-profile', title: '3D含水层剖面' },
+    coupling3d: { id: '3d-multi-layer-coupling', title: '3D多层耦合' },
   };
+
+  // 3D Tab不需要ResponsiveVizPanel（Three.js自行处理canvas尺寸）
+  const is3DTab = activeTab === 'profile3d' || activeTab === 'coupling3d';
 
   return (
     <div className="space-y-4">
@@ -88,14 +99,19 @@ export function Visualization() {
         <div className="text-[11px] text-gw-muted">
           {TABS.find(t => t.key === activeTab)?.description}
         </div>
-        <VizExportBar
-          panelId={tabExportConfig[activeTab].id}
-          panelTitle={tabExportConfig[activeTab].title}
-          compact={isMobile}
-        />
+        {!is3DTab && (
+          <VizExportBar
+            panelId={tabExportConfig[activeTab].id}
+            panelTitle={tabExportConfig[activeTab].title}
+            compact={isMobile}
+          />
+        )}
+        {is3DTab && (
+          <span className="text-[10px] text-gw-muted/60">Three.js WebGL · 拖拽旋转 · 滚轮缩放</span>
+        )}
       </div>
 
-      {/* 内容区 — 通过ResponsiveVizPanel实现移动端适配 */}
+      {/* 内容区 */}
       <div>
         {activeTab === 'map' && (
           <ResponsiveVizPanel defaultSvgWidth={800} defaultSvgHeight={600}><EnhancedMap /></ResponsiveVizPanel>
@@ -122,6 +138,8 @@ export function Visualization() {
           <ResponsiveVizPanel defaultSvgWidth={520} defaultSvgHeight={340}><RealtimeMonitoringViz /></ResponsiveVizPanel>
         )}
         {activeTab === 'realtime' && <RealtimeDashboard />}
+        {activeTab === 'profile3d' && <AquiferProfile3DWebGL />}
+        {activeTab === 'coupling3d' && <MultiLayerCoupling3D />}
       </div>
     </div>
   );
