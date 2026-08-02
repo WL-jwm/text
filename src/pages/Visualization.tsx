@@ -9,7 +9,7 @@
  */
 
 import { useState } from 'react';
-import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass, CloudRain, GitBranch } from 'lucide-react';
+import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass, CloudRain, GitBranch, Activity } from 'lucide-react';
 import { EnhancedMap } from '../components/visualization/EnhancedMap';
 import { AquiferProfile3D } from '../components/visualization/AquiferProfile3D';
 import { InteractivePiperDiagram } from '../components/visualization/InteractivePiperDiagram';
@@ -17,8 +17,9 @@ import { ComprehensiveDashboard } from '../components/visualization/Comprehensiv
 import { GroundwaterAgeViz } from '../components/visualization/GroundwaterAgeViz';
 import { VadoseZoneViz } from '../components/visualization/VadoseZoneViz';
 import { MultiLayerCouplingViz } from '../components/visualization/MultiLayerCouplingViz';
+import { RealtimeMonitoringViz } from '../components/visualization/RealtimeMonitoringViz';
 
-type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling';
+type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling' | 'monitoring';
 
 const TABS: { key: VizTab; label: string; icon: typeof Map; description: string }[] = [
   { key: 'map', label: '交互式地图', icon: Map, description: '多图层等值线 / 城市详情 / 全屏模式' },
@@ -28,6 +29,7 @@ const TABS: { key: VizTab; label: string; icon: typeof Map; description: string 
   { key: 'age', label: '地下水年龄', icon: Hourglass, description: '14C年龄剖面 / δD-δ18O散点 / 氚衰减 / 年龄分级' },
   { key: 'vadose', label: '包气带运移', icon: CloudRain, description: '包气带剖面 / 入渗系数对比 / 埋深关系 / 流域排行 / 补给构成' },
   { key: 'coupling', label: '多层耦合', icon: GitBranch, description: '含水层系统剖面 / 越流流图 / 分层开采对比 / 水位恢复' },
+  { key: 'monitoring', label: '实时监测', icon: Activity, description: '监测站网 / 水位动态 / 沉降热力 / 水质演变 / 预警面板' },
 ];
 
 export function Visualization() {
@@ -71,6 +73,7 @@ export function Visualization() {
         {activeTab === 'age' && <GroundwaterAgeViz />}
         {activeTab === 'vadose' && <VadoseZoneViz />}
         {activeTab === 'coupling' && <MultiLayerCouplingViz />}
+        {activeTab === 'monitoring' && <RealtimeMonitoringViz />}
       </div>
     </div>
   );
