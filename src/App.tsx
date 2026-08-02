@@ -17,6 +17,7 @@ import { ScrollProgress, BackToTop } from './components/ScrollProgress';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Database, Droplets, FlaskConical, AlertTriangle, Wrench, Waves, Mountain, Layers, History, Thermometer, Gem, MapPin, PanelLeftClose, PanelLeft, Clock, Menu, X, BarChart3, Briefcase, Ban, Scale, TrendingDown } from 'lucide-react';
+import { MobileBottomNav } from './components/mobile/MobileBottomNav';
 import { version as pkgVersion } from '../package.json';
 
 // ── Route lazy loading：19个页面组件按需加载 ──
@@ -440,6 +441,7 @@ export default function App() {
           <PrintFooter />
         </div>
       </div>
+      <MobileBottomNav />
       </ToastProvider>
     </BrowserRouter>
   );

@@ -1248,3 +1248,178 @@ html {
     background: transparent;
   }
 }
+
+
+/* ═══════════════════════════════════════
+   E-05 移动端适配增强
+   ═══════════════════════════════════════ */
+
+/* 安全区域CSS变量 */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+/* 底部导航栏占位（避免内容被遮挡） */
+@media (max-width: 767px) {
+  main[id="main-content"] {
+    padding-bottom: 64px;
+  }
+}
+
+/* 移动端Sheet入场动画 */
+.mobile-sheet-enter {
+  animation: mobile-sheet-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes mobile-sheet-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 触摸友好：增大点击区域 */
+@media (hover: none) and (pointer: coarse) {
+  button, a, [role="button"] {
+    min-height: 36px;
+    min-width: 36px;
+  }
+
+  /* 表单元素增大 */
+  input[type="text"], input[type="number"], input[type="email"],
+  input[type="search"], select, textarea {
+    min-height: 40px;
+    font-size: 14px; /* 防止iOS缩放 */
+  }
+
+  /* Tab按钮触摸友好 */
+  .tab-scroll-container button {
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+}
+
+/* 移动端SVG容器触摸优化 */
+@media (hover: none) and (pointer: coarse) {
+  svg {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* 防止SVG内部文字被选中 */
+  svg text {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* 移动端滚动优化 */
+@media (max-width: 767px) {
+  /* 平滑滚动 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 隐藏水平滚动条但保持可滚动 */
+  .mobile-scroll-x {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mobile-scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 卡片圆角增大（视觉舒适） */
+  .mobile-card-radius {
+    border-radius: 12px;
+  }
+
+  /* 字体防缩放 */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* 禁用长按菜单（图表区域） */
+  .no-callout {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* 移动端表格优化 */
+@media (max-width: 767px) {
+  .table-mobile-card {
+    display: block;
+  }
+
+  .table-mobile-card thead {
+    display: none;
+  }
+
+  .table-mobile-card tbody,
+  .table-mobile-card tr,
+  .table-mobile-card td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-mobile-card tr {
+    margin-bottom: 8px;
+    border: 1px solid var(--gw-border, #334155);
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  .table-mobile-card td {
+    padding: 4px 0;
+    border: none;
+    text-align: right;
+  }
+
+  .table-mobile-card td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 500;
+    color: var(--gw-muted, #94a3b8);
+  }
+}
+
+/* 移动端网格自适应 */
+.mobile-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 380px) {
+  .mobile-grid-auto {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 横屏优化 */
+@media (max-width: 926px) and (orientation: landscape) {
+  /* 横屏时减少上下间距 */
+  .mobile-landscape-compact {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
+/* 暗色模式移动端优化 */
+@media (max-width: 767px) and (prefers-color-scheme: dark) {
+  .bg-gw-card {
+    background-color: rgba(15, 23, 32, 0.95);
+  }
+}
