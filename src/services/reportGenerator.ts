@@ -290,6 +290,15 @@ export function getRegisteredTypes(): string[] {
 /**
  * 生成并下载指定类型的报告
  */
+export function getReportConfig(
+  type: string,
+  data: Record<string, unknown>,
+): ReportConfig | null {
+  const generator = generators[type];
+  if (!generator) return null;
+  return generator(data);
+}
+
 export async function generateTypedReport(
   type: string,
   data: Record<string, unknown>,
