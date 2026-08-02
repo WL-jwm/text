@@ -12,8 +12,9 @@ import { ComplianceCheckerTab } from '../components/workspace/ComplianceCheckerT
 import { PipelineDashboard } from '../components/workspace/PipelineDashboard';
 import { ExportCenterTab } from '../components/workspace/ExportCenterTab';
 import { ReportGeneratorTab } from '../components/workspace/ReportGeneratorTab';
+import { CustomDataTab } from '../components/workspace/CustomDataTab';
 
-type TabKey = 'import' | 'annotations' | 'bookmarks' | 'validation' | 'quality' | 'compliance' | 'pipeline' | 'export' | 'report';
+type TabKey = 'import' | 'annotations' | 'bookmarks' | 'validation' | 'quality' | 'compliance' | 'pipeline' | 'export' | 'report' | 'custom';
 
 const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string }[] = [
   { key: 'import', label: '数据导入', icon: Upload, desc: 'CSV/JSON文件导入、解析、预览' },
@@ -25,6 +26,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string 
   { key: 'pipeline', label: '数据流', icon: Share2, desc: '跨模块数据联动与数据总线管理' },
   { key: 'export', label: '导出中心', icon: Download, desc: '批量导出多模块数据为Excel/Word/JSON' },
   { key: 'report', label: '报告生成', icon: FileText, desc: '模板化完整Word报告生成器' },
+  { key: 'custom', label: '自定义数据', icon: Database, desc: '导入监测井Excel数据为标准格式' },
 ];
 
 export function Workspace() {
@@ -132,6 +134,7 @@ export function Workspace() {
         {activeTab === 'pipeline' && <PipelineDashboard />}
         {activeTab === 'export' && <ExportCenterTab />}
         {activeTab === 'report' && <ReportGeneratorTab />}
+        {activeTab === 'custom' && <CustomDataTab />}
       </div>
 
       {/* 存储说明 */}
