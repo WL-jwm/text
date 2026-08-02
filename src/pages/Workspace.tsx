@@ -1,6 +1,6 @@
 import { useTabTransition } from '../hooks/useTabTransition';
 import React, { useState, useEffect } from 'react';
-import { Database, Upload, BookMarked, Shield, Layers, Activity, Scale, Share2, Download } from 'lucide-react';
+import { Database, Upload, BookMarked, Shield, Layers, Activity, Scale, Share2, Download, FileText } from 'lucide-react';
 import { SectionTitle, StatCard } from '../components/UI';
 const DataImportPanel = React.lazy(() => import('../components/DataImportPanel').then(m => ({ default: m.DataImportPanel })));
 const AnnotationsPanel = React.lazy(() => import('../components/AnnotationsPanel').then(m => ({ default: m.AnnotationsPanel })));
@@ -11,8 +11,9 @@ import { useAppStore } from '../store/useAppStore';
 import { ComplianceCheckerTab } from '../components/workspace/ComplianceCheckerTab';
 import { PipelineDashboard } from '../components/workspace/PipelineDashboard';
 import { ExportCenterTab } from '../components/workspace/ExportCenterTab';
+import { ReportGeneratorTab } from '../components/workspace/ReportGeneratorTab';
 
-type TabKey = 'import' | 'annotations' | 'bookmarks' | 'validation' | 'quality' | 'compliance' | 'pipeline' | 'export';
+type TabKey = 'import' | 'annotations' | 'bookmarks' | 'validation' | 'quality' | 'compliance' | 'pipeline' | 'export' | 'report';
 
 const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string }[] = [
   { key: 'import', label: '数据导入', icon: Upload, desc: 'CSV/JSON文件导入、解析、预览' },
@@ -23,6 +24,7 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType; desc: string 
   { key: 'compliance', label: '合规检查', icon: Scale, desc: '地下水法规标准合规性自动检查' },
   { key: 'pipeline', label: '数据流', icon: Share2, desc: '跨模块数据联动与数据总线管理' },
   { key: 'export', label: '导出中心', icon: Download, desc: '批量导出多模块数据为Excel/Word/JSON' },
+  { key: 'report', label: '报告生成', icon: FileText, desc: '模板化完整Word报告生成器' },
 ];
 
 export function Workspace() {
@@ -129,6 +131,7 @@ export function Workspace() {
         {activeTab === 'compliance' && <ComplianceCheckerTab />}
         {activeTab === 'pipeline' && <PipelineDashboard />}
         {activeTab === 'export' && <ExportCenterTab />}
+        {activeTab === 'report' && <ReportGeneratorTab />}
       </div>
 
       {/* 存储说明 */}
