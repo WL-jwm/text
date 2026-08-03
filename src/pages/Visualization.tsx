@@ -31,26 +31,35 @@ import { MultiLayerCoupling3D } from '../components/visualization/MultiLayerCoup
 import { VizExportBar } from '../components/visualization/VizExportBar';
 import { ResponsiveVizPanel } from '../components/visualization/ResponsiveVizPanel';
 import { useIsMobile } from '../hooks/useMediaQuery';
+import { useI18n } from '../hooks/useI18n';
 
 type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling' | 'monitoring' | 'realtime' | 'profile3d' | 'coupling3d';
 
-const TABS: { key: VizTab; label: string; icon: typeof Map; description: string }[] = [
-  { key: 'map', label: '交互式地图', icon: Map, description: '多图层等值线 / 城市详情 / 全屏模式' },
-  { key: 'profile', label: '含水层剖面', icon: Layers3, description: '多层结构 / 水头曲线 / 钻孔详情' },
-  { key: 'piper', label: 'Piper三线图', icon: FlaskConical, description: '多水样叠加 / 水化学分区 / 实时编辑' },
-  { key: 'dashboard', label: '综合仪表盘', icon: LayoutDashboard, description: '关键指标 / 雷达图 / 风险排行' },
-  { key: 'age', label: '地下水年龄', icon: Hourglass, description: '14C年龄剖面 / δD-δ18O散点 / 氚衰减 / 年龄分级' },
-  { key: 'vadose', label: '包气带运移', icon: CloudRain, description: '包气带剖面 / 入渗系数对比 / 埋深关系 / 流域排行 / 补给构成' },
-  { key: 'coupling', label: '多层耦合', icon: GitBranch, description: '含水层系统剖面 / 越流流图 / 分层开采对比 / 水位恢复' },
-  { key: 'monitoring', label: '实时监测', icon: Activity, description: '监测站网 / 水位动态 / 沉降热力 / 水质演变 / 预警面板' },
-  { key: 'realtime', label: '实时数据', icon: Radio, description: '4通道实时轮询 / 自动刷新 / 预警推送 / 数据流' },
-  { key: 'profile3d', label: '3D剖面', icon: Box, description: 'Three.js立体含水层 / 水头曲面 / 钻孔标注 / 旋转缩放' },
-  { key: 'coupling3d', label: '3D耦合', icon: Boxes, description: 'Three.js多层耦合 / 越流粒子动画 / 开采井3D / 补给方向' },
+const TAB_DEFS: { key: VizTab; icon: typeof Map; labelKey: string; descKey: string }[] = [
+  { key: 'map', icon: Map, labelKey: 'viz.tab.map', descKey: 'viz.tab.map.desc' },
+  { key: 'profile', icon: Layers3, labelKey: 'viz.tab.profile', descKey: 'viz.tab.profile.desc' },
+  { key: 'piper', icon: FlaskConical, labelKey: 'viz.tab.piper', descKey: 'viz.tab.piper.desc' },
+  { key: 'dashboard', icon: LayoutDashboard, labelKey: 'viz.tab.dashboard', descKey: 'viz.tab.dashboard.desc' },
+  { key: 'age', icon: Hourglass, labelKey: 'viz.tab.age', descKey: 'viz.tab.age.desc' },
+  { key: 'vadose', icon: CloudRain, labelKey: 'viz.tab.vadose', descKey: 'viz.tab.vadose.desc' },
+  { key: 'coupling', icon: GitBranch, labelKey: 'viz.tab.coupling', descKey: 'viz.tab.coupling.desc' },
+  { key: 'monitoring', icon: Activity, labelKey: 'viz.tab.monitoring', descKey: 'viz.tab.monitoring.desc' },
+  { key: 'realtime', icon: Radio, labelKey: 'viz.tab.realtime', descKey: 'viz.tab.realtime.desc' },
+  { key: 'profile3d', icon: Box, labelKey: 'viz.tab.profile3d', descKey: 'viz.tab.profile3d.desc' },
+  { key: 'coupling3d', icon: Boxes, labelKey: 'viz.tab.coupling3d', descKey: 'viz.tab.coupling3d.desc' },
 ];
 
 export function Visualization() {
   const [activeTab, setActiveTab] = useState<VizTab>('map');
   const isMobile = useIsMobile();
+  const { t } = useI18n();
+
+  const TABS = TAB_DEFS.map(td => ({
+    key: td.key,
+    icon: td.icon,
+    label: t(td.labelKey),
+    description: t(td.descKey),
+  }));
 
   // 当前Tab的导出配置
   const tabExportConfig: Record<VizTab, { id: string; title: string }> = {
@@ -107,7 +116,7 @@ export function Visualization() {
           />
         )}
         {is3DTab && (
-          <span className="text-[10px] text-gw-muted/60">Three.js WebGL · 拖拽旋转 · 滚轮缩放</span>
+          <span className="text-[10px] text-gw-muted/60">Three.js WebGL · Drag to rotate · Scroll to zoom</span>
         )}
       </div>
 

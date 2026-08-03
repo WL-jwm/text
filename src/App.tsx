@@ -5,6 +5,8 @@ import { PrintFooter, PrintButton } from './components/PrintFooter';
 import { useKeyboardShortcuts, ShortcutHelpPanel } from './components/KeyboardShortcuts';
 import { PrintPageHeader } from './components/PrintPageHeader';
 import { ThemeToggle } from './components/ThemeToggle';
+import { LanguageToggle } from './components/LanguageToggle';
+import { useI18n } from './hooks/useI18n';
 import { ToastProvider } from './components/Toast';
 import OfflineBanner from './components/OfflineBanner';
 import InstallPrompt from './components/InstallPrompt';
@@ -124,8 +126,50 @@ navGroups.forEach(g => g.items.forEach(i => {
 // navGroups 28 + saline-water(1) + NotFound(1) = 30 pages
 const TOTAL_PAGES = navGroups.reduce((n, g) => n + g.items.length, 0) + 2;
 
+// ── i18n 导航键映射（path → i18n key）──
+const NAV_I18N_KEYS: Record<string, { label: string; desc: string }> = {
+  '/': { label: 'nav.page.overview', desc: 'nav.page.overview.desc' },
+  '/system-zoning': { label: 'nav.page.system-zoning', desc: 'nav.page.system-zoning.desc' },
+  '/geology': { label: 'nav.page.geology', desc: 'nav.page.geology.desc' },
+  '/map': { label: 'nav.page.map', desc: 'nav.page.map.desc' },
+  '/hydro-zone-params': { label: 'nav.page.hydro-zone-params', desc: 'nav.page.hydro-zone-params.desc' },
+  '/water-source': { label: 'nav.page.water-source', desc: 'nav.page.water-source.desc' },
+  '/karst-water': { label: 'nav.page.karst-water', desc: 'nav.page.karst-water.desc' },
+  '/fracture-water': { label: 'nav.page.fracture-water', desc: 'nav.page.fracture-water.desc' },
+  '/resources': { label: 'nav.page.resources', desc: 'nav.page.resources.desc' },
+  '/county-compare': { label: 'nav.page.county-compare', desc: 'nav.page.county-compare.desc' },
+  '/water-quality': { label: 'nav.page.water-quality', desc: 'nav.page.water-quality.desc' },
+  '/environment': { label: 'nav.page.environment', desc: 'nav.page.environment.desc' },
+  '/exploitation': { label: 'nav.page.exploitation', desc: 'nav.page.exploitation.desc' },
+  '/groundwater-function': { label: 'nav.page.groundwater-function', desc: 'nav.page.groundwater-function.desc' },
+  '/hydrogeology-historical': { label: 'nav.page.hydrogeology-historical', desc: 'nav.page.hydrogeology-historical.desc' },
+  '/groundwater-balance': { label: 'nav.page.groundwater-balance', desc: 'nav.page.groundwater-balance.desc' },
+  '/groundwater-background': { label: 'nav.page.groundwater-background', desc: 'nav.page.groundwater-background.desc' },
+  '/hydrochemistry': { label: 'nav.page.hydrochemistry', desc: 'nav.page.hydrochemistry.desc' },
+  '/geothermal': { label: 'nav.page.geothermal', desc: 'nav.page.geothermal.desc' },
+  '/mineral-water': { label: 'nav.page.mineral-water', desc: 'nav.page.mineral-water.desc' },
+  '/saline-soil': { label: 'nav.page.saline-soil', desc: 'nav.page.saline-soil.desc' },
+  '/mine-hydrogeology': { label: 'nav.page.mine-hydrogeology', desc: 'nav.page.mine-hydrogeology.desc' },
+  '/data-insight': { label: 'nav.page.data-insight', desc: 'nav.page.data-insight.desc' },
+  '/time-series': { label: 'nav.page.time-series', desc: 'nav.page.time-series.desc' },
+  '/spatial': { label: 'nav.page.spatial', desc: 'nav.page.spatial.desc' },
+  '/visualization': { label: 'nav.page.visualization', desc: 'nav.page.visualization.desc' },
+  '/workspace': { label: 'nav.page.workspace', desc: 'nav.page.workspace.desc' },
+  '/changelog': { label: 'nav.page.changelog', desc: 'nav.page.changelog.desc' },
+};
+
+const NAV_GROUP_KEYS: Record<number, string> = {
+  0: 'nav.group.basic',
+  1: 'nav.group.hydro',
+  2: 'nav.group.resource',
+  3: 'nav.group.special',
+  4: 'nav.group.analysis',
+  5: 'nav.group.system',
+};
+
 // ── 侧栏导航内容（桌面+移动端复用） ──
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+  const { t } = useI18n();
   return (
     <>
       <div className="p-4 border-b border-gw-border/60 flex items-center gap-3 h-14">
@@ -139,10 +183,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       <nav aria-label="移动端导航" className="flex-1 py-2 px-2 space-y-3 overflow-y-auto scrollbar-thin">
-        {navGroups.map(group => (
+        {navGroups.map((group, gi) => {
+          const groupKey = NAV_GROUP_KEYS[gi];
+          return (
           <div key={group.label}>
             <p className="text-[10px] text-gw-muted/50 uppercase tracking-wider px-3 mb-1.5 font-medium">
-              {group.label}
+              {groupKey ? t(groupKey, group.label) : group.label}
             </p>
             {group.items.map(item => (
               <NavLink
@@ -159,11 +205,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                 }
               >
                 <item.icon size={16} className="flex-shrink-0" />
-                <span className="truncate">{item.label}</span>
+                <span className="truncate">{NAV_I18N_KEYS[item.path] ? t(NAV_I18N_KEYS[item.path].label, item.label) : item.label}</span>
               </NavLink>
             ))}
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="px-4 py-3 border-t border-gw-border/40 text-[10px] text-gw-muted/40 font-mono">
@@ -203,8 +250,9 @@ function TopBar({ collapsed, onToggleCollapse, onOpenMobileNav }: { collapsed: b
           <GlobalSearchEnhanced placeholder="搜索参数、区域、指标... (Ctrl+K)" />
         </div>
 
-        {/* 主题切换 - 移动端 */}
-        <div className="md:hidden">
+        {/* 语言 + 主题切换 - 移动端 */}
+        <div className="md:hidden flex items-center gap-1">
+          <LanguageToggle />
           <ThemeToggle />
         </div>
 
@@ -216,8 +264,9 @@ function TopBar({ collapsed, onToggleCollapse, onOpenMobileNav }: { collapsed: b
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </button>
 
-        {/* 主题切换 - 桌面端 */}
-        <div className="hidden lg:block">
+        {/* 语言 + 主题切换 - 桌面端 */}
+        <div className="hidden lg:flex items-center gap-1">
+          <LanguageToggle />
           <ThemeToggle />
         </div>
 
@@ -312,6 +361,7 @@ function PreloadManager() {
 export default function App() {
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
+  const { t } = useI18n();
 
   return (
     <BrowserRouter>
@@ -351,11 +401,11 @@ export default function App() {
           )}
 
           <nav aria-label="侧栏导航" className="flex-1 py-2 px-2 space-y-3 overflow-y-auto scrollbar-thin">
-            {navGroups.map(group => (
+            {navGroups.map((group, gi) => (
               <div key={group.label}>
                 {!collapsed && (
                   <p className="text-[10px] text-gw-muted/50 uppercase tracking-wider px-3 mb-1.5 font-medium">
-                    {group.label}
+                    {NAV_GROUP_KEYS[gi] ? t(NAV_GROUP_KEYS[gi], group.label) : group.label}
                   </p>
                 )}
                 {group.items.map(item => (
@@ -363,7 +413,7 @@ export default function App() {
                     key={item.path}
                     to={item.path}
                     end={item.path === '/'}
-                    title={collapsed ? item.label : undefined}
+                    title={collapsed ? (NAV_I18N_KEYS[item.path] ? t(NAV_I18N_KEYS[item.path].label, item.label) : item.label) : undefined}
                     className={({ isActive }) =>
                       `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-all duration-200 group ${
                         isActive
@@ -373,7 +423,7 @@ export default function App() {
                     }
                   >
                     <item.icon size={16} className="flex-shrink-0" />
-                    {!collapsed && <span className="truncate">{item.label}</span>}
+                    {!collapsed && <span className="truncate">{NAV_I18N_KEYS[item.path] ? t(NAV_I18N_KEYS[item.path].label, item.label) : item.label}</span>}
                   </NavLink>
                 ))}
               </div>
