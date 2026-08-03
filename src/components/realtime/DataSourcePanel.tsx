@@ -31,7 +31,7 @@ const CHANNEL_LABELS: Record<DataChannel, string> = {
 const SOURCE_TYPE_LABELS: Record<DataSourceType, string> = {
   mock: 'Mock 模拟',
   http: 'HTTP 轮询',
-  ws: 'WebSocket (G-01b)',
+  ws: 'WebSocket 推送',
 };
 
 const LOG_LEVEL_COLORS: Record<string, string> = {
@@ -179,7 +179,7 @@ export function DataSourcePanel(): React.ReactElement {
                     className="text-xs bg-slate-700 text-slate-200 rounded px-2 py-1 border border-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-400"
                   >
                     {(Object.keys(SOURCE_TYPE_LABELS) as DataSourceType[]).map(type => (
-                      <option key={type} value={type} disabled={type === 'ws'}>
+                      <option key={type} value={type}>
                         {SOURCE_TYPE_LABELS[type]}
                       </option>
                     ))}
@@ -330,10 +330,37 @@ export function DataSourcePanel(): React.ReactElement {
                   </div>
                 )}
 
-                {/* WS 提示 */}
-                {isExpanded && config.type === 'ws' && (
-                  <div className="mt-2 pl-8 text-xs text-yellow-400 border-l-2 border-slate-700">
-                    WebSocket 数据源将在 G-01b 阶段实现，当前不可用。
+                {/* WS 配置 */}
+                {isExpanded && config.type === 'ws' && config.wsConfig && (
+                  <div className="mt-3 space-y-2 pl-8 border-l-2 border-slate-700">
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="text-xs text-slate-400">
+                        WebSocket URL
+                        <input type="text" value={config.wsConfig.url}
+                          onChange={e => { const updated = { ...config, wsConfig: { ...config.wsConfig!, url: e.target.value } }; realtimeService.updateSourceConfig(channel, updated); setConfigs(realtimeService.getAllSourceConfigs()); }}
+                          className="block w-full mt-1 text-xs bg-slate-900 text-slate-200 rounded px-2 py-1 border border-slate-700" />
+                      </label>
+                      <label className="text-xs text-slate-400">
+                        心跳间隔(ms)
+                        <input type="number" value={config.wsConfig.heartbeatMs ?? 30000}
+                          onChange={e => { const updated = { ...config, wsConfig: { ...config.wsConfig!, heartbeatMs: parseInt(e.target.value) || 30000 } }; realtimeService.updateSourceConfig(channel, updated); setConfigs(realtimeService.getAllSourceConfigs()); }}
+                          className="block w-full mt-1 text-xs bg-slate-900 text-slate-200 rounded px-2 py-1 border border-slate-700" />
+                      </label>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="text-xs text-slate-400">
+                        重连间隔(ms)
+                        <input type="number" value={config.wsConfig.reconnectDelayMs ?? 3000}
+                          onChange={e => { const updated = { ...config, wsConfig: { ...config.wsConfig!, reconnectDelayMs: parseInt(e.target.value) || 3000 } }; realtimeService.updateSourceConfig(channel, updated); setConfigs(realtimeService.getAllSourceConfigs()); }}
+                          className="block w-full mt-1 text-xs bg-slate-900 text-slate-200 rounded px-2 py-1 border border-slate-700" />
+                      </label>
+                      <label className="text-xs text-slate-400">
+                        最大重连次数
+                        <input type="number" value={config.wsConfig.maxReconnects ?? 5}
+                          onChange={e => { const updated = { ...config, wsConfig: { ...config.wsConfig!, maxReconnects: parseInt(e.target.value) || 5 } }; realtimeService.updateSourceConfig(channel, updated); setConfigs(realtimeService.getAllSourceConfigs()); }}
+                          className="block w-full mt-1 text-xs bg-slate-900 text-slate-200 rounded px-2 py-1 border border-slate-700" />
+                      </label>
+                    </div>
                   </div>
                 )}
               </div>

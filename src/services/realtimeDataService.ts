@@ -463,6 +463,10 @@ class RealtimeDataService {
       httpConfig: type === 'http'
         ? this.sourceConfigs[channel].httpConfig ?? DEFAULT_SOURCE_CONFIGS[channel].httpConfig
         : this.sourceConfigs[channel].httpConfig,
+      // 切换到 WS 时确保有 wsConfig
+      wsConfig: type === 'ws'
+        ? this.sourceConfigs[channel].wsConfig ?? DEFAULT_SOURCE_CONFIGS[channel].wsConfig
+        : this.sourceConfigs[channel].wsConfig,
     };
     saveSourceConfigs(this.sourceConfigs);
 

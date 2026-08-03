@@ -25,6 +25,7 @@ import { useRealtimeAll, useConnectionStatus } from '../../hooks/useRealtimeData
 import { RealtimeStatusBadge, AutoRefreshControl, ChannelStatusGrid } from './RealtimeStatus';
 import { DataSourcePanel } from './DataSourcePanel';
 import { OfflineAnalysisPanel } from './OfflineAnalysisPanel';
+import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { useAutoCache } from '../../hooks/useRealtimeCache';
 
 // ── 通道图标映射 ──
@@ -380,6 +381,9 @@ export function RealtimeDashboard() {
 
       {/* G-02: 离线分析面板 */}
       <OfflineAnalysisPanel />
+
+      {/* G-01b: 诊断增强面板 */}
+      <DiagnosticsPanel />
     </div>
   );
 }

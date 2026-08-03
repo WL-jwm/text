@@ -279,27 +279,46 @@ describe('WebSocketDataSource', () => {
     expect(source.isPush).toBe(true);
   });
 
-  it('connect 调用 onError（未实现）', () => {
+  it('connect 缺少 wsConfig 时调用 onError', () => {
     let errorCaught: Error | null = null;
     const disconnect = source.connect(
       'waterLevel',
-      makeMockConfig('waterLevel'),
+      makeMockConfig('waterLevel'), // 无 wsConfig
       () => {},
       (err) => { errorCaught = err; },
     );
 
     expect(errorCaught).not.toBeNull();
-    expect(errorCaught!.message).toContain('尚未实现');
+    expect(errorCaught!.message).toContain('未配置');
     disconnect();
   });
 
-  it('fetch 抛出未实现错误', async () => {
+  it('fetch 抛出不支持主动拉取错误', async () => {
     await expect(source.fetch('waterLevel', makeMockConfig('waterLevel'))).rejects.toThrow('不支持主动拉取');
   });
 
-  it('testConnection 返回 false', async () => {
+  it('testConnection 无 wsConfig 时返回 false', async () => {
     const result = await source.testConnection('waterLevel', makeMockConfig('waterLevel'));
     expect(result).toBe(false);
+  });
+
+  it('getMetrics 返回 idle 状态指标', () => {
+    const metrics = source.getMetrics('waterLevel');
+    expect(metrics.state).toBe('idle');
+    expect(metrics.reconnectCount).toBe(0);
+    expect(metrics.messagesReceived).toBe(0);
+  });
+
+  it('getDiagnostics 返回 4 通道诊断', () => {
+    const diag = source.getDiagnostics();
+    expect(diag).toHaveLength(4);
+    expect(diag[0].state).toBe('idle');
+  });
+
+  it('onStateChange 返回取消函数', () => {
+    const unsub = source.onStateChange(() => {});
+    expect(typeof unsub).toBe('function');
+    unsub();
   });
 });
 
