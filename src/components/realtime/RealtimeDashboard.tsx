@@ -28,6 +28,7 @@ import { OfflineAnalysisPanel } from './OfflineAnalysisPanel';
 import { DiagnosticsPanel } from './DiagnosticsPanel';
 import { useAutoCache } from '../../hooks/useRealtimeCache';
 import { QualityPanel } from './QualityPanel';
+import { PerformancePanel } from './PerformancePanel';
 
 // ── 通道图标映射 ──
 
@@ -388,6 +389,9 @@ export function RealtimeDashboard() {
 
       {/* G-08: 数据质量评估面板 */}
       <QualityPanel readings={allReadings} />
+
+      {/* G-07: 性能监控面板 */}
+      <PerformancePanel />
     </div>
   );
 }

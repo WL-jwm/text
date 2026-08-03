@@ -164,6 +164,23 @@ export const translations: Record<Language, Dict> = {
     'realtime.quality_reset': '重置质量引擎',
     'realtime.quality_violation_detail': '违规详情',
 
+    // ── G-07 性能监控 ──
+    'realtime.perf_title': '性能监控',
+    'realtime.perf_health': '系统健康度',
+    'realtime.perf_healthy': '健康',
+    'realtime.perf_degraded': '降级',
+    'realtime.perf_unhealthy': '异常',
+    'realtime.perf_channel_latency': '通道延迟',
+    'realtime.perf_avg': '平均',
+    'realtime.perf_cache': '缓存',
+    'realtime.perf_worker': 'Worker',
+    'realtime.perf_render': '渲染',
+    'realtime.perf_events': '实时事件',
+    'realtime.perf_records': '记录数',
+    'realtime.perf_clear': '清除历史',
+    'realtime.perf_refresh': '数据每 5s 刷新',
+    'realtime.perf_waiting': '正在采集性能数据...',
+
     // ── 导出工具栏 ──
     'export.label': '导出',
     'export.exporting': '导出中...',
@@ -409,6 +426,23 @@ export const translations: Record<Language, Dict> = {
     'realtime.quality_no_violations': 'No violations under current filter',
     'realtime.quality_reset': 'Reset Quality Engine',
     'realtime.quality_violation_detail': 'Violation Details',
+
+    // ── G-07 Performance ──
+    'realtime.perf_title': 'Performance Monitor',
+    'realtime.perf_health': 'System Health',
+    'realtime.perf_healthy': 'Healthy',
+    'realtime.perf_degraded': 'Degraded',
+    'realtime.perf_unhealthy': 'Unhealthy',
+    'realtime.perf_channel_latency': 'Channel Latency',
+    'realtime.perf_avg': 'avg',
+    'realtime.perf_cache': 'Cache',
+    'realtime.perf_worker': 'Worker',
+    'realtime.perf_render': 'Render',
+    'realtime.perf_events': 'Live Events',
+    'realtime.perf_records': 'Records',
+    'realtime.perf_clear': 'Clear History',
+    'realtime.perf_refresh': 'Data refreshes every 5s',
+    'realtime.perf_waiting': 'Collecting performance data...',
 
     // ── Export ──
     'export.label': 'Export',
