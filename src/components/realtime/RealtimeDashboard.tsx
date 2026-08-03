@@ -24,6 +24,8 @@ import {
 import { useRealtimeAll, useConnectionStatus } from '../../hooks/useRealtimeData';
 import { RealtimeStatusBadge, AutoRefreshControl, ChannelStatusGrid } from './RealtimeStatus';
 import { DataSourcePanel } from './DataSourcePanel';
+import { OfflineAnalysisPanel } from './OfflineAnalysisPanel';
+import { useAutoCache } from '../../hooks/useRealtimeCache';
 
 // ── 通道图标映射 ──
 
@@ -312,6 +314,7 @@ function MobileRealtimeKpis({ readings }: { readings: RealtimeReading[] }) {
 export function RealtimeDashboard() {
   const { allReadings, refreshAll } = useRealtimeAll();
   const status = useConnectionStatus();
+  const { cachedCount } = useAutoCache(allReadings, status === 'connected');
 
   const channels: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
 
@@ -325,6 +328,11 @@ export function RealtimeDashboard() {
             <span className="text-[11px] text-gw-muted">
               共 {allReadings.length} 条实时读数
             </span>
+            {cachedCount > 0 && (
+              <span className="text-[11px] text-emerald-400">
+                已缓存 {cachedCount} 条
+              </span>
+            )}
           </div>
           <AutoRefreshControl intervalMs={30000} />
         </div>
@@ -369,6 +377,9 @@ export function RealtimeDashboard() {
 
       {/* G-01a: 数据源管理面板 */}
       <DataSourcePanel />
+
+      {/* G-02: 离线分析面板 */}
+      <OfflineAnalysisPanel />
     </div>
   );
 }
