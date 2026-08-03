@@ -23,6 +23,7 @@ import {
 } from '../../services/realtimeDataService';
 import { useRealtimeAll, useConnectionStatus } from '../../hooks/useRealtimeData';
 import { RealtimeStatusBadge, AutoRefreshControl, ChannelStatusGrid } from './RealtimeStatus';
+import { DataSourcePanel } from './DataSourcePanel';
 
 // ── 通道图标映射 ──
 
@@ -365,6 +366,9 @@ export function RealtimeDashboard() {
           手动刷新全部通道
         </button>
       </div>
+
+      {/* G-01a: 数据源管理面板 */}
+      <DataSourcePanel />
     </div>
   );
 }

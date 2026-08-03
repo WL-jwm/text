@@ -48,7 +48,9 @@ export function useRealtimeChannel(channel: DataChannel): {
   }, [channel]);
 
   const refresh = useCallback(() => {
-    realtimeService.refresh(channel);
+    realtimeService.refresh(channel).catch(() => {
+      // 错误已由 service 内部处理并通知订阅者
+    });
   }, [channel]);
 
   return { readings, lastUpdate, isStale, refresh };
@@ -87,7 +89,9 @@ export function useRealtimeAll(): {
   }, []);
 
   const refreshAll = useCallback(() => {
-    realtimeService.refreshAll();
+    realtimeService.refreshAll().catch(() => {
+      // 错误已由 service 内部处理并通知订阅者
+    });
   }, []);
 
   return { allReadings, lastUpdates, refreshAll };
@@ -134,7 +138,7 @@ export function useAutoRefresh(intervalMs: number = 30000): {
       if (pausedRef.current) return;
       setNextRefreshIn(prev => {
         if (prev <= 1) {
-          realtimeService.refreshAll();
+          realtimeService.refreshAll().catch(() => {});
           setLastRefresh(Date.now());
           return Math.floor(intervalMs / 1000);
         }
@@ -153,7 +157,7 @@ export function useAutoRefresh(intervalMs: number = 30000): {
   }, [intervalMs]);
 
   const refresh = useCallback(() => {
-    realtimeService.refreshAll();
+    realtimeService.refreshAll().catch(() => {});
     setLastRefresh(Date.now());
     setNextRefreshIn(Math.floor(intervalMs / 1000));
   }, []);

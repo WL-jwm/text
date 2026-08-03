@@ -1,14 +1,21 @@
 /**
  * F-01 实时数据接入框架 — 数据服务层
+ * G-01a 升级：数据源适配器注入，支持 Mock/HTTP/WS
  *
- * 提供模拟实时数据源，支持：
+ * 提供实时数据源，支持：
  *   - 轮询模式（interval-based polling）
  *   - 订阅/取消订阅（pub/sub pattern）
  *   - 数据缓存与过期检测
  *   - 多数据通道（水位/水质/沉降/开采量）
- *
- * 实际生产环境中可将 generateMockReading() 替换为真实 API 调用。
+ *   - G-01a: 数据源适配器注入（Mock/HTTP/WS）
+ *   - G-01a: 通道级独立数据源配置
  */
+
+import type { RealtimeDataSource, DataSourceType } from './realtimeDataSource';
+import { getDataSource, connectionLogger } from './realtimeDataSource';
+import type { LogEntry } from './realtimeDataSource';
+import type { ChannelSourceConfig } from '../config/realtimeConfig';
+import { loadSourceConfigs, saveSourceConfigs, DEFAULT_SOURCE_CONFIGS } from '../config/realtimeConfig';
 
 // ============================================================
 // 类型定义
@@ -35,6 +42,8 @@ export interface ChannelConfig {
   unit: string;
   intervalMs: number;
   stations: { id: string; name: string; city: string; baseValue: number; volatility: number }[];
+  /** G-01a: 附加 HTTP 数据源配置（可选） */
+  httpConfig?: import('./realtimeDataSource').HttpSourceConfig;
 }
 
 export interface SubscriptionCallback {
@@ -112,11 +121,10 @@ export const ALERT_THRESHOLDS: Record<DataChannel, { warning: number; critical: 
 };
 
 // ============================================================
-// 实时数据服务
+// 实时数据服务（G-01a 升级版）
 // ============================================================
 
 class RealtimeDataService {
-  private timers = new Map<DataChannel, ReturnType<typeof setInterval>>();
   private subscriptions = new Map<DataChannel, Set<SubscriptionCallback>>();
   private cache = new Map<DataChannel, RealtimeReading[]>();
   private lastUpdate = new Map<DataChannel, number>();
@@ -124,65 +132,89 @@ class RealtimeDataService {
   private statusListeners = new Set<(status: ConnectionStatus) => void>();
   private globalListeners = new Set<SubscriptionCallback>();
 
-  /**
-   * 生成单条模拟读数（基于基准值 + 高斯噪声）
-   */
-  private generateMockReading(
-    station: ChannelConfig['stations'][number],
-    channel: DataChannel,
-    config: ChannelConfig,
-  ): RealtimeReading {
-    // Box-Muller 变换生成高斯随机数
-    const u1 = Math.random() || 0.0001;
-    const u2 = Math.random();
-    const gauss = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-    const noise = gauss * station.volatility;
-    const value = station.baseValue + noise;
+  /** G-01a: 通道级数据源配置 */
+  private sourceConfigs: Record<DataChannel, ChannelSourceConfig>;
+  /** G-01a: 通道级数据源实例缓存 */
+  private sourceInstances = new Map<DataChannel, RealtimeDataSource>();
+  /** G-01a: 通道级连接断开函数 */
+  private disconnectors = new Map<DataChannel, () => void>();
+  /** G-01a: 通道级错误 */
+  private channelErrors = new Map<DataChannel, string | undefined>();
+  private errorListeners = new Set<(channel: DataChannel, error: string | undefined) => void>();
 
-    // 数据质量评级
-    const deviation = Math.abs(noise) / station.volatility;
-    const quality: RealtimeReading['quality'] = deviation < 1 ? 'good' : deviation < 2 ? 'fair' : 'poor';
-
-    return {
-      stationId: station.id,
-      stationName: station.name,
-      city: station.city,
-      channel,
-      value: Math.round(value * 100) / 100,
-      unit: config.unit,
-      timestamp: Date.now(),
-      quality,
-    };
+  constructor() {
+    this.sourceConfigs = loadSourceConfigs();
   }
 
   /**
-   * 采集指定通道的全部站点读数
+   * G-01a: 获取指定通道的数据源实例
    */
-  private collectChannel(channel: DataChannel): RealtimeReading[] {
-    const config = CHANNEL_CONFIGS[channel];
-    const readings = config.stations.map(station =>
-      this.generateMockReading(station, channel, config),
-    );
+  private getDataSourceForChannel(channel: DataChannel): RealtimeDataSource {
+    if (!this.sourceInstances.has(channel)) {
+      const config = this.sourceConfigs[channel];
+      this.sourceInstances.set(channel, getDataSource(config.type));
+    }
+    return this.sourceInstances.get(channel)!;
+  }
+
+  /**
+   * G-01a: 构建带 HTTP 配置的 ChannelConfig
+   */
+  private buildChannelConfig(channel: DataChannel): ChannelConfig {
+    const baseConfig = CHANNEL_CONFIGS[channel];
+    const sourceConfig = this.sourceConfigs[channel];
+
+    if (sourceConfig.type === 'http' && sourceConfig.httpConfig) {
+      return { ...baseConfig, httpConfig: sourceConfig.httpConfig };
+    }
+
+    return baseConfig;
+  }
+
+  /**
+   * G-01a: 采集数据回调处理器
+   */
+  private handleReadings(channel: DataChannel, readings: RealtimeReading[]): void {
     this.cache.set(channel, readings);
     this.lastUpdate.set(channel, Date.now());
-    return readings;
+    this.channelErrors.set(channel, undefined);
+    this.notifyErrorListeners(channel);
+
+    // 通知订阅者
+    const subs = this.subscriptions.get(channel);
+    if (subs) {
+      subs.forEach(cb => cb(readings));
+    }
+    this.globalListeners.forEach(cb => cb(readings));
+  }
+
+  /**
+   * G-01a: 错误回调处理器
+   */
+  private handleError(channel: DataChannel, error: Error): void {
+    this.channelErrors.set(channel, error.message);
+    this.notifyErrorListeners(channel);
+    this.setStatus('error');
+  }
+
+  private notifyErrorListeners(channel: DataChannel): void {
+    const err = this.channelErrors.get(channel);
+    this.errorListeners.forEach(cb => cb(channel, err));
   }
 
   /**
    * 通知订阅者
    */
   private notify(channel: DataChannel, readings: RealtimeReading[]): void {
-    // 通道订阅者
     const subs = this.subscriptions.get(channel);
     if (subs) {
       subs.forEach(cb => cb(readings));
     }
-    // 全局订阅者
     this.globalListeners.forEach(cb => cb(readings));
   }
 
   /**
-   * 启动指定通道的轮询
+   * 订阅指定通道
    */
   subscribe(channel: DataChannel, callback: SubscriptionCallback): () => void {
     // 注册回调
@@ -197,23 +229,35 @@ class RealtimeDataService {
       callback(cached);
     }
 
-    // 启动定时器（如果尚未运行）
-    if (!this.timers.has(channel)) {
-      const config = CHANNEL_CONFIGS[channel];
-      // 立即采集一次
-      const readings = this.collectChannel(channel);
-      this.notify(channel, readings);
-      this.setStatus('connected');
+    // 启动数据源连接（如果尚未运行）
+    if (!this.disconnectors.has(channel)) {
+      const sourceConfig = this.sourceConfigs[channel];
+      if (!sourceConfig.enabled) {
+        connectionLogger.warn(channel, sourceConfig.type, '通道已禁用，跳过连接');
+        return () => this.unsubscribe(channel, callback);
+      }
 
-      // 启动轮询
-      const timer = setInterval(() => {
-        const fresh = this.collectChannel(channel);
-        this.notify(channel, fresh);
-      }, config.intervalMs);
-      this.timers.set(channel, timer);
+      const source = this.getDataSourceForChannel(channel);
+      const config = this.buildChannelConfig(channel);
+
+      connectionLogger.info(channel, sourceConfig.type, `数据源连接中...`);
+      this.setStatus('connecting');
+
+      const disconnect = source.connect(
+        channel,
+        config,
+        (readings) => this.handleReadings(channel, readings),
+        (error) => this.handleError(channel, error),
+      );
+
+      this.disconnectors.set(channel, disconnect);
+
+      // Mock 和 HTTP 会立即推送，状态设为 connected
+      if (!source.isPush) {
+        this.setStatus('connected');
+      }
     }
 
-    // 返回取消订阅函数
     return () => this.unsubscribe(channel, callback);
   }
 
@@ -224,14 +268,15 @@ class RealtimeDataService {
     const subs = this.subscriptions.get(channel);
     if (subs) {
       subs.delete(callback);
-      // 无订阅者时停止轮询
+      // 无订阅者时断开数据源
       if (subs.size === 0) {
-        const timer = this.timers.get(channel);
-        if (timer) {
-          clearInterval(timer);
-          this.timers.delete(channel);
+        const disconnect = this.disconnectors.get(channel);
+        if (disconnect) {
+          disconnect();
+          this.disconnectors.delete(channel);
         }
         this.subscriptions.delete(channel);
+        this.sourceInstances.delete(channel);
       }
     }
   }
@@ -241,7 +286,6 @@ class RealtimeDataService {
    */
   subscribeAll(callback: SubscriptionCallback): () => void {
     this.globalListeners.add(callback);
-    // 推送当前缓存
     this.cache.forEach(readings => callback(readings));
 
     const channels: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
@@ -282,20 +326,34 @@ class RealtimeDataService {
   /**
    * 手动刷新指定通道
    */
-  refresh(channel: DataChannel): RealtimeReading[] {
-    const readings = this.collectChannel(channel);
-    this.notify(channel, readings);
-    return readings;
+  async refresh(channel: DataChannel): Promise<RealtimeReading[]> {
+    const source = this.getDataSourceForChannel(channel);
+    const config = this.buildChannelConfig(channel);
+
+    try {
+      const readings = await source.fetch(channel, config);
+      this.handleReadings(channel, readings);
+      return readings;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      this.handleError(channel, error);
+      throw error;
+    }
   }
 
   /**
    * 手动刷新所有通道
    */
-  refreshAll(): RealtimeReading[] {
+  async refreshAll(): Promise<RealtimeReading[]> {
     const channels: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
     const all: RealtimeReading[] = [];
-    channels.forEach(ch => {
-      all.push(...this.refresh(ch));
+    const results = await Promise.allSettled(
+      channels.map(ch => this.refresh(ch)),
+    );
+    results.forEach(result => {
+      if (result.status === 'fulfilled') {
+        all.push(...result.value);
+      }
     });
     return all;
   }
@@ -327,14 +385,15 @@ class RealtimeDataService {
    * 获取通道配置
    */
   getChannelConfig(channel: DataChannel): ChannelConfig {
-    return CHANNEL_CONFIGS[channel];
+    return this.buildChannelConfig(channel);
   }
 
   /**
    * 获取所有通道配置
    */
   getAllChannelConfigs(): ChannelConfig[] {
-    return Object.values(CHANNEL_CONFIGS);
+    const channels: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
+    return channels.map(ch => this.buildChannelConfig(ch));
   }
 
   /**
@@ -350,11 +409,178 @@ class RealtimeDataService {
    * 关闭所有通道
    */
   disconnect(): void {
-    this.timers.forEach(timer => clearInterval(timer));
-    this.timers.clear();
+    this.disconnectors.forEach(d => d());
+    this.disconnectors.clear();
     this.subscriptions.clear();
     this.globalListeners.clear();
+    this.sourceInstances.clear();
     this.setStatus('disconnected');
+  }
+
+  // ============================================================
+  // G-01a: 数据源管理 API
+  // ============================================================
+
+  /**
+   * 获取通道数据源类型
+   */
+  getDataSourceType(channel: DataChannel): DataSourceType {
+    return this.sourceConfigs[channel].type;
+  }
+
+  /**
+   * 获取通道数据源配置
+   */
+  getSourceConfig(channel: DataChannel): ChannelSourceConfig {
+    return this.sourceConfigs[channel];
+  }
+
+  /**
+   * 获取所有通道数据源配置
+   */
+  getAllSourceConfigs(): Record<DataChannel, ChannelSourceConfig> {
+    return { ...this.sourceConfigs };
+  }
+
+  /**
+   * 设置通道数据源类型（运行时切换）
+   * 会断开当前连接，下次 subscribe 时使用新数据源
+   */
+  setDataSourceType(channel: DataChannel, type: DataSourceType): void {
+    // 断开当前连接
+    const disconnect = this.disconnectors.get(channel);
+    if (disconnect) {
+      disconnect();
+      this.disconnectors.delete(channel);
+    }
+    this.sourceInstances.delete(channel);
+
+    // 更新配置
+    this.sourceConfigs[channel] = {
+      ...this.sourceConfigs[channel],
+      type,
+      // 切换到 HTTP 时确保有 httpConfig
+      httpConfig: type === 'http'
+        ? this.sourceConfigs[channel].httpConfig ?? DEFAULT_SOURCE_CONFIGS[channel].httpConfig
+        : this.sourceConfigs[channel].httpConfig,
+    };
+    saveSourceConfigs(this.sourceConfigs);
+
+    connectionLogger.info(channel, type, `数据源已切换为 ${type}`);
+
+    // 如果有订阅者，自动重连
+    const subs = this.subscriptions.get(channel);
+    if (subs && subs.size > 0) {
+      const source = this.getDataSourceForChannel(channel);
+      const config = this.buildChannelConfig(channel);
+      this.setStatus('connecting');
+
+      const newDisconnect = source.connect(
+        channel,
+        config,
+        (readings) => this.handleReadings(channel, readings),
+        (error) => this.handleError(channel, error),
+      );
+      this.disconnectors.set(channel, newDisconnect);
+
+      if (!source.isPush) {
+        this.setStatus('connected');
+      }
+    }
+  }
+
+  /**
+   * 更新通道数据源配置
+   */
+  updateSourceConfig(channel: DataChannel, config: Partial<ChannelSourceConfig>): void {
+    this.sourceConfigs[channel] = {
+      ...this.sourceConfigs[channel],
+      ...config,
+    };
+    saveSourceConfigs(this.sourceConfigs);
+    connectionLogger.info(channel, this.sourceConfigs[channel].type, '数据源配置已更新');
+  }
+
+  /**
+   * 启用/禁用通道
+   */
+  setChannelEnabled(channel: DataChannel, enabled: boolean): void {
+    this.sourceConfigs[channel].enabled = enabled;
+    saveSourceConfigs(this.sourceConfigs);
+
+    if (!enabled) {
+      const disconnect = this.disconnectors.get(channel);
+      if (disconnect) {
+        disconnect();
+        this.disconnectors.delete(channel);
+      }
+    } else {
+      // 重新连接
+      const subs = this.subscriptions.get(channel);
+      if (subs && subs.size > 0 && !this.disconnectors.has(channel)) {
+        const source = this.getDataSourceForChannel(channel);
+        const config = this.buildChannelConfig(channel);
+        const disconnect = source.connect(
+          channel,
+          config,
+          (readings) => this.handleReadings(channel, readings),
+          (error) => this.handleError(channel, error),
+        );
+        this.disconnectors.set(channel, disconnect);
+      }
+    }
+  }
+
+  /**
+   * 获取通道错误信息
+   */
+  getChannelError(channel: DataChannel): string | undefined {
+    return this.channelErrors.get(channel);
+  }
+
+  /**
+   * 订阅通道错误变化
+   */
+  onChannelError(callback: (channel: DataChannel, error: string | undefined) => void): () => void {
+    this.errorListeners.add(callback);
+    return () => this.errorListeners.delete(callback);
+  }
+
+  /**
+   * 获取连接日志
+   */
+  getConnectionLogs(): LogEntry[] {
+    return connectionLogger.getLogs();
+  }
+
+  /**
+   * 订阅连接日志
+   */
+  onLogs(callback: (logs: LogEntry[]) => void): () => void {
+    return connectionLogger.subscribe(callback);
+  }
+
+  /**
+   * 清除连接日志
+   */
+  clearLogs(): void {
+    connectionLogger.clear();
+  }
+
+  /**
+   * 测试通道连接
+   */
+  async testConnection(channel: DataChannel): Promise<boolean> {
+    const source = this.getDataSourceForChannel(channel);
+    const config = this.buildChannelConfig(channel);
+    try {
+      const ok = await source.testConnection(channel, config);
+      connectionLogger.info(channel, this.sourceConfigs[channel].type, `连接测试: ${ok ? '成功' : '失败'}`);
+      return ok;
+    } catch (err) {
+      connectionLogger.error(channel, this.sourceConfigs[channel].type, '连接测试异常', err instanceof Error ? err.message : String(err));
+      return false;
+    }
   }
 }
 
