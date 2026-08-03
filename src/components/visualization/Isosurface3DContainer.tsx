@@ -1,14 +1,14 @@
 /**
- * G-03/G-04 Isosurface3DContainer
+ * G-03/G-04/G-06 Isosurface3DContainer
  *
  * 包装 Isosurface3D + Snapshot3DToolbar + 示例数据
- * 集成 IDW 插值 + 3D 等值面渲染 + 截图导出
+ * 集成 IDW 插值（G-06 Worker 化）+ 3D 等值面渲染 + 截图导出
  */
 
-import { useMemo, useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Isosurface3D } from './Isosurface3D';
-
-import { idwInterpolate, type InterpolationPoint } from '../../utils/idwInterpolation';
+import { useWorkerInterpolation, useWorkerStatus } from '../../hooks/useWorker';
+import type { InterpolationPoint, InterpolationGrid } from '../../utils/idwInterpolation';
 
 // 河北省地下水监测站点示例数据（水位埋深 m）
 const SAMPLE_POINTS: InterpolationPoint[] = [
@@ -27,24 +27,32 @@ const SAMPLE_POINTS: InterpolationPoint[] = [
 
 export function Isosurface3DContainer(): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { interpolate, usingWorker, lastElapsed } = useWorkerInterpolation();
+  const { available: workerAvailable } = useWorkerStatus();
 
-  // IDW 插值生成网格
-  const grid = useMemo(() => {
-    return idwInterpolate(SAMPLE_POINTS, undefined, {
-      power: 2,
-      resolution: 0.08,
-      searchRadius: 1.5,
-      minPoints: 3,
-      maxPoints: 10,
-    });
-  }, []);
+  const [grid, setGrid] = useState<InterpolationGrid | null>(null);
 
-  // 直接从 canvas 截图的简化方案
+  // Worker 化 IDW 插值
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const result = await interpolate(SAMPLE_POINTS, undefined, {
+        power: 2,
+        resolution: 0.08,
+        searchRadius: 1.5,
+        minPoints: 3,
+        maxPoints: 10,
+      });
+      if (!cancelled) setGrid(result);
+    })();
+    return () => { cancelled = true; };
+  }, [interpolate]);
+
+  // 直接从 canvas 截图
   const handleQuickCapture = (pixelRatio: number) => {
     const canvas = containerRef.current?.querySelector('canvas') as HTMLCanvasElement | null;
     if (!canvas) return;
 
-    // 创建临时高分辨率 canvas
     const w = canvas.width * pixelRatio;
     const h = canvas.height * pixelRatio;
     const tmpCanvas = document.createElement('canvas');
@@ -53,7 +61,7 @@ export function Isosurface3DContainer(): React.ReactElement {
     const ctx = tmpCanvas.getContext('2d')!;
     ctx.drawImage(canvas, 0, 0, w, h);
 
-    // 添加水印
+    // 水印
     ctx.font = `bold ${w * 0.02}px sans-serif`;
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
     ctx.textAlign = 'right';
@@ -71,10 +79,20 @@ export function Isosurface3DContainer(): React.ReactElement {
     a.click();
   };
 
+  if (!grid) {
+    return (
+      <div className="flex items-center justify-center h-[400px] bg-slate-900 rounded-lg border border-slate-700">
+        <span className="text-sm text-slate-500">
+          {usingWorker ? 'Worker 计算中...' : '插值计算中...'}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
-      {/* 截图工具栏 */}
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/60 rounded border border-slate-700">
+      {/* 截图工具栏 + Worker 状态 */}
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/60 rounded border border-slate-700 flex-wrap">
         <span className="text-[10px] text-slate-500">3D 截图:</span>
         <button
           onClick={() => handleQuickCapture(1)}
@@ -94,8 +112,23 @@ export function Isosurface3DContainer(): React.ReactElement {
         >
           PNG 4K
         </button>
-        <span className="text-[10px] text-slate-600 ml-2">
-          {SAMPLE_POINTS.length} 个监测站 · IDW 插值 {grid.cols}×{grid.rows}
+        <div className="w-px h-4 bg-slate-600 mx-1" />
+        {/* Worker 状态指示 */}
+        <span className="text-[10px] flex items-center gap-1">
+          <span
+            className={`w-2 h-2 rounded-full ${workerAvailable ? 'bg-emerald-400' : 'bg-yellow-400'}`}
+          />
+          <span className={workerAvailable ? 'text-emerald-400' : 'text-yellow-400'}>
+            {workerAvailable ? 'Worker' : '主线程'}
+          </span>
+        </span>
+        {lastElapsed > 0 && (
+          <span className="text-[10px] text-slate-600">
+            {lastElapsed.toFixed(1)}ms
+          </span>
+        )}
+        <span className="text-[10px] text-slate-600 ml-auto">
+          {SAMPLE_POINTS.length} 站 · {grid.cols}×{grid.rows}
         </span>
       </div>
 
