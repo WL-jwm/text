@@ -16,8 +16,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { realtimeCache, type RealtimeReading } from '../realtimeCache';
-import type { DataChannel } from '../realtimeDataService';
+import { realtimeCache } from '../realtimeCache';
+import type { RealtimeReading, DataChannel } from '../realtimeDataService';
 
 // ============================================================
 // 辅助工具
@@ -83,14 +83,7 @@ function makeReadingsWithStations(
 
 // 使用真实的 IDB 通过 fake-indexeddb 来测试
 // 检查是否已安装
-let fakeIndexedDB: typeof import('fake-indexeddb') | null = null;
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  fakeIndexedDB = require('fake-indexeddb');
-} catch {
-  // fake-indexeddb 未安装，使用 mock
-}
+// IDB 在 node 环境不可用，测试走 catch 分支验证接口完整性
 
 // ============================================================
 // 1. RealtimeCacheService 测试

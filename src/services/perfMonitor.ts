@@ -468,5 +468,5 @@ export function perfTrack(type: MetricType, options?: { label?: string; channel?
 
 // 在开发模式下暴露到全局
 if (typeof window !== 'undefined' && import.meta.env.DEV) {
-  (window as Record<string, unknown>).__perfMonitor = perfMonitor;
+  (window as unknown as Record<string, unknown>).__perfMonitor = perfMonitor;
 }

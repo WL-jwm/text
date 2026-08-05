@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
@@ -56,18 +56,18 @@ const samplePie = [
 ];
 
 const sampleCityChart = [
-  { city: '石家庄', recharge: 20.1, discharge: 25.3 },
-  { city: '保定', recharge: 15.2, discharge: 18.7 },
+  { name: '石家庄', recharge: 20.1, discharge: 25.3, balance: -5.2 },
+  { name: '保定', recharge: 15.2, discharge: 18.7, balance: -3.5 },
 ];
 
 const samplePotential = [
-  { name: '山前平原', value: 5.2 },
-  { name: '中部平原', value: 2.1 },
+  { name: '山前平原', resource: 20.1, extraction: 14.9, surplus: 5.2 },
+  { name: '中部平原', resource: 15.2, extraction: 13.1, surplus: 2.1 },
 ];
 
 const samplePollution = [
-  { city: '石家庄', area: 1200 },
-  { city: '保定', area: 800 },
+  { name: '石家庄', unpol: 60, light: 20, moderate: 10, heavy: 5, severe: 5 },
+  { name: '保定', unpol: 70, light: 15, moderate: 8, heavy: 4, severe: 3 },
 ];
 
 // ═══════════════════════════════════════════════════════

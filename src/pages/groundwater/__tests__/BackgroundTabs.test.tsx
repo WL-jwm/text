@@ -129,8 +129,8 @@ describe('BackgroundCompareTab', () => {
   ];
 
   const sampleIndicatorCompare = [
-    { indicator: 'pH', shallow: 7.5, deep: 7.8, diff: 0.3 },
-    { indicator: 'TDS', shallow: 450, deep: 850, diff: 400 },
+    { name: 'pH', shallow: 7.5, deep: 7.8, diff: 0.3 },
+    { name: 'TDS', shallow: 450, deep: 850, diff: 400 },
   ];
 
   it('renders indicator comparison chart card', () => {
@@ -139,6 +139,7 @@ describe('BackgroundCompareTab', () => {
         radarData={sampleRadarData}
         indicatorCompare={sampleIndicatorCompare}
         selectedLayer="shallow"
+        setSelectedLayer={() => {}}
       />
     );
     expect(screen.getByText('主要指标分区对比（上限值）')).toBeInTheDocument();
@@ -150,6 +151,7 @@ describe('BackgroundCompareTab', () => {
         radarData={sampleRadarData}
         indicatorCompare={sampleIndicatorCompare}
         selectedLayer="shallow"
+        setSelectedLayer={() => {}}
       />
     );
     expect(screen.getByText('指标分布雷达图')).toBeInTheDocument();
@@ -161,6 +163,7 @@ describe('BackgroundCompareTab', () => {
         radarData={sampleRadarData}
         indicatorCompare={sampleIndicatorCompare}
         selectedLayer="shallow"
+        setSelectedLayer={() => {}}
       />
     );
     expect(screen.getByText('浅层 vs 深层背景值对比')).toBeInTheDocument();
@@ -172,8 +175,8 @@ describe('BackgroundCompareTab', () => {
 // ═══════════════════════════════════════════════════════
 describe('BackgroundExceedTab', () => {
   const sampleCities = [
-    { city: '石家庄', factors: ['TDS', 'F'], exceedCount: 2 },
-    { city: '保定', factors: ['NO3'], exceedCount: 1 },
+    { city: '石家庄', shallow: '高', deep: '中', note: 'TDS、氟超标' },
+    { city: '保定', shallow: '中', deep: '低', note: '硝酸盐超标' },
   ];
 
   it('renders exceed factor table card', () => {
@@ -181,6 +184,7 @@ describe('BackgroundExceedTab', () => {
       <BackgroundExceedTab
         filteredCities={sampleCities}
         citySearch=""
+        setCitySearch={() => {}}
         expandedCity={null}
         setExpandedCity={vi.fn()}
       />
@@ -193,6 +197,7 @@ describe('BackgroundExceedTab', () => {
       <BackgroundExceedTab
         filteredCities={sampleCities}
         citySearch=""
+        setCitySearch={() => {}}
         expandedCity={null}
         setExpandedCity={vi.fn()}
       />
@@ -206,6 +211,7 @@ describe('BackgroundExceedTab', () => {
       <BackgroundExceedTab
         filteredCities={sampleCities}
         citySearch=""
+        setCitySearch={() => {}}
         expandedCity={null}
         setExpandedCity={vi.fn()}
       />

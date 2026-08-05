@@ -64,8 +64,8 @@ const sampleCityType = [
 ];
 
 const sampleRecoveryChart = [
-  { year: '2019', shallow: 25.3, deep: 45.2 },
-  { year: '2020', shallow: 24.8, deep: 44.1 },
+  { year: '2019', shallowDepth: 25.3, deepDepth: 45.2, shallowRise: 1.2, deepRise: 2.5 },
+  { year: '2020', shallowDepth: 24.8, deepDepth: 44.1, shallowRise: 2.5, deepRise: 4.1 },
 ];
 
 const sampleRecoveryExport = [
@@ -74,8 +74,8 @@ const sampleRecoveryExport = [
 ];
 
 const sampleZoneRadar = [
-  { indicator: '水质保护', score: 85 },
-  { indicator: '水量维持', score: 72 },
+  { name: '水质保护', value: 85 },
+  { name: '水量维持', value: 72 },
 ];
 
 // ═══════════════════════════════════════════════════════

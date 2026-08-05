@@ -249,7 +249,7 @@ vi.mock('../../store/useAppStore', () => ({
 }));
 
 import { useStoreInit } from '../useStoreInit';
-import { useAppStore } from '../../store/useAppStore';
+import { useAppStore, type AppState } from '../../store/useAppStore';
 
 describe('useStoreInit', () => {
   it('exports a hook function', () => {
@@ -258,8 +258,8 @@ describe('useStoreInit', () => {
 
   it('calls init from useAppStore on mount', async () => {
     const mockInit = vi.fn().mockResolvedValue(undefined);
-    useAppStore.mockImplementation((selector: (state: Record<string, unknown>) => unknown) =>
-      selector({ init: mockInit, isInitialized: false, theme: 'system', language: 'zh-CN' })
+    vi.mocked(useAppStore).mockImplementation((selector: (state: AppState) => unknown) =>
+      selector({ init: mockInit } as unknown as AppState)
     );
 
     renderHook(() => useStoreInit());

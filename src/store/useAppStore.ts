@@ -90,7 +90,7 @@ const DB_NAME = 'hebei-groundwater-db';
 const DB_VERSION = 2;
 
 /* ── Zustand Store ──────────────────────────────────── */
-interface AppState {
+export interface AppState {
   db: IDBPDatabase<AppDBSchema> | null;
   initialized: boolean;
 

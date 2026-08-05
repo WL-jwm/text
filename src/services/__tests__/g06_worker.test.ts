@@ -13,7 +13,7 @@
  *   8. useWorkerStatus — 状态检测
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { idwInterpolate, type InterpolationPoint } from '../../utils/idwInterpolation';
 import {
@@ -23,7 +23,6 @@ import {
   useWorkerStatus,
   isWorkerAvailable,
   type ContourSegment,
-  type WorkerStatsResult,
 } from '../../hooks/useWorker';
 
 // ============================================================

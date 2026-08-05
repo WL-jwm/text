@@ -21,6 +21,8 @@ import {
 import type { DataChannel } from '../../services/realtimeDataService';
 import { useI18n } from '../../hooks/useI18n';
 
+const CHANNELS: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
+
 const CHANNEL_LABELS: Record<DataChannel, string> = {
   waterLevel: '水位埋深',
   waterQuality: '水质达标率',

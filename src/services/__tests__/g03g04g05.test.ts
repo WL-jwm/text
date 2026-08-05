@@ -32,14 +32,14 @@ describe('G-05 i18n 翻译键完整性', () => {
   });
 
   it('所有中文值都是非空字符串', () => {
-    for (const [key, val] of Object.entries(translations['zh-CN'])) {
+    for (const [, val] of Object.entries(translations['zh-CN'])) {
       expect(typeof val).toBe('string');
       expect(val.length).toBeGreaterThan(0);
     }
   });
 
   it('所有英文值都是非空字符串', () => {
-    for (const [key, val] of Object.entries(translations.en)) {
+    for (const [, val] of Object.entries(translations.en)) {
       expect(typeof val).toBe('string');
       expect(val.length).toBeGreaterThan(0);
     }
