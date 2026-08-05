@@ -16,7 +16,7 @@
  */
 
 import { useState } from 'react';
-import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass, CloudRain, GitBranch, Activity, Radio, Box, Boxes, Globe } from 'lucide-react';
+import { Map, Layers3, FlaskConical, LayoutDashboard, Hourglass, CloudRain, GitBranch, Activity, Radio, Box, Boxes, Globe, Network } from 'lucide-react';
 import { EnhancedMap } from '../components/visualization/EnhancedMap';
 import { AquiferProfile3D } from '../components/visualization/AquiferProfile3D';
 import { InteractivePiperDiagram } from '../components/visualization/InteractivePiperDiagram';
@@ -29,12 +29,13 @@ import { RealtimeDashboard } from '../components/realtime/RealtimeDashboard';
 import { AquiferProfile3DWebGL } from '../components/visualization/AquiferProfile3DWebGL';
 import { MultiLayerCoupling3D } from '../components/visualization/MultiLayerCoupling3D';
 import { Isosurface3DContainer } from '../components/visualization/Isosurface3DContainer';
+import { WellNetworkPanel } from '../components/well-network/WellNetworkPanel';
 import { VizExportBar } from '../components/visualization/VizExportBar';
 import { ResponsiveVizPanel } from '../components/visualization/ResponsiveVizPanel';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import { useI18n } from '../hooks/useI18n';
 
-type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling' | 'monitoring' | 'realtime' | 'profile3d' | 'coupling3d' | 'isosurface3d';
+type VizTab = 'map' | 'profile' | 'piper' | 'dashboard' | 'age' | 'vadose' | 'coupling' | 'monitoring' | 'realtime' | 'profile3d' | 'coupling3d' | 'isosurface3d' | 'wellnetwork';
 
 const TAB_DEFS: { key: VizTab; icon: typeof Map; labelKey: string; descKey: string }[] = [
   { key: 'map', icon: Map, labelKey: 'viz.tab.map', descKey: 'viz.tab.map.desc' },
@@ -49,6 +50,7 @@ const TAB_DEFS: { key: VizTab; icon: typeof Map; labelKey: string; descKey: stri
   { key: 'profile3d', icon: Box, labelKey: 'viz.tab.profile3d', descKey: 'viz.tab.profile3d.desc' },
   { key: 'coupling3d', icon: Boxes, labelKey: 'viz.tab.coupling3d', descKey: 'viz.tab.coupling3d.desc' },
   { key: 'isosurface3d', icon: Globe, labelKey: 'viz.tab.isosurface3d', descKey: 'viz.tab.isosurface3d.desc' },
+  { key: 'wellnetwork', icon: Network, labelKey: 'viz.tab.wellnetwork', descKey: 'viz.tab.wellnetwork.desc' },
 ];
 
 export function Visualization() {
@@ -77,10 +79,12 @@ export function Visualization() {
     profile3d: { id: '3d-aquifer-profile', title: '3D含水层剖面' },
     coupling3d: { id: '3d-multi-layer-coupling', title: '3D多层耦合' },
     isosurface3d: { id: '3d-isosurface', title: '3D等值面' },
+    wellnetwork: { id: 'well-network', title: '监测井网与空间分析' },
   };
 
   // 3D Tab不需要ResponsiveVizPanel（Three.js自行处理canvas尺寸）
   const is3DTab = activeTab === 'profile3d' || activeTab === 'coupling3d' || activeTab === 'isosurface3d';
+  const isNoExportTab = activeTab === 'realtime' || activeTab === 'wellnetwork';
 
   return (
     <div className="space-y-4">
@@ -111,7 +115,7 @@ export function Visualization() {
         <div className="text-[11px] text-gw-muted">
           {TABS.find(t => t.key === activeTab)?.description}
         </div>
-        {!is3DTab && (
+        {!is3DTab && !isNoExportTab && (
           <VizExportBar
             panelId={tabExportConfig[activeTab].id}
             panelTitle={tabExportConfig[activeTab].title}
@@ -153,6 +157,7 @@ export function Visualization() {
         {activeTab === 'profile3d' && <AquiferProfile3DWebGL />}
         {activeTab === 'coupling3d' && <MultiLayerCoupling3D />}
         {activeTab === 'isosurface3d' && <Isosurface3DContainer />}
+        {activeTab === 'wellnetwork' && <WellNetworkPanel />}
       </div>
     </div>
   );

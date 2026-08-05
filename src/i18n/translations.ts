@@ -108,6 +108,8 @@ export const translations: Record<Language, Dict> = {
     'viz.tab.coupling3d.desc': 'Three.js多层耦合 / 越流粒子动画 / 开采井3D / 补给方向',
     'viz.tab.isosurface3d': '3D等值面',
     'viz.tab.isosurface3d.desc': 'IDW插值 / Marching Squares等值线 / 顶点着色 / 色标',
+    'viz.tab.wellnetwork': '监测井网',
+    'viz.tab.wellnetwork.desc': '监测井网管理 / 空间分析 / 缓冲区分析 / 最近邻分析',
     'viz.isosurface3d': '3D等值面',
 
     // ── 实时数据 ──
@@ -371,6 +373,8 @@ export const translations: Record<Language, Dict> = {
     'viz.tab.coupling3d.desc': 'Three.js multi-layer / Leakage particles / 3D wells / Recharge',
     'viz.tab.isosurface3d': '3D Isosurface',
     'viz.tab.isosurface3d.desc': 'IDW interpolation / Marching Squares contours / Vertex coloring / Color bar',
+    'viz.tab.wellnetwork': 'Well Network',
+    'viz.tab.wellnetwork.desc': 'Well network management / Spatial analysis / Buffer analysis / Nearest neighbor analysis',
     'viz.isosurface3d': '3D Isosurface',
 
     // ── Realtime ──
