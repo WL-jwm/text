@@ -29,6 +29,7 @@ import {
   Radio,
   TriangleAlert,
   Clock,
+  FileDown,
 } from 'lucide-react';
 import { TechCard } from '../UI';
 import {
@@ -46,6 +47,8 @@ import {
 import { WELL_REALTIME_STATUS_CONFIG } from '../../services/wellRealtime';
 import { ALERT_SEVERITY_CONFIG, formatAlertThreshold } from '../../services/wellAlerts';
 import type { AlertSeverity } from '../../services/wellAlerts';
+import { downloadWellReport } from '../../services/wellReportDocx';
+import { buildWellReportData } from '../../services/wellReport';
 import type { AquiferType, WellStatus, Well } from '../../services/wellNetwork';
 import type { WellWithData, WellRealtimeStatus } from '../../services/wellRealtime';
 import type { DataChannel } from '../../services/realtimeDataService';
@@ -429,7 +432,7 @@ export function WellNetworkPanel() {
   const liveTrend = useWellRealtimeTrend(selectedId, allReadings, 30);
 
   // 告警联动
-  const { summary: alertSummary, filteredAlerts } = useWellAlerts(wellsWithData);
+  const { alerts: allAlerts, summary: alertSummary, filteredAlerts } = useWellAlerts(wellsWithData);
   const selectedForChannel = useMemo(
     () => wellsWithData.find(w => w.id === selectedId) ?? null,
     [wellsWithData, selectedId],
@@ -443,6 +446,8 @@ export function WellNetworkPanel() {
   const [rtFilter, setRtFilter] = useState<WellRealtimeStatus | 'all'>('all');
   const [showAlerts, setShowAlerts] = useState(true);
   const [alertSeverityFilter, setAlertSeverityFilter] = useState<AlertSeverity | 'all'>('all');
+  const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done' | 'error'>('idle');
+  const [reportMsg, setReportMsg] = useState('');
   const [bufferRadius, setBufferRadius] = useState(50);
   const [bufferCenter, setBufferCenter] = useState('WL-CZ-01');
   const [distances, setDistances] = useState<ReturnType<typeof getDistances>>([]);
@@ -485,6 +490,18 @@ export function WellNetworkPanel() {
   const handleBuffer = useCallback(() => {
     analyzeBuffer(bufferCenter, bufferRadius);
   }, [bufferCenter, bufferRadius, analyzeBuffer]);
+
+  // 生成并下载报告
+  const handleGenerateReport = useCallback(async () => {
+    setReportStatus('generating');
+    setReportMsg('正在生成报告...');
+    const data = buildWellReportData(wellsWithData, allAlerts, {
+      unit: '河北瑞三元环境科技有限公司',
+    });
+    const result = await downloadWellReport(data);
+    setReportStatus(result.ok ? 'done' : 'error');
+    setReportMsg(result.message);
+  }, [wellsWithData, allAlerts]);
 
   const bufferWells = buffer?.wellsWithin ?? [];
 
@@ -650,7 +667,23 @@ export function WellNetworkPanel() {
             <Crosshair size={11} />井列表({displayWells.length})
             <ChevronDown size={9} className={`transition-transform ${showTable ? 'rotate-0' : '-rotate-90'}`} />
           </button>
+          <button
+            onClick={handleGenerateReport}
+            disabled={reportStatus === 'generating'}
+            className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors disabled:opacity-50 ml-auto"
+            title="生成并下载 Word 报告"
+          >
+            <FileDown size={11} />
+            {reportStatus === 'generating' ? '生成中...' : '生成报告'}
+          </button>
         </div>
+
+        {/* 报告状态提示 */}
+        {reportStatus !== 'idle' && (
+          <div className={`text-[9px] px-2 py-1 rounded ${reportStatus === 'done' ? 'bg-emerald-500/10 text-emerald-400' : reportStatus === 'error' ? 'bg-red-500/10 text-red-400' : 'bg-gw-cyan/10 text-gw-cyan'}`}>
+            {reportMsg}
+          </div>
+        )}
 
         {/* 新增表单 */}
         {showAdd && <AddWellForm onAdd={addWell} onClose={() => setShowAdd(false)} />}
