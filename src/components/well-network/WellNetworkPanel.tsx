@@ -30,6 +30,7 @@ import {
   TriangleAlert,
   Clock,
   FileDown,
+  Download,
   Droplets,
   TrendingUp,
   TrendingDown,
@@ -48,6 +49,8 @@ import { useWaterBalance, useCityBalance, useBalanceComparison } from '../../hoo
 import { RECHARGE_META, DISCHARGE_META } from '../../services/waterBalance';
 import { useWaterQuality, useWellWaterQuality } from '../../hooks/useWaterQuality';
 import { WATER_CLASS_LABELS } from '../../services/waterQuality';
+import { getDefaultExportOptions, exportData } from '../../services/dataExporter';
+import type { ExportFormat, ExportSheet } from '../../services/dataExporter';
 import { useIntegratedAnalysis } from '../../hooks/useWaterQualityBalance';
 import {
   AQUIFER_LABELS,
@@ -477,6 +480,38 @@ export function WellNetworkPanel() {
   const [showIntegrated, setShowIntegrated] = useState(false);
   const integratedAnalysis = useIntegratedAnalysis(cityBalances, qualityCityStats);
 
+  // 数据导出
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [exportStatus, setExportStatus] = useState<'idle' | 'exporting' | 'done'>('idle');
+
+  const handleExport = useCallback(async (format: ExportFormat) => {
+    setExportStatus('exporting');
+    setShowExportMenu(false);
+    try {
+      const allSheets = ['wells', 'readings', 'alerts', 'balance', 'quality', 'integrated'] as ExportSheet[];
+      const options = getDefaultExportOptions(
+        {
+          wells,
+          alerts: allAlerts,
+          balanceResult,
+          cityBalances,
+          qualityAssessments,
+          qualitySummary,
+          qualityCityStats,
+          integratedAnalysis,
+        },
+        format,
+      );
+      options.sheets = allSheets;
+      await exportData(options);
+      setExportStatus('done');
+    } catch (err) {
+      console.error('导出失败:', err);
+      setExportStatus('idle');
+    }
+    setTimeout(() => setExportStatus('idle'), 3000);
+  }, [wells, allAlerts, balanceResult, cityBalances, qualityAssessments, qualitySummary, qualityCityStats, integratedAnalysis]);
+
   const cities = useMemo(() => Array.from(new Set(wells.map(w => w.city))).sort(), [wells]);
 
   // 选中井的实时数据视图
@@ -695,18 +730,54 @@ export function WellNetworkPanel() {
           <button
             onClick={handleGenerateReport}
             disabled={reportStatus === 'generating'}
-            className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors disabled:opacity-50 ml-auto"
+            className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors disabled:opacity-50"
             title="生成并下载 Word 报告"
           >
             <FileDown size={11} />
             {reportStatus === 'generating' ? '生成中...' : '生成报告'}
           </button>
+
+          {/* 数据导出按钮 */}
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              disabled={exportStatus === 'exporting'}
+              className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-surface/40 text-gw-muted rounded hover:text-gw-text hover:bg-gw-surface/60 transition-colors disabled:opacity-50"
+              title="导出数据 (Excel/CSV/JSON)"
+            >
+              <Download size={11} />
+              {exportStatus === 'exporting' ? '导出中...' : '导出数据'}
+            </button>
+
+            {showExportMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowExportMenu(false)} />
+                <div className="absolute right-0 top-full mt-1 z-50 bg-gw-surface border border-gw-border/30 rounded-lg shadow-lg overflow-hidden min-w-[120px]">
+                  {(['xlsx', 'csv', 'json'] as ExportFormat[]).map(fmt => (
+                    <button
+                      key={fmt}
+                      onClick={() => handleExport(fmt)}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-[10px] text-gw-muted hover:text-gw-text hover:bg-gw-surface/30 transition-colors"
+                    >
+                      <span className="text-[8px] font-mono px-1 rounded bg-gw-surface/30">{fmt.toUpperCase()}</span>
+                      <span>{fmt === 'xlsx' ? 'Excel 多标签页' : fmt === 'csv' ? 'CSV 文本' : 'JSON 结构化'}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* 报告状态提示 */}
+        {/* 报告/导出状态提示 */}
         {reportStatus !== 'idle' && (
           <div className={`text-[9px] px-2 py-1 rounded ${reportStatus === 'done' ? 'bg-emerald-500/10 text-emerald-400' : reportStatus === 'error' ? 'bg-red-500/10 text-red-400' : 'bg-gw-cyan/10 text-gw-cyan'}`}>
             {reportMsg}
+          </div>
+        )}
+        {exportStatus === 'done' && (
+          <div className="text-[9px] px-2 py-1 rounded bg-emerald-500/10 text-emerald-400">
+            数据导出成功
           </div>
         )}
 
