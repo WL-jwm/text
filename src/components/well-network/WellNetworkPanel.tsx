@@ -29,6 +29,7 @@ import {
   Radio,
   TriangleAlert,
   Clock,
+  Bell,
   FileDown,
   Download,
   Upload,
@@ -63,6 +64,8 @@ import {
 import { WELL_REALTIME_STATUS_CONFIG } from '../../services/wellRealtime';
 import { ALERT_SEVERITY_CONFIG, formatAlertThreshold } from '../../services/wellAlerts';
 import type { AlertSeverity } from '../../services/wellAlerts';
+import { AlertNotifier, buildAlertTimeline } from '../../services/alertNotifier';
+import type { AlertTimeline, NotificationConfig } from '../../services/alertNotifier';
 import { downloadWellReport } from '../../services/wellReportDocx';
 import { buildWellReportData } from '../../services/wellReport';
 import type { AquiferType, WellStatus, Well } from '../../services/wellNetwork';
@@ -462,6 +465,22 @@ export function WellNetworkPanel() {
   const [rtFilter, setRtFilter] = useState<WellRealtimeStatus | 'all'>('all');
   const [showAlerts, setShowAlerts] = useState(true);
   const [alertSeverityFilter, setAlertSeverityFilter] = useState<AlertSeverity | 'all'>('all');
+  const [alertNotifier] = useState(() => new AlertNotifier());
+  const [alertTimeline, setAlertTimeline] = useState<AlertTimeline>({ entries: [], unreadCount: 0, stats24h: { critical: 0, warning: 0, stale: 0, total: 0 } });
+  const [showNotifyConfig, setShowNotifyConfig] = useState(false);
+  const [notifyConfig, setNotifyConfig] = useState<NotificationConfig>({ browserNotify: true, soundAlert: true, criticalOnly: false, throttleMs: 60000 });
+
+  // 构建告警时间线
+  useEffect(() => {
+    const wellNames: Record<string, string> = {};
+    for (const w of wells) {
+      wellNames[w.id] = w.name;
+    }
+    const timeline = buildAlertTimeline(allAlerts, wellNames);
+    setAlertTimeline(timeline);
+    alertNotifier.checkAndNotify(allAlerts, wellNames);
+  }, [allAlerts, wells, alertNotifier]);
+
   const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done' | 'error'>('idle');
   const [reportMsg, setReportMsg] = useState('');
   const [bufferRadius, setBufferRadius] = useState(50);
@@ -564,6 +583,59 @@ export function WellNetworkPanel() {
     if (rtFilter !== 'all') {
       result = result.filter(w => w.realtime.status === rtFilter);
     }
+        {/* 通知设置 */}
+        {showNotifyConfig && (
+          <div className="px-1.5 py-1 rounded-lg bg-gw-surface/20 border border-gw-border/10 mb-2">
+            <div className="flex items-center gap-1 mb-1">
+              <Bell size={9} className="text-gw-muted/60" />
+              <span className="text-[9px] font-medium text-gw-muted">通知设置</span>
+            </div>
+            <div className="space-y-1">
+              <label className="flex items-center gap-1.5 text-[8px] text-gw-muted cursor-pointer">
+                <input type="checkbox" checked={notifyConfig.browserNotify} onChange={e => { const newConfig = { ...notifyConfig, browserNotify: e.target.checked }; setNotifyConfig(newConfig); alertNotifier.updateConfig(newConfig); }} className="accent-gw-cyan" />
+                浏览器通知
+              </label>
+              <label className="flex items-center gap-1.5 text-[8px] text-gw-muted cursor-pointer">
+                <input type="checkbox" checked={notifyConfig.soundAlert} onChange={e => { const newConfig = { ...notifyConfig, soundAlert: e.target.checked }; setNotifyConfig(newConfig); alertNotifier.updateConfig(newConfig); }} className="accent-gw-cyan" />
+                声音提醒
+              </label>
+              <label className="flex items-center gap-1.5 text-[8px] text-gw-muted cursor-pointer">
+                <input type="checkbox" checked={notifyConfig.criticalOnly} onChange={e => { const newConfig = { ...notifyConfig, criticalOnly: e.target.checked }; setNotifyConfig(newConfig); alertNotifier.updateConfig(newConfig); }} className="accent-gw-cyan" />
+                仅严重告警
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* 告警时间线 */}
+        {showAlerts && alertTimeline.entries.length > 0 && (
+          <div className="px-1.5 py-1 rounded-lg bg-gw-surface/20 border border-gw-border/10 mb-2">
+            <div className="flex items-center gap-1 mb-1">
+              <Clock size={9} className="text-gw-muted/60" />
+              <span className="text-[9px] font-medium text-gw-muted">告警时间线（最近24h）</span>
+              <span className="text-[8px] text-gw-muted/50 ml-auto">
+                {alertTimeline.stats24h.critical > 0 && <span className="text-red-400">严重{alertTimeline.stats24h.critical} </span>}
+                {alertTimeline.stats24h.warning > 0 && <span className="text-amber-400">预警{alertTimeline.stats24h.warning} </span>}
+                {alertTimeline.stats24h.stale > 0 && <span className="text-gw-muted/60">过期{alertTimeline.stats24h.stale}</span>}
+              </span>
+            </div>
+            <div className="max-h-32 overflow-y-auto">
+              {alertTimeline.entries.slice(0, 15).map((entry, idx) => (
+                <div key={entry.id} className="flex items-start gap-1 px-1 py-0.5 text-[7px] border-b border-gw-border/5 last:border-0">
+                  <span className="text-gw-muted/30 w-8 flex-shrink-0 font-mono">
+                    {new Date(entry.timestamp).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <span className={'w-1 h-1 rounded-full mt-1 flex-shrink-0 ' + (
+                    entry.severity === 'critical' ? 'bg-red-400' : entry.severity === 'warning' ? 'bg-amber-400' : 'bg-gw-muted/40'
+                  )} />
+                  <span className="text-gw-muted/70 w-14 truncate flex-shrink-0">{entry.wellName}</span>
+                  <span className={'text-gw-muted/60 flex-1 ' + (entry.read ? '' : 'font-medium text-gw-text')}>{entry.message}</span>
+                  {idx === 0 && !entry.read && <span className="text-red-400 text-[6px] px-0.5 rounded bg-red-500/20">新</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
     return result;
   }, [wellsWithData, filters, rtFilter]);
 
@@ -664,8 +736,15 @@ export function WellNetworkPanel() {
               <span>实时告警 ({alertSummary.total})</span>
               <ChevronDown size={9} className={`transition-transform ${showAlerts ? 'rotate-0' : '-rotate-90'}`} />
             </button>
-            {showAlerts && alertSummary.total > 0 && (
+            {showAlerts && (
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setShowNotifyConfig(!showNotifyConfig)}
+                  className={`text-[7px] px-1 py-0.5 rounded transition-colors ${notifyConfig.browserNotify || notifyConfig.soundAlert ? 'bg-gw-cyan/20 text-gw-cyan' : 'bg-gw-surface/30 text-gw-muted/50'}`}
+                  title="通知设置"
+                >
+                  <Bell size={9} />
+                </button>
                 <select
                   value={alertSeverityFilter}
                   onChange={e => setAlertSeverityFilter(e.target.value as AlertSeverity | 'all')}
