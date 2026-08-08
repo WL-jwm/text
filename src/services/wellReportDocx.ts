@@ -1,10 +1,7 @@
 /**
- * H-03 报告自动生成 — Word 报告生成器
- *
- * 基于报告数据模型生成 .docx 报告，支持在浏览器端下载。
- * 使用 docx 库（v9.x）+ file-saver。
+ * Q-03 优化版 — Word 报告生成器
+ * 同步 PDF 样式：专业封面+摘要卡片+含水层中文名+表格着色+页脚说明
  */
-
 import {
   Document,
   Packer,
@@ -25,15 +22,17 @@ import type { WellReportData } from './wellReport';
 import { formatGeneratedAt, getThresholdNote } from './wellReport';
 
 // ============================================================
-// 样式常量
+// 配色方案（与 PDF 统一）
 // ============================================================
-
 const COLORS = {
   primary: '#1a3a5c',
-  accent: '#2c5f8a',
+  accent: '#06b6d4',
   text: '#333333',
   muted: '#666666',
-  headerBg: '#e8f0f8',
+  light: '#94a3b8',
+  headerBg: '#2c3e50',
+  headerText: '#ffffff',
+  rowAlt: '#f5f7fa',
   normal: '#10b981',
   warning: '#f59e0b',
   critical: '#ef4444',
@@ -46,12 +45,12 @@ const FONT = 'Microsoft YaHei';
 // 辅助函数
 // ============================================================
 
-function titleRun(text: string, color = COLORS.primary, size = 22, bold = true): TextRun {
+function titleRun(text: string, color = COLORS.primary, size = 28, bold = true): TextRun {
   return new TextRun({ text, bold, size, color, font: FONT });
 }
 
-function headingRun(text: string, color = COLORS.primary, size = 16): TextRun {
-  return new TextRun({ text, bold: true, size, color, font: FONT });
+function subtitleRun(text: string, color = COLORS.muted, size = 12): TextRun {
+  return new TextRun({ text, bold: false, size, color, font: FONT });
 }
 
 function bodyRun(text: string, color = COLORS.text, size = 10.5, bold = false): TextRun {
@@ -61,16 +60,19 @@ function bodyRun(text: string, color = COLORS.text, size = 10.5, bold = false): 
 function heading(text: string): Paragraph {
   return new Paragraph({
     heading: HeadingLevel.HEADING_1,
-    spacing: { before: 240, after: 120 },
-    children: [headingRun(text)],
+    spacing: { before: 360, after: 200 },
+    children: [new TextRun({ text, bold: true, size: 18, color: COLORS.primary, font: FONT })],
   });
 }
 
-function subHeading(text: string): Paragraph {
+function sectionTitle(text: string): Paragraph {
   return new Paragraph({
-    heading: HeadingLevel.HEADING_2,
-    spacing: { before: 180, after: 100 },
-    children: [new TextRun({ text, bold: true, size: 13, color: COLORS.accent, font: FONT })],
+    spacing: { before: 240, after: 120 },
+    indent: { left: 180 },
+    children: [
+      new TextRun({ text: '▎', bold: true, size: 16, color: COLORS.accent, font: FONT }),
+      new TextRun({ text, bold: true, size: 14, color: COLORS.primary, font: FONT }),
+    ],
   });
 }
 
@@ -84,18 +86,28 @@ function bodyParagraph(text: string, opts: { bold?: boolean; color?: string; siz
 function keyValueParagraph(label: string, value: string): Paragraph {
   return new Paragraph({
     spacing: { after: 40 },
-    children: [bodyRun(label, COLORS.muted, 10), bodyRun(value, COLORS.text, 10, true)],
+    indent: { left: 200 },
+    children: [bodyRun(label, COLORS.light, 10), bodyRun(value, COLORS.text, 10, true)],
   });
 }
 
-function makeCell(text: string, opts: { bold?: boolean; bg?: string; color?: string; align?: (typeof AlignmentType)[keyof typeof AlignmentType] } = {}): TableCell {
+// ============================================================
+// 表格构建
+// ============================================================
+
+function makeCell(
+  text: string,
+  opts: { bold?: boolean; bg?: string; color?: string; align?: (typeof AlignmentType)[keyof typeof AlignmentType]; width?: number } = {},
+): TableCell {
   return new TableCell({
     verticalAlign: VerticalAlign.CENTER,
     shading: opts.bg ? { fill: opts.bg, type: 'clear' } : undefined,
-    margins: { top: 60, bottom: 60, left: 80, right: 80 },
+    margins: { top: 50, bottom: 50, left: 80, right: 80 },
+    width: opts.width ? { size: opts.width, type: WidthType.PERCENTAGE } : undefined,
     children: [
       new Paragraph({
         alignment: opts.align ?? AlignmentType.LEFT,
+        spacing: { after: 0 },
         children: [bodyRun(text, opts.color, 9, opts.bold)],
       }),
     ],
@@ -103,22 +115,27 @@ function makeCell(text: string, opts: { bold?: boolean; bg?: string; color?: str
 }
 
 function makeTable(headers: string[], rows: string[][]): Table {
+  const colWidth = Math.floor(100 / headers.length);
+
   const headerRow = new TableRow({
     tableHeader: true,
-    children: headers.map(h => makeCell(h, { bold: true, bg: COLORS.headerBg, color: COLORS.primary })),
+    children: headers.map(h =>
+      makeCell(h, { bold: true, bg: COLORS.headerBg, color: COLORS.headerText, align: AlignmentType.CENTER, width: colWidth }),
+    ),
   });
 
   const bodyRows = rows.map((row, i) => new TableRow({
     children: row.map((cell, j) => {
       // 状态列着色
       let color: string | undefined;
-      if (headers[j] === '状态' || headers[j] === '级别') {
+      const header = headers[j] ?? '';
+      if (header === '状态' || header === '级别' || header === '严重度') {
         if (cell === '正常' || cell === '运行中') color = COLORS.normal;
         else if (cell === '预警') color = COLORS.warning;
-        else if (cell === '超标') color = COLORS.critical;
+        else if (cell === '严重' || cell === '超标') color = COLORS.critical;
         else if (cell === '过期') color = COLORS.stale;
       }
-      return makeCell(cell, { color, bg: i % 2 === 1 ? '#f7fafc' : undefined });
+      return makeCell(cell, { color, bg: i % 2 === 1 ? COLORS.rowAlt : undefined, width: colWidth });
     }),
   }));
 
@@ -137,6 +154,31 @@ function makeTable(headers: string[], rows: string[][]): Table {
 }
 
 // ============================================================
+// 含水层中文名映射
+// ============================================================
+const AQUIFER_LABELS: Record<string, string> = {
+  shallowPorous: '浅层孔隙水',
+  deepPorous: '深层孔隙水',
+  karst: '岩溶水',
+  fracture: '裂隙水',
+};
+
+function aquiferLabel(type: string): string {
+  return AQUIFER_LABELS[type] ?? type;
+}
+
+const INDICATOR_LABELS: Record<string, string> = {
+  waterLevel: '水位',
+  waterQuality: '水质',
+  subsidence: '沉降',
+  extraction: '开采量',
+};
+
+function indicatorLabel(ind: string): string {
+  return INDICATOR_LABELS[ind] ?? ind;
+}
+
+// ============================================================
 // 报告生成
 // ============================================================
 
@@ -145,44 +187,51 @@ export function buildWellReportDoc(data: WellReportData): Document {
 
   // ── 封面标题 ──
   children.push(
+    new Paragraph({ spacing: { before: 800 }, children: [] }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 1200, after: 200 },
-      children: [titleRun(data.meta.title, COLORS.primary, 28)],
+      spacing: { after: 80 },
+      children: [titleRun('地下水监测井网分析报告', COLORS.primary, 28)],
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 600 },
-      children: [bodyRun(data.meta.unit, COLORS.muted, 12)],
+      spacing: { after: 120 },
+      children: [bodyRun('──────────────────', COLORS.accent, 11)],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 400 },
+      children: [subtitleRun(data.meta.unit, COLORS.muted, 12)],
     }),
   );
 
-  // ── 报告信息 ──
-  children.push(
-    subHeading('报告信息'),
-    keyValueParagraph('报告期间：', data.meta.period),
-    keyValueParagraph('生成时间：', formatGeneratedAt(data.meta.generatedAt)),
-    keyValueParagraph('编制单位：', data.meta.unit),
-  );
+  // ── 报告信息卡片 ──
+  children.push(sectionTitle('报告信息'));
+  children.push(keyValueParagraph('报告编号：', data.meta.reportId));
+  children.push(keyValueParagraph('生成时间：', formatGeneratedAt(data.meta.generatedAt)));
+  children.push(keyValueParagraph('编制单位：', data.meta.unit));
+  children.push(keyValueParagraph('评估日期：', data.summary.assessmentDate));
 
-  // ── 一、监测井网总览 ──
-  children.push(heading('一、监测井网总览'));
+  // ── 一、报告摘要 ──
+  children.push(heading('一、报告摘要'));
   children.push(bodyParagraph(
-    `本次报告共统计监测井 ${data.summary.totalWells} 口，覆盖 ${data.summary.cities} 个城市、${data.summary.aquiferTypes} 类含水层。其中运行中井 ${data.summary.activeWells} 口，实时数据覆盖率 ${data.summary.coverage}%，异常井 ${data.summary.abnormalCount} 口（其中超标 ${data.summary.criticalCount} 口）。`,
+    `本次报告共统计监测井 ${data.summary.totalWells} 口，覆盖 ${data.summary.cities} 个城市、${data.summary.aquiferTypes} 类含水层。` +
+    `其中运行中井 ${data.summary.activeWells} 口，实时数据覆盖率 ${data.summary.coverage}%，` +
+    `告警 ${data.summary.alertCount} 条（严重 ${data.summary.criticalAlerts} 条）。`,
   ));
 
-  // 摘要统计表
+  // 关键指标表
+  children.push(sectionTitle('关键指标'));
   children.push(
-    subHeading('关键指标'),
     makeTable(
-      ['监测井总数', '覆盖城市', '运行井数', '含水层类型', '数据覆盖率', '异常井'],
+      ['监测井总数', '覆盖城市', '运行井数', '含水层类型', '告警总数', '严重告警'],
       [[
         String(data.summary.totalWells),
         String(data.summary.cities),
         String(data.summary.activeWells),
         String(data.summary.aquiferTypes),
-        `${data.summary.coverage}%`,
-        String(data.summary.abnormalCount),
+        String(data.summary.alertCount),
+        String(data.summary.criticalAlerts),
       ]],
     ),
   );
@@ -190,17 +239,17 @@ export function buildWellReportDoc(data: WellReportData): Document {
   // ── 二、含水层与城市分布 ──
   children.push(heading('二、含水层与城市分布'));
   if (data.aquiferRows.length > 0) {
+    children.push(sectionTitle('含水层分布'));
     children.push(
-      subHeading('含水层分布'),
       makeTable(
-        ['含水层', '井数', '平均井深(m)', '运行井'],
-        data.aquiferRows.map(r => [r.label, String(r.count), String(r.avgDepth), String(r.activeCount)]),
+        ['含水层类型', '井数', '平均井深(m)', '运行井数'],
+        data.aquiferRows.map(r => [aquiferLabel(r.type), String(r.count), String(r.avgDepth), String(r.activeCount)]),
       ),
     );
   }
   if (data.cityRows.length > 0) {
+    children.push(sectionTitle('城市分布'));
     children.push(
-      subHeading('城市分布'),
       makeTable(
         ['城市', '井数', '含水层类型'],
         data.cityRows.map(r => [r.city, String(r.count), r.aquiferDesc]),
@@ -213,7 +262,7 @@ export function buildWellReportDoc(data: WellReportData): Document {
     children.push(heading('三、实时监测状态'));
     children.push(
       makeTable(
-        ['通道', '井数', '正常', '预警', '超标', '过期', '覆盖率'],
+        ['监测通道', '总井数', '正常', '预警', '超标', '过期', '覆盖率'],
         data.realtimeRows.map(r => [
           r.label,
           String(r.total),
@@ -228,8 +277,8 @@ export function buildWellReportDoc(data: WellReportData): Document {
   }
 
   // ── 四、告警清单 ──
+  children.push(heading('四、告警清单'));
   if (data.alertRows.length > 0) {
-    children.push(heading('四、告警清单'));
     children.push(
       makeTable(
         ['井名', '城市', '通道', '级别', '当前值', '告警详情'],
@@ -237,11 +286,10 @@ export function buildWellReportDoc(data: WellReportData): Document {
       ),
     );
   } else {
-    children.push(heading('四、告警清单'));
     children.push(bodyParagraph('本次报告期间无告警记录。'));
   }
 
-  // ── 五、井详情表 ──
+  // ── 五、监测井明细 ──
   if (data.wellRows.length > 0) {
     children.push(heading('五、监测井明细'));
     children.push(
@@ -251,7 +299,7 @@ export function buildWellReportDoc(data: WellReportData): Document {
           w.name,
           w.id,
           w.city,
-          w.aquiferLabel,
+          aquiferLabel(w.aquiferLabel),
           String(w.depth),
           w.indicatorLabel,
           w.realtimeValue,
@@ -266,6 +314,9 @@ export function buildWellReportDoc(data: WellReportData): Document {
   children.push(bodyParagraph('指标阈值说明：', { bold: true }));
   const notes = getThresholdNote().split('\n');
   notes.forEach(n => children.push(bodyParagraph(n, { size: 9, color: COLORS.muted })));
+  children.push(bodyParagraph(''));
+  children.push(bodyParagraph('数据来源：河北省地下水环境信息平台', { size: 9, color: COLORS.muted }));
+  children.push(bodyParagraph('免责声明：本报告仅供参考，不构成专业法律意见。', { size: 9, color: COLORS.muted }));
 
   return new Document({
     creator: data.meta.unit,
@@ -292,9 +343,6 @@ export function buildWellReportDoc(data: WellReportData): Document {
   });
 }
 
-/**
- * 生成并下载报告
- */
 export async function downloadWellReport(
   data: WellReportData,
 ): Promise<{ ok: boolean; filename: string; message: string }> {
