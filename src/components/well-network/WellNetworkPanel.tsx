@@ -57,6 +57,8 @@ import { DataSourceConfigManager, DEFAULT_CHANNELS, testConnection } from '../..
 import type { DataSourceConfig } from '../../services/dataSourceConfigManager';
 import { previewImport, importWells } from '../../services/dataImporter';
 import { buildSpatialOptimization } from '../../services/spatialOptimizer';
+import { downloadWellReportPdf } from '../../services/wellReportPdf';
+import { downloadWellReportExcel } from '../../services/wellReportExcel';
 import { useIntegratedAnalysis } from '../../hooks/useWaterQualityBalance';
 import {
   AQUIFER_LABELS,
@@ -484,6 +486,8 @@ export function WellNetworkPanel() {
 
   const [reportStatus, setReportStatus] = useState<'idle' | 'generating' | 'done' | 'error'>('idle');
   const [reportMsg, setReportMsg] = useState('');
+  const [reportFormat, setReportFormat] = useState<'docx' | 'pdf' | 'xlsx'>('docx');
+  const [showReportFormatMenu, setShowReportFormatMenu] = useState(false);
   const [bufferRadius, setBufferRadius] = useState(50);
   const [bufferCenter, setBufferCenter] = useState('WL-CZ-01');
   const [distances, setDistances] = useState<ReturnType<typeof getDistances>>([]);
@@ -657,16 +661,24 @@ export function WellNetworkPanel() {
   }, [bufferCenter, bufferRadius, analyzeBuffer]);
 
   // 生成并下载报告
-  const handleGenerateReport = useCallback(async () => {
+  const handleGenerateReport = useCallback(async (format: 'docx' | 'pdf' | 'xlsx' = reportFormat) => {
     setReportStatus('generating');
-    setReportMsg('正在生成报告...');
+    const formatLabel = format === 'docx' ? 'Word' : format === 'pdf' ? 'PDF' : 'Excel';
+    setReportMsg(`正在生成 ${formatLabel} 报告...`);
     const data = buildWellReportData(wellsWithData, allAlerts, {
       unit: '河北瑞三元环境科技有限公司',
     });
-    const result = await downloadWellReport(data);
+    let result: { ok: boolean; message: string };
+    if (format === 'pdf') {
+      result = await downloadWellReportPdf(data);
+    } else if (format === 'xlsx') {
+      result = await downloadWellReportExcel(data);
+    } else {
+      result = await downloadWellReport(data);
+    }
     setReportStatus(result.ok ? 'done' : 'error');
     setReportMsg(result.message);
-  }, [wellsWithData, allAlerts]);
+  }, [wellsWithData, allAlerts, reportFormat]);
 
   const bufferWells = buffer?.wellsWithin ?? [];
 
@@ -839,15 +851,50 @@ export function WellNetworkPanel() {
             <Crosshair size={11} />井列表({displayWells.length})
             <ChevronDown size={9} className={`transition-transform ${showTable ? 'rotate-0' : '-rotate-90'}`} />
           </button>
-          <button
-            onClick={handleGenerateReport}
-            disabled={reportStatus === 'generating'}
-            className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors disabled:opacity-50"
-            title="生成并下载 Word 报告"
-          >
-            <FileDown size={11} />
-            {reportStatus === 'generating' ? '生成中...' : '生成报告'}
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => {
+                handleGenerateReport(reportFormat);
+              }}
+              disabled={reportStatus === 'generating'}
+              className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors disabled:opacity-50"
+              title="生成并下载报告"
+            >
+              <FileDown size={11} />
+              {reportStatus === 'generating' ? '生成中...' : '生成报告'}
+            </button>
+            <button
+              onClick={() => setShowReportFormatMenu(!showReportFormatMenu)}
+              className="px-1 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors"
+              title="选择格式"
+            >
+              <ChevronDown size={9} />
+            </button>
+
+            {showReportFormatMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowReportFormatMenu(false)} />
+                <div className="absolute right-0 top-full mt-1 z-50 bg-gw-surface border border-gw-border/30 rounded-lg shadow-lg overflow-hidden min-w-[100px]">
+                  {(['docx', 'pdf', 'xlsx'] as const).map(fmt => (
+                    <button
+                      key={fmt}
+                      onClick={() => {
+                        setReportFormat(fmt);
+                        setShowReportFormatMenu(false);
+                        handleGenerateReport(fmt);
+                      }}
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-[10px] transition-colors ${
+                        reportFormat === fmt ? 'text-gw-cyan bg-gw-cyan/10' : 'text-gw-muted hover:text-gw-text hover:bg-gw-surface/30'
+                      }`}
+                    >
+                      <span className="text-[8px] font-mono px-1 rounded bg-gw-surface/30">{fmt.toUpperCase()}</span>
+                      <span>{fmt === 'docx' ? 'Word 文档' : fmt === 'pdf' ? 'PDF 文档' : 'Excel 表格'}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
           {/* 数据导出按钮 */}
           <div className="relative">
