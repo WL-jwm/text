@@ -248,12 +248,27 @@ export function classifyFactor(
     }
 
     // 判断是否超过该类限值
-    if (range.inclusive && isFinite(range.high) && numericValue > range.high) {
-      className = cls === 'I' ? 'II' : cls;
-      classNum = cls === 'I' ? 2 : (classes.indexOf(cls) + 1);
-    } else if (!range.inclusive && isFinite(range.low) && numericValue > range.low) {
-      className = cls === 'I' ? 'II' : cls;
-      classNum = cls === 'I' ? 2 : (classes.indexOf(cls) + 1);
+    let exceeded = false;
+    if (range.inclusive && isFinite(range.high)) {
+      exceeded = numericValue > range.high;
+    } else if (!range.inclusive && isFinite(range.low)) {
+      exceeded = numericValue > range.low;
+    }
+
+    if (exceeded) {
+      // 超过当前类限值 → 进入下一类
+      const nextIdx = classes.indexOf(cls) + 1;
+      if (nextIdx < classes.length) {
+        className = classes[nextIdx];
+        classNum = nextIdx + 1;
+      } else {
+        // 超出V类限值仍为V类（无更高类别）
+        className = 'V';
+        classNum = 5;
+      }
+    } else {
+      // 未超过当前类限值 → 此即为最终类别，停止遍历
+      break;
     }
   }
 

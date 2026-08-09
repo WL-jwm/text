@@ -176,18 +176,17 @@ describe('classifyFactor', () => {
     expect(r.Pi).toBe('0.25');
   });
 
-  // 注意: 当前 classifyFactor 逻辑中 classNum 不能正确累加（bug），
-  // 实际返回的 classNum 是触发超限的最后一个类别的索引+1，
-  // 并非严格意义上的水质类别。以下测试反映实际行为。
-  it('TDS=800 返回数值和Pi', () => {
+  it('TDS=800 为 III 类、未超标', () => {
     const r = classifyFactor('800', TEST_FACTORS[2]);
-    expect(r.numericValue).toBe(800);
+    expect(r.classNum).toBe(3);
+    expect(r.isExceeded).toBe(false);
     expect(r.Pi).toBe('0.80');
   });
 
-  it('TDS=1500 返回数值和Pi', () => {
+  it('TDS=1500 为 IV 类、超标', () => {
     const r = classifyFactor('1500', TEST_FACTORS[2]);
-    expect(r.numericValue).toBe(1500);
+    expect(r.classNum).toBe(4);
+    expect(r.isExceeded).toBe(true);
     expect(r.Pi).toBe('1.50');
   });
 
@@ -204,21 +203,24 @@ describe('classifyFactor', () => {
     expect(r.isExceeded).toBe(false);
   });
 
-  it('总硬度=350 返回标准指数', () => {
+  it('总硬度=350 为 III 类', () => {
     const r = classifyFactor('350', TEST_FACTORS[1]);
-    expect(r.standardIII).toBe(450);
+    expect(r.classNum).toBe(3);
+    expect(r.isExceeded).toBe(false);
     expect(r.Pi).toBe('0.78');
   });
 
-  it('总硬度=500 返回标准指数', () => {
+  it('总硬度=500 为 IV 类', () => {
     const r = classifyFactor('500', TEST_FACTORS[1]);
-    expect(r.standardIII).toBe(450);
+    expect(r.classNum).toBe(4);
+    expect(r.isExceeded).toBe(true);
     expect(r.Pi).toBe('1.11');
   });
 
-  it('氟化物=1.2 返回标准指数', () => {
+  it('氟化物=1.2 为 IV 类', () => {
     const r = classifyFactor('1.2', TEST_FACTORS[3]);
-    expect(r.standardIII).toBe(1.0);
+    expect(r.classNum).toBe(4);
+    expect(r.isExceeded).toBe(true);
     expect(r.Pi).toBe('1.20');
   });
 
@@ -259,26 +261,27 @@ describe('classifySample', () => {
     expect(r.exceededCount).toBe(0);
   });
 
-  it('含超标因子 → 记录超标因子', () => {
+  it('含 IV 类因子 → 综合 IV 类', () => {
     const r = classifySample('井2', {
       'pH': '7.0',
       '总硬度': '500',
       'TDS': '200',
       '氟化物': '0.5',
     }, TEST_FACTORS);
-    expect(r.overallClassNum).toBeGreaterThanOrEqual(1);
-    expect(r.exceededCount).toBeGreaterThanOrEqual(0);
+    expect(r.overallClassNum).toBe(4);
+    expect(r.exceededCount).toBe(1);
+    expect(r.exceededFactors).toContain('总硬度');
   });
 
-  it('含 V 类因子 → 记录超标', () => {
+  it('含 V 类和 IV 类 → 综合 V 类', () => {
     const r = classifySample('井3', {
       'pH': '7.0',
       '总硬度': '500',
       'TDS': '2500',
       '氟化物': '0.5',
     }, TEST_FACTORS);
-    expect(r.overallClassNum).toBeGreaterThanOrEqual(1);
-    expect(r.exceededFactors).toContain('TDS');
+    expect(r.overallClassNum).toBe(5);
+    expect(r.exceededCount).toBe(2);
   });
 
   it('未录入的因子自动跳过', () => {
@@ -350,11 +353,11 @@ describe('sukalovClassification', () => {
     expect(r.zone).toBeLessThanOrEqual(49);
   });
 
-  it('阴离子HCO3占优 → 类型包含HCO₃', () => {
+  it('阳离子排序 Ca > Mg > Na', () => {
     const r = sukalovClassification({
       HCO3: 300, SO4: 50, Cl: 30,
       Ca: 100, Mg: 50, Na: 20,
     });
-    expect(r.type).toContain('HCO₃');
+    expect(r.cations).toEqual(['Ca', 'Mg']);
   });
 });
