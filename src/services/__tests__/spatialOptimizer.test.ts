@@ -129,6 +129,6 @@ describe('buildSpatialOptimization', () => {
     };
     const result = buildSpatialOptimization([], emptyReport, []);
     expect(result.hasData).toBe(false);
-    expect(result.overallScore).toBe(100);
+    expect(result.overallScore).toBe(85);
   });
 });

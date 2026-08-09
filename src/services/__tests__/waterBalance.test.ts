@@ -283,8 +283,8 @@ describe('DEFAULT_PERIODS', () => {
   it('均衡趋势应符合规律', () => {
     // 超采量应逐年减少(南水北调效应)
     const balances = DEFAULT_PERIODS.map(p => p.balance);
-    expect(balances[0]).toBeLessThan(balances[1]); // -16.95 < -17.358? 不对，1991-2000是-16.95，2001-2010是-17.358
-    // 实际上2001-2010超采加剧，2011-2020缓解
+    expect(balances[0]).toBeGreaterThan(balances[1]); // -16.95 > -17.358，2001-2010超采加剧
+    // 2011-2020缓解
     expect(balances[2]).toBeGreaterThan(balances[1]); // -6.294 > -17.358
   });
 });

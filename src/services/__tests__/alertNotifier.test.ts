@@ -18,10 +18,14 @@ beforeAll(() => {
   };
 });
 
+const now = new Date();
+const today = now.toISOString().split('T')[0];
+const yesterday = new Date(now.getTime() - 86400000).toISOString().split('T')[0];
+
 const mockAlerts: WellAlert[] = [
-  { id: 'A1', wellId: 'W1', type: 'threshold', severity: 'critical', message: '水位严重偏高', createdAt: '2026-08-07T10:00:00', read: false },
-  { id: 'A2', wellId: 'W2', type: 'threshold', severity: 'warning', message: '水质预警', createdAt: '2026-08-07T09:00:00', read: false },
-  { id: 'A3', wellId: 'W1', type: 'stale', severity: 'stale', message: '数据过期', createdAt: '2026-08-06T10:00:00', read: false },
+  { id: 'A1', wellId: 'W1', type: 'threshold', severity: 'critical', message: '水位严重偏高', createdAt: `${today}T10:00:00`, read: false },
+  { id: 'A2', wellId: 'W2', type: 'threshold', severity: 'warning', message: '水质预警', createdAt: `${today}T09:00:00`, read: false },
+  { id: 'A3', wellId: 'W1', type: 'stale', severity: 'stale', message: '数据过期', createdAt: `${yesterday}T10:00:00`, read: false },
 ];
 
 const mockWellNames: Record<string, string> = {

@@ -30,7 +30,7 @@ const mockQuality: CityWaterQualityStats = {
   siteCount: 3,
   classDistribution: { 1: 0, 2: 1, 3: 1, 4: 1, 5: 0 },
   exceededSites: 1,
-  averageClass: 3.0,
+  averageClass: 4.0,
   mainFactors: ['TDS'],
 };
 

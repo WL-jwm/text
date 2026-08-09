@@ -116,7 +116,7 @@ export function autoDetectMapping(headers: string[]): ColumnMapping[] {
  */
 export function parseCSV(csvText: string): { headers: string[]; rows: string[][] } {
   const lines = csvText.split(/\r?\n/).filter(l => l.trim().length > 0);
-  if (lines.length < 2) {
+  if (lines.length === 0) {
     return { headers: [], rows: [] };
   }
 
