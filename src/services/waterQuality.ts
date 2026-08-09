@@ -246,6 +246,27 @@ export function comprehensiveAssessment(
     indicators.push(evaluateSingleIndicator(indicator as WaterQualityIndicator, value));
   }
 
+  // 空指标值 → 返回默认评价（无数据时不判定为差类）
+  if (indicators.length === 0) {
+    return {
+      stationId,
+      stationName,
+      city,
+      assessmentDate: new Date().toISOString().split('T')[0],
+      indicators: [],
+      comprehensiveClass: 1,
+      comprehensiveLabel: '无数据',
+      exceededFactors: [],
+      exceededCount: 0,
+      sulin,
+      anionEq,
+      cationEq,
+      TDS: 0,
+      totalHardness: 0,
+      hydrochemicalType: sulin?.fullName,
+    };
+  }
+
   // 综合类别 = 最差单项
   const worstClass = Math.max(...indicators.map(i => i.class)) as WaterQualityClass;
   const exceeded = indicators.filter(i => i.isExceeded);
@@ -261,7 +282,7 @@ export function comprehensiveAssessment(
     assessmentDate: new Date().toISOString().split('T')[0],
     indicators,
     comprehensiveClass: worstClass,
-    comprehensiveLabel: WATER_CLASS_LABELS[worstClass].description,
+    comprehensiveLabel: WATER_CLASS_LABELS[worstClass]?.description ?? '未知',
     exceededFactors: exceeded,
     exceededCount: exceeded.length,
     sulin,
