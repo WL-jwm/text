@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>地下水平台开发文档汇编</title>
+<style>
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", SimSun, sans-serif;
+    color: #2c3e50;
+    line-height: 1.7;
+    font-size: 11pt;
+  }
+  h1 {
+    font-size: 24pt;
+    color: #1a3a5c;
+    text-align: center;
+    border-bottom: 3px solid #06b6d4;
+    padding-bottom: 12px;
+  }
+  h2 {
+    font-size: 17pt;
+    color: #1a3a5c;
+    border-left: 6px solid #06b6d4;
+    padding-left: 10px;
+    margin-top: 32px;
+    background-color: #f0f8fa;
+  }
+  h3 {
+    font-size: 13pt;
+    color: #0e7490;
+    margin-top: 22px;
+  }
+  p { margin: 8px 0; }
+  .meta {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 10pt;
+    margin-bottom: 8px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+  }
+  th, td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    font-size: 10.5pt;
+  }
+  th {
+    background-color: #f0f8fa;
+    color: #1a3a5c;
+    font-weight: bold;
+  }
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #f5f7f9;
+    border: 1px solid #e0e4e8;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 9.5pt;
+    color: #c7254e;
+  }
+  pre {
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e4e8;
+    border-left: 4px solid #06b6d4;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 9pt;
+    line-height: 1.5;
+    color: #2c3e50;
+  }
+  blockquote {
+    border-left: 4px solid #06b6d4;
+    background-color: #f0f8fa;
+    margin: 12px 0;
+    padding: 10px 14px;
+    color: #0e7490;
+  }
+  .checklist {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e4e8;
+    border-radius: 4px;
+    padding: 12px 18px;
+  }
+  .pagebreak { page-break-before: always; }
+  ol, ul { margin: 8px 0; padding-left: 24px; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h1>地下水平台开发文档汇编</h1>
+<p class="meta">hebei-groundwater-platform · 开发文档合集<br>包含：修复记录、修复模板、命名规范 三部分</p>
+
+<div class="pagebreak"></div>
+<h1>第一部分 测试修复与 Bug 修复记录</h1>
+<p class="meta">项目：hebei-groundwater-platform · 日期：2026-08-09 · 当前基线：63 files / 1101 tests / 全量通过</p>
+
+<h2>1.1 修复清单</h2>
+<table>
+  <tr><th>编号</th><th>类型</th><th>文件</th><th>问题</th><th>影响等级</th></tr>
+  <tr><td>B-01</td><td>源逻辑缺陷</td><td><code>waterQuality.ts</code></td><td>空指标值导致运行时崩溃</td><td><b>高</b></td></tr>
+  <tr><td>B-02</td><td>源逻辑缺陷</td><td><code>waterQualityCalculator.ts</code></td><td>水质分类类别不累加</td><td><b>中</b></td></tr>
+  <tr><td>B-03</td><td>源逻辑缺陷</td><td><code>dataImporter.ts</code></td><td>单行输入（仅表头）返回空</td><td><b>低</b></td></tr>
+  <tr><td>T-01</td><td>测试数据漂移</td><td><code>alertNotifier.test.ts</code></td><td>硬编码时间戳过期</td><td>低</td></tr>
+  <tr><td>T-02</td><td>测试预期不匹配</td><td><code>spatialOptimizer.test.ts</code></td><td>空井网评分预期 100 实际 85</td><td>低</td></tr>
+  <tr><td>T-03</td><td>测试数据不匹配</td><td><code>waterBalance.test.ts</code></td><td>趋势方向断言反了</td><td>低</td></tr>
+  <tr><td>T-04</td><td>测试数据不匹配</td><td><code>waterQualityBalance.test.ts</code></td><td>mock averageClass 不满足判定条件</td><td>低</td></tr>
+</table>
+
+<h2>1.2 Bug 修复详情</h2>
+
+<h3>B-01: comprehensiveAssessment 空指标值崩溃</h3>
+<p><b>文件：</b><code>src/services/waterQuality.ts</code></p>
+<p><b>触发条件：</b>收到空 <code>indicatorValues</code>（{}）时，<code>Math.max(...[])</code> 返回 <code>-Infinity</code>，<code>WATER_CLASS_LABELS[-Infinity].description</code> 崩溃。</p>
+<p><b>生产触发场景：</b></p>
+<ul>
+  <li>新建监测井尚未录入数据</li>
+  <li>批量处理时个别井数据缺失</li>
+  <li>数据导入失败导致 indicatorValues 为空</li>
+</ul>
+<p><b>修复方案：</b>空指标值时提前返回默认评价（class=1, label='无数据'）；正常路径增加 <code>?.</code> 安全链。</p>
+<p><b>影响：</b>正常数据结果不变；空数据从崩溃变为容错。</p>
+
+<h3>B-02: classifyFactor 水质类别不累加</h3>
+<p><b>文件：</b><code>src/utils/waterQualityCalculator.ts</code></p>
+<p><b>触发条件：</b>监测值同时超过多级标准限值，类别停滞在较低级别。示例：TDS 标准 I≤300、II≤500、III≤1000，实测值 800。</p>
+<table>
+  <tr><th>步骤</th><th>800 &gt; 限值?</th><th>修复前</th><th>修复后</th></tr>
+  <tr><td>检查 II 类(≤500)</td><td>是</td><td>设为 II 类（停滞）</td><td>设为 III 类（累加）</td></tr>
+  <tr><td>检查 III 类(≤1000)</td><td>否</td><td>继续遍历</td><td>break 停止</td></tr>
+  <tr><td>最终结果</td><td>—</td><td><b>II 类（误判）</b></td><td><b>III 类（正确）</b></td></tr>
+</table>
+<p><b>根因：</b>原代码超过某类限值后设为当前类（<code>cls</code>）而非下一类，且不 break。</p>
+<p><b>代码 diff：</b></p>
+<pre>
+// 修复前
+if (range.inclusive &amp;&amp; isFinite(range.high) &amp;&amp; numericValue &gt; range.high) {
+  className = cls === 'I' ? 'II' : cls;
+  classNum = cls === 'I' ? 2 : (classes.indexOf(cls) + 1);
+}
+// 修复后
+let exceeded = false;
+if (range.inclusive &amp;&amp; isFinite(range.high)) {
+  exceeded = numericValue &gt; range.high;
+}
+if (exceeded) {
+  const nextIdx = classes.indexOf(cls) + 1;
+  if (nextIdx &lt; classes.length) {
+    className = classes[nextIdx];   // 下一类
+    classNum = nextIdx + 1;
+  } else {
+    className = 'V';                // 超出V类仍为V类
+    classNum = 5;
+  }
+} else {
+  break;                            // 未超过 → 停止
+}
+</pre>
+<p><b>验证数据：</b></p>
+<table>
+  <tr><th>因子</th><th>实测值</th><th>修复前</th><th>修复后</th><th>正确</th></tr>
+  <tr><td>TDS 800</td><td>800</td><td>II 类</td><td><b>III 类</b></td><td>III</td></tr>
+  <tr><td>TDS 1500</td><td>1500</td><td>III 类</td><td><b>IV 类</b></td><td>IV</td></tr>
+  <tr><td>总硬度 350</td><td>350</td><td>II 类</td><td><b>III 类</b></td><td>III</td></tr>
+  <tr><td>总硬度 500</td><td>500</td><td>III 类</td><td><b>IV 类</b></td><td>IV</td></tr>
+  <tr><td>氟化物 1.2</td><td>1.2</td><td>III 类</td><td><b>IV 类</b></td><td>IV</td></tr>
+</table>
+<p><b>下游影响：</b><code>classifySample</code> 综合评定依赖 <code>classifyFactor</code> 的输出取最差类别，因此随本修复自动修正。</p>
+
+<h3>B-03: parseCSV 单行输入返回空</h3>
+<p><b>文件：</b><code>src/services/dataImporter.ts</code></p>
+<p><b>修复：</b><code>lines.length &lt; 2</code> → <code>lines.length === 0</code>，仅表头无数据的 CSV 现在能正确解析出列名。</p>
+
+<h2>1.3 测试数据修复</h2>
+<table>
+  <tr><th>编号</th><th>文件</th><th>问题</th><th>修复方式</th></tr>
+  <tr><td>T-01</td><td>alertNotifier</td><td>硬编码时间戳过期</td><td>动态日期计算</td></tr>
+  <tr><td>T-02</td><td>spatialOptimizer</td><td>空井网评分预期 100 不符</td><td>修正为 85</td></tr>
+  <tr><td>T-03</td><td>waterBalance</td><td>趋势方向断言反了</td><td>toBeLessThan → toBeGreaterThan</td></tr>
+  <tr><td>T-04</td><td>waterQualityBalance</td><td>averageClass=3.0 不满足 &gt;=3.5</td><td>改为 4.0</td></tr>
+</table>
+
+<h2>1.4 回归验证</h2>
+<table>
+  <tr><th>指标</th><th>修复前</th><th>修复后</th></tr>
+  <tr><td>测试文件通过</td><td>56/63</td><td><b>63/63</b></td></tr>
+  <tr><td>测试用例通过</td><td>1072/1101</td><td><b>1101/1101</b></td></tr>
+  <tr><td>通过率</td><td>97.4%</td><td><b>100%</b></td></tr>
+  <tr><td>遗留缺陷</td><td>7 个</td><td><b>0 个</b></td></tr>
+</table>
+
+<div class="pagebreak"></div>
+<h1>第二部分 水质评价与数据处理 Bug 修复模板</h1>
+<p class="meta">目的：总结修复中发现的共性模式，形成可复用的排查清单和修复模板，降低同类问题复发率。</p>
+
+<h2>2.1 Bug 模式分类</h2>
+<p>本次修复的 7 个问题可归纳为 4 种模式：</p>
+<table>
+  <tr><th>模式</th><th>代码味道</th><th>本次案例</th><th>频次</th></tr>
+  <tr><td><b>A. 空集合崩溃</b></td><td>对数组/对象的操作未做空值保护</td><td>B-01 <code>Math.max(...[])</code> 返回 <code>-Infinity</code></td><td>1</td></tr>
+  <tr><td><b>B. 循环累加停滞</b></td><td>循环内累计变量未正确推进</td><td>B-02 <code>className = cls</code> 设为当前类</td><td>1</td></tr>
+  <tr><td><b>C. 边界条件过严</b></td><td>输入校验阈值大于实际需求</td><td>B-03 <code>lines.length &lt; 2</code> 拒绝单行</td><td>1</td></tr>
+  <tr><td><b>D. 测试数据失配</b></td><td>测试数据与实现逻辑/时间不同步</td><td>T-01~T-04 共 4 例</td><td>4</td></tr>
+</table>
+
+<h2>2.2 排查清单</h2>
+<h3>A. 空集合崩溃（模式 A）</h3>
+<p>在以下操作前，确认集合是否可能为空：</p>
+<pre>
+Math.max(...arr)     // 空数组返回 -Infinity
+Math.min(...arr)     // 空数组返回 Infinity
+arr.reduce(fn, init) // 空数组无初始值时报错
+arr[0]               // 空数组返回 undefined
+</pre>
+<p><b>排查问题：</b>该数组是否可能为空？空数组时是否有默认值/提前返回？链式调用中每一步是否都有空值保护？对象属性访问是否用了 <code>?.</code> 安全链？</p>
+
+<h3>B. 循环累加停滞（模式 B）</h3>
+<pre>
+// 危险信号
+for (const item of list) {
+  if (condition) {
+    result = item;      // 设为当前项而非下一项
+  }
+}
+</pre>
+<p><b>排查问题：</b>循环变量是推进到"下一项"还是停留在"当前项"？满足条件后是否应该 <code>break</code>？最后一次迭代是否产生正确的边界结果？是否有测试验证多级累加场景？</p>
+
+<h3>C. 边界条件过严（模式 C）</h3>
+<pre>
+if (lines.length &lt; 2) return empty;  // 阈值 2 是否合理？
+if (data.length &lt; 3) return null;    // 阈值 3 是否合理？
+</pre>
+<p><b>排查问题：</b>该阈值的最小合理值是多少？边界值各应返回什么？拒绝输入时是否丢失了有价值的中间结果？</p>
+
+<h3>D. 测试数据失配（模式 D）</h3>
+<p><b>时间相关：</b>时间戳是硬编码还是动态计算？硬编码时间戳是否超过过滤窗口？测试是否在任何日期都能通过？</p>
+<p><b>Mock 数据与逻辑匹配：</b>Mock 数据是否满足被测函数的所有前置条件？条件分支的每个路径是否都有对应的 mock 数据？</p>
+<p><b>断言方向：</b>比较操作符方向是否正确？预期值是否与注释/文档一致？</p>
+
+<h2>2.3 修复模板</h2>
+<h3>空集合崩溃模板</h3>
+<pre>
+// 修复前
+function processData(items: Item[]) {
+  const max = Math.max(...items.map(i =&gt; i.value));
+  return LABELS[max].name;   // items 为空时崩溃
+}
+// 修复后
+function processData(items: Item[]) {
+  if (items.length === 0) {
+    return { class: 0, label: '无数据' };   // 提前返回默认值
+  }
+  const max = Math.max(...items.map(i =&gt; i.value));
+  return { class: max, label: LABELS[max]?.name ?? '未知' };  // 安全链
+}
+</pre>
+
+<h3>循环累加模板</h3>
+<pre>
+// 修复前
+for (const level of LEVELS) {
+  if (value &gt; level.threshold) {
+    result = level;           // 设为当前级，不累加
+  }
+}
+// 修复后
+for (let i = 0; i &lt; LEVELS.length; i++) {
+  if (value &gt; LEVELS[i].threshold) {
+    if (i + 1 &lt; LEVELS.length) {
+      result = LEVELS[i + 1];  // 设为下一级，推进累加
+    } else {
+      result = LEVELS[i];      // 末级边界
+    }
+  } else {
+    break;                     // 未超过 → 停止
+  }
+}
+</pre>
+
+<h3>边界条件模板</h3>
+<pre>
+// 修复前
+if (lines.length &lt; 2) { return { headers: [], rows: [] }; }
+// 修复后
+if (lines.length === 0) { return { headers: [], rows: [] }; }
+</pre>
+
+<h3>测试数据时间戳模板</h3>
+<pre>
+// 修复前（硬编码，随时间失效）
+const mockAlerts = [{ createdAt: '2026-08-07T10:00:00' }];
+// 修复后（动态计算，永远有效）
+const now = new Date();
+const today = now.toISOString().split('T')[0];
+const yesterday = new Date(now.getTime() - 86400000).toISOString().split('T')[0];
+</pre>
+
+<h2>2.4 测试编写规范</h2>
+<h3>边界值三件套</h3>
+<pre>
+describe('阈值边界', () =&gt; {
+  it('恰好等于限值应归入当前类', () =&gt; { /* threshold */ });
+  it('略低于限值应归入当前类', () =&gt; { /* threshold - epsilon */ });
+  it('略高于限值应归入下一类', () =&gt; { /* threshold + epsilon */ });
+});
+</pre>
+<h3>空值覆盖</h3>
+<pre>
+describe('空值处理', () =&gt; {
+  it('空数组返回默认值', () =&gt; { /* [] */ });
+  it('undefined 值被跳过', () =&gt; { /* { key: undefined } */ });
+  it('null 值不崩溃', () =&gt; { /* null */ });
+});
+</pre>
+<h3>时间无关性</h3>
+<pre>
+// 好的测试：不依赖固定时间
+const ts = new Date().toISOString();
+// 坏的测试：依赖固定时间
+const ts = '2026-08-07T10:00:00';
+</pre>
+
+<h2>2.5 预防措施</h2>
+<div class="checklist">
+<p><b>代码审查检查项：</b></p>
+<ul>
+  <li>所有 Math.max/min 操作前确认数组非空</li>
+  <li>循环累加逻辑使用 nextIdx 而非 currentIdx</li>
+  <li>输入校验阈值设为最小必要值（优先用 === 0 而非 &lt; 2）</li>
+  <li>对象属性访问链全部使用 ?. 安全链</li>
+  <li>条件分支的每个路径都有对应的测试覆盖</li>
+</ul>
+<p><b>测试检查项：</b></p>
+<ul>
+  <li>测试时间戳使用动态计算</li>
+  <li>Mock 数据满足所有前置条件</li>
+  <li>断言方向与注释一致</li>
+  <li>边界值（threshold-1, threshold, threshold+1）全覆盖</li>
+  <li>空数组/空对象/undefined/null 各有一条测试</li>
+</ul>
+</div>
+
+<h2>2.6 本次修复速查</h2>
+<table>
+  <tr><th>模式</th><th>问题</th><th>修复要点</th><th>涉及文件</th></tr>
+  <tr><td>A</td><td>空指标值崩溃</td><td>提前返回 + <code>?.</code> 安全链</td><td><code>waterQuality.ts</code></td></tr>
+  <tr><td>B</td><td>水质类别不累加</td><td><code>nextIdx</code> + <code>break</code></td><td><code>waterQualityCalculator.ts</code></td></tr>
+  <tr><td>C</td><td>单行 CSV 返回空</td><td>阈值 <code>&lt; 2</code> → <code>=== 0</code></td><td><code>dataImporter.ts</code></td></tr>
+  <tr><td>D</td><td>测试时间戳过期</td><td>动态日期计算</td><td><code>alertNotifier.test.ts</code></td></tr>
+  <tr><td>D</td><td>空井网评分预期不符</td><td>对齐实际输出</td><td><code>spatialOptimizer.test.ts</code></td></tr>
+  <tr><td>D</td><td>趋势方向断言反了</td><td>修正比较操作符</td><td><code>waterBalance.test.ts</code></td></tr>
+  <tr><td>D</td><td>Mock 不满足条件</td><td>调整 mock 数据</td><td><code>waterQualityBalance.test.ts</code></td></tr>
+</table>
+
+<div class="pagebreak"></div>
+<h1>第三部分 前端命名规范</h1>
+<p class="meta">适用范围：hebei-groundwater-platform（React 18 + TypeScript + Zustand + Three.js）<br>目的：统一命名规则，保证代码可读性与可检索性</p>
+
+<h2>3.1 文件命名</h2>
+<table>
+  <tr><th>类型</th><th>规则</th><th>示例</th><th>说明</th></tr>
+  <tr><td>组件</td><td><code>PascalCase.tsx</code></td><td><code>WellNetworkPanel.tsx</code></td><td>组件文件用大写驼峰，与导出的组件名一致</td></tr>
+  <tr><td>Hook</td><td><code>useCamelCase.ts</code></td><td><code>useWaterBalance.ts</code></td><td><code>use</code> 前缀，小写驼峰</td></tr>
+  <tr><td>服务/工具</td><td><code>camelCase.ts</code></td><td><code>waterQuality.ts</code></td><td>小写驼峰，体现模块职责</td></tr>
+  <tr><td>测试</td><td><code>文件名.test.ts(x)</code></td><td><code>waterQuality.test.ts</code></td><td>与源文件同名 + <code>.test</code> 后缀</td></tr>
+  <tr><td>类型</td><td><code>xxx.types.ts</code></td><td><code>waterQuality.types.ts</code></td><td>仅含类型的文件用 <code>.types.ts</code> 后缀</td></tr>
+</table>
+
+<h2>3.2 组件命名（PascalCase）</h2>
+<pre>
+// 正确：PascalCase 函数组件
+function WellNetworkPanel() { ... }
+const SpatialMap = () =&gt; { ... };
+// 错误
+function wellNetworkPanel() { ... }   // 首字母小写
+</pre>
+<blockquote>说明：React 约定组件名必须大写开头，否则 JSX 会将其当作原生 DOM 标签导致渲染错误。</blockquote>
+
+<h2>3.3 Hook 命名（use + camelCase）</h2>
+<pre>
+// 正确
+function useWaterBalance() { ... }
+// 错误
+function getWaterData() { ... }    // 不以 use 开头，绕过 eslint 检查
+</pre>
+<blockquote>说明：<code>use</code> 前缀是 React Hook 的强制约定，eslint 依赖此前缀校验 Hook 调用规则。</blockquote>
+
+<h2>3.4 状态变量命名（camelCase）</h2>
+<pre>
+// 正确：名词，表达状态含义
+const wellList = useMemo(() =&gt; ..., []);
+const [selectedWellId, setSelectedWellId] = useState&lt;string | null&gt;(null);
+const isLoading = useSelector(s =&gt; s.loading);
+// 错误
+const list = useState(...)[0];   // 无意义命名
+</pre>
+<blockquote>说明：布尔状态用 <code>is/has/can</code> 前缀（如 <code>isLoading</code>、<code>hasData</code>）。</blockquote>
+
+<h2>3.5 常量命名（UPPER_SNAKE_CASE）</h2>
+<pre>
+// 正确：模块级常量全大写 + 下划线
+const WATER_CLASS_LABELS = {...};
+const MAX_WELL_COUNT = 1000;
+// 错误
+const waterClassLabels = {...};   // 模块级常量误用 camelCase
+</pre>
+
+<h2>3.6 类型与接口命名（PascalCase）</h2>
+<pre>
+// 正确
+interface WellNetworkProps { ... }
+type WaterQualityClass = 1 | 2 | 3 | 4 | 5;
+// 错误
+interface wellNetworkProps { ... }   // 首字母小写
+</pre>
+
+<h2>3.7 函数命名（动词 + 名词，camelCase）</h2>
+<pre>
+// 计算类：calc + 对象
+calcBalance(input);
+// 获取类：get/query + 对象
+getBalanceSummary(results);
+// 分类/判定类：classify + 对象
+classifyFactor(value, factor);
+// 导出/生成类：export/generate + 对象
+generateWellReport(well, options);
+// 错误
+balance();              // 无动词
+</pre>
+
+<h2>3.8 Store 命名（useXxxStore）</h2>
+<pre>
+// 正确：Zustand store 用 use + 领域名 + Store
+const useAppStore = ...;
+// 错误
+const appStore = ...;   // 直接引用 store 对象，绕过 hook
+</pre>
+
+<h2>3.9 命名一致性检查</h2>
+<div class="checklist">
+<ul>
+  <li>组件/类型：PascalCase</li>
+  <li>Hook/变量/函数：camelCase</li>
+  <li>模块级常量：UPPER_SNAKE_CASE</li>
+  <li>Hook 均以 use 开头</li>
+  <li>测试文件与源文件同名</li>
+</ul>
+</div>
+
+</body>
+</html>
