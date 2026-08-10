@@ -238,130 +238,9 @@ WATER_CLASS_LABELS[worstClass]?.description ?? '未知';  // 安全
 
 ### 命名规范
 
-统一命名规则，保证代码可读性与可检索性。以下规则结合本项目技术栈（React + TypeScript + Zustand + Three.js）制定。
+统一命名规则，保证代码可读性与可检索性。详细规则（含代码示例与说明）参见 `docs/命名规范.md`。
 
-#### 文件命名
-
-| 类型 | 规则 | 示例 | 说明 |
-|------|------|------|------|
-| 组件 | `PascalCase.tsx` | `WellNetworkPanel.tsx` | 组件文件用大写驼峰，与导出的组件名一致 |
-| Hook | `useCamelCase.ts` | `useWaterBalance.ts` | `use` 前缀，小写驼峰 |
-| 服务/工具 | `camelCase.ts` | `waterQuality.ts` | 小写驼峰，体现模块职责 |
-| 测试 | `文件名.test.ts(x)` | `waterQuality.test.ts` | 与源文件同名 + `.test` 后缀，放 `__tests__/` 目录 |
-| 类型 | `xxx.types.ts` | `waterQuality.types.ts` | 仅含类型的文件用 `.types.ts` 后缀（如需拆分） |
-
-#### 组件命名（PascalCase）
-
-```typescript
-// 正确：PascalCase 函数组件
-function WellNetworkPanel() { ... }
-const SpatialMap = () => { ... };  // 箭头函数常量也可，但首字母必须大写
-
-// 错误
-function wellNetworkPanel() { ... }   // 首字母小写
-const wellMap = () => { ... };        // 首字母小写
-```
-
-**说明**：React 约定组件名必须大写开头，否则 JSX 会将其当作原生 DOM 标签（如 `<wellMap>`）导致渲染错误，且难以排查。
-
-#### Hook 命名（use + camelCase）
-
-```typescript
-// 正确
-function useWaterBalance() { ... }
-function useCityWaterQuality() { ... }
-
-// 错误
-function getWaterData() { ... }    // 不以 use 开头，无法触发 eslint-plugin-react-hooks 检查
-const WaterState = () => { ... }   // Hook 返回状态对象，不应大写
-```
-
-**说明**：`use` 前缀是 React Hook 的强制约定，eslint 依赖此前缀校验 Hook 调用规则（不可在条件/循环中调用），命名不规范会绕过检查。
-
-#### 状态变量命名（camelCase）
-
-```typescript
-// 正确：名词，表达状态含义
-const wellList = useMemo(() => ..., []);
-const [selectedWellId, setSelectedWellId] = useState<string | null>(null);
-const isLoading = useSelector(s => s.loading);
-
-// 错误
-const list = useState(...)[0];   // 无意义命名
-const [is, setIs] = useState(...);  // 过于泛化
-```
-
-**说明**：状态变量用名词描述内容，布尔状态用 `is/has/can` 前缀（如 `isLoading`、`hasData`），便于语义化阅读。
-
-#### 常量命名（UPPER_SNAKE_CASE）
-
-```typescript
-// 正确：模块级常量全大写 + 下划线
-const WATER_CLASS_LABELS = {...};
-const MAX_WELL_COUNT = 1000;
-const DEFAULT_CITY = '石家庄';
-
-// 错误
-const waterClassLabels = {...};   // 模块级常量误用 camelCase
-const maxWellCount = 1000;
-```
-
-**说明**：模块级不可变常量用全大写，与函数内局部变量（camelCase）区分，便于识别作用域。
-
-#### 类型/接口命名（PascalCase）
-
-```typescript
-// 正确
-interface WellNetworkProps { ... }
-interface BalanceInput { ... }
-type WaterQualityClass = 1 | 2 | 3 | 4 | 5;
-type BalanceStatus = 'surplus' | 'balanced' | 'deficit';
-
-// 错误
-interface wellNetworkProps { ... }   // 首字母小写
-interface WellProps2 { ... }         // 无意义后缀
-```
-
-**说明**：接口/类型用 PascalCase，与值命名区分；联合类型用名词短语（如 `BalanceStatus`）。
-
-#### 函数命名（动词 + 名词，camelCase）
-
-```typescript
-// 计算类：calc + 对象
-calcBalance(input);
-calcIonPercent(mmol);
-
-// 获取类：get/query + 对象
-getBalanceSummary(results);
-
-// 分类/判定类：classify/judge + 对象
-classifyFactor(value, factor);
-classifySample(stationId, values, factors);
-
-// 导出/生成类：export/generate + 对象
-generateWellReport(well, options);
-
-// 错误
-balance();              // 无动词
-calc(input, factor);    // 动词后无明确对象
-```
-
-**说明**：函数命名遵循「动词 + 名词」结构，前缀表达动作类型（calc/get/classify/export），名词表达操作对象，保证功能一目了然。
-
-#### Store 命名（useXxxStore）
-
-```typescript
-// 正确：Zustand store 用 use + 领域名 + Store
-const useAppStore = ...;
-const useWellNetworkStore = ...;
-
-// 错误
-const appStore = ...;   // 直接引用 store 对象，绕过 hook
-```
-
-**说明**：Zustand store 统一以 `useXxxStore` 命名并作为 hook 使用，避免组件直接引用 store 原始对象导致订阅失效。
-
-#### 命名一致性检查
+**速查：**
 
 ```
 □ 组件/类型：PascalCase
@@ -369,6 +248,8 @@ const appStore = ...;   // 直接引用 store 对象，绕过 hook
 □ 模块级常量：UPPER_SNAKE_CASE
 □ Hook 均以 use 开头
 □ 测试文件与源文件同名
+□ 函数命名：动词 + 名词（calc/get/classify/export）
+□ Store：useXxxStore
 ```
 
 ### 修复模板
