@@ -106,6 +106,8 @@ npm run ci           # lint + tsc + test 全流程
 
 ## 开发规范
 
+> 以下规范均来源于本项目实际修复的 Bug，每条附【问题示例】说明其成因，供开发时对照参考。
+
 ### 代码审查检查项
 
 提交 PR 前逐项检查：
@@ -118,12 +120,121 @@ npm run ci           # lint + tsc + test 全流程
 □ 条件分支的每个路径都有对应的测试覆盖
 ```
 
+#### 逐项注释说明
+
+**① Math.max/min 前确认数组非空**
+
+空数组的 `Math.max(...[])` 返回 `-Infinity`，`Math.min(...[])` 返回 `Infinity`，参与后续计算会得到灾难性结果（如污染水质类别、水位均值等）。
+
+```typescript
+// 问题示例：comprehensiveAssessment 空指标值崩溃
+// 空指标值时 indicators 数组为空
+const worstClass = Math.max(...indicators.map(i => i.class));
+// → Math.max(...[]) = -Infinity
+// → WATER_CLASS_LABELS[-Infinity].description → 访问 undefined 属性崩溃
+```
+
+**修复方式**：空集合时提前返回默认值，或对结果加 `?.` 安全链。
+
+---
+
+**② 循环累加使用 nextIdx 而非 currentIdx**
+
+遍历分级/分层阈值时，超过当前级应推进到**下一级**，而非停留在当前级。
+
+```typescript
+// 问题示例：水质分类类别不累加
+// TDS: I≤300, II≤500, III≤1000，实测值 800 应判定为 III 类
+for (const cls of classes) {
+  if (value > range.high) {
+    className = cls;  // 停在当前类，800 被误判为 II 类
+  }
+}
+// 正确：className = classes[nextIdx];  // 推进到下一类 → III 类
+```
+
+**修复方式**：`className = classes[indexOf(cls) + 1]`，并注意末级（V 类）边界处理。
+
+---
+
+**③ 输入校验阈值设为最小必要值**
+
+拒绝输入的阈值应能放行最小合法输入，优先用 `=== 0` 判断空集，而非宽松的 `< 2` 等。
+
+```typescript
+// 问题示例：parseCSV 单行输入返回空
+if (lines.length < 2) {          // 仅表头(1行)也被拒绝
+  return { headers: [], rows: [] };  // 丢失了表头信息
+}
+// 正确：if (lines.length === 0)  // 仅拒绝真正的空输入
+```
+
+**修复方式**：用 `=== 0` 替代 `< N`，确保合法的部分数据（如表头）不被丢弃。
+
+---
+
+**④ 对象属性访问链全部使用 ?. 安全链**
+
+当键名来自运行期值（如分类号、索引）时，访问结果可能是 `undefined`，需用 `?.` 防御。
+
+```typescript
+// 问题示例：WATER_CLASS_LABELS[worstClass].description
+// worstClass 可能为 -Infinity 或越界值
+WATER_CLASS_LABELS[worstClass].description;        // 崩溃
+WATER_CLASS_LABELS[worstClass]?.description ?? '未知';  // 安全
+```
+
+**修复方式**：链式访问统一加 `?.`，并配合 `??` 提供兜底默认值。
+
+---
+
+**⑤ 条件分支每个路径都有测试覆盖**
+
+`if/else`、`switch`、分级阈值等每个分支都应至少有一条测试，尤其注意：
+
+- 每个等级/类别的进入与退出
+- 恰好等于阈值的情况
+- V 类/末级的 `>X` 边界格式
+
+```typescript
+// 问题示例：水质分类边界测试
+// 需覆盖: ≤限值(当前类)、=限值(当前类)、>限值(下一类)、>V类限值(仍V类)
+```
+
+---
+
 ### 测试编写规范
 
 - **边界值三件套**：每个阈值覆盖 `threshold-1`、`threshold`、`threshold+1`
+  ```typescript
+  // 阈值 100 的三件套
+  value = 99;   // 应在当前类
+  value = 100;  // 应恰好落在阈值边界
+  value = 101;  // 应进入下一类
+  ```
+
 - **空值覆盖**：空数组、空对象、`undefined`、`null` 各有一条测试
+  ```typescript
+  // 空指标值测试：确保不崩溃且返回合理默认值
+  comprehensiveAssessment('WQ-01', '站', '石家庄', {});
+  ```
+
 - **时间无关性**：时间戳使用动态计算，禁止硬编码
+  ```typescript
+  // 错误：硬编码时间戳，24h 后测试失效
+  { createdAt: '2026-08-07T10:00:00' };
+  // 正确：动态计算
+  const today = new Date().toISOString().split('T')[0];
+  { createdAt: `${today}T10:00:00` };
+  ```
+
 - **Mock 数据完整性**：确认 Mock 数据满足被测函数的所有前置条件
+  ```typescript
+  // 问题示例：象限判定需要 averageClass >= 3.5
+  // 但 Mock 数据 averageClass = 3.0，未触发目标分支
+  determineQuadrant(mockBalance, { averageClass: 3.0 });  // 返回 3 而非 1
+  // 正确：averageClass = 4.0，才能触发象限 1
+  ```
 
 ### 修复模板
 
@@ -131,9 +242,9 @@ npm run ci           # lint + tsc + test 全流程
 
 **4 种 Bug 模式速查：**
 
-| 模式 | 代码味道 | 修复要点 |
-|------|---------|---------|
-| 空集合崩溃 | 对数组操作未做空值保护 | 提前返回 + `?.` 安全链 |
-| 循环累加停滞 | 累计变量未正确推进 | `nextIdx` + `break` |
-| 边界条件过严 | 输入校验阈值过大 | 阈值设为最小必要值 |
-| 测试数据失配 | Mock 数据与逻辑不同步 | 动态计算 + 对齐预期 |
+| 模式 | 代码味道 | 修复要点 | 本次案例 |
+|------|---------|---------|---------|
+| 空集合崩溃 | 对数组操作未做空值保护 | 提前返回 + `?.` 安全链 | `waterQuality.ts` |
+| 循环累加停滞 | 累计变量未正确推进 | `nextIdx` + `break` | `waterQualityCalculator.ts` |
+| 边界条件过严 | 输入校验阈值过大 | 阈值设为最小必要值 | `dataImporter.ts` |
+| 测试数据失配 | Mock 数据与逻辑不同步 | 动态计算 + 对齐预期 | 4 个测试文件 |
