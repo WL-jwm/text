@@ -205,6 +205,18 @@ passRate = (passedTests / totalTests) × 100%
 
 passedTests = totalTests - failedTests
 </pre>
+<p><b>公式注释说明：</b></p>
+<pre>
+passRate          // 通过率，即通过测试占总测试的百分比（%），数值越高说明质量越可靠
+=                 // 赋值运算符：左侧为计算结果，右侧为计算表达式
+(passedTests      // 通过的测试用例数：即 totalTests 中未失败的用例数量
+ / totalTests)    // 测试用例总数：本次全量回归运行的全部用例数（含通过的与失败的）
+× 100%            // 将比率转换为百分比形式，便于直观比较
+
+passedTests       // 通过的测试用例数
+= totalTests      // 由总测试用例数出发
+- failedTests     // 减去失败的测试用例数（failedTests ≥ 0）
+</pre>
 <p><b>变量定义（遵循 camelCase 命名规范）：</b></p>
 <table>
   <tr><th>变量</th><th>含义</th></tr>
