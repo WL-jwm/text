@@ -63,6 +63,9 @@ eslint-any*.json
 geology_full.txt
 coverage/
 *.py
+# === 例外：正式工具脚本（批注工具），不被 *.py 忽略 ===
+!docs/docx_comment_tool.py
+!docs/remove_comments_tool.py
 
 # === Untracked leftover ===
 _fix_any.py
