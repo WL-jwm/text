@@ -35,6 +35,7 @@ pnpm-debug.log*
 # === Temp / Recovery ===
 _recovery/
 *.bak
+*.bak_split
 /tmp/
 temp_test/
 server_pid.txt
