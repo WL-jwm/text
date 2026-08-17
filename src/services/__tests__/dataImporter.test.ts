@@ -11,6 +11,8 @@ import {
   importWells,
   COLUMN_ALIASES,
 } from '../dataImporter';
+import type { ImportPreviewRow } from '../dataImporter';
+import type { Well } from '../wellNetwork';
 import {
   DataSourceConfigManager,
   DEFAULT_CHANNELS,
@@ -136,9 +138,9 @@ describe('importWells', () => {
   it('应导入有效井', () => {
     const addWellMock = vi.fn((well: { name: string }) => ({ id: 'W-NEW', ...well }));
     const previewRows = [
-      { rowNum: 2, raw: {}, valid: true, errors: [], well: { name: '井1', city: '石家庄', lng: 114.5, lat: 38.0, indicators: ['waterLevel'] as const, status: 'active' as const, group: '', note: '' } },
+      { rowNum: 2, raw: {}, valid: true, errors: [], well: { name: '井1', city: '石家庄', latitude: 38.0, longitude: 114.5, depth: 100, aquiferType: 'shallowPorous' as const, indicators: ['waterLevel'] as const, status: 'active' as const, builtYear: 2010 } },
     ];
-    const result = importWells(previewRows as any, addWellMock as any);
+    const result = importWells(previewRows as unknown as ImportPreviewRow[], addWellMock as unknown as (w: Omit<Well, 'id'>) => Well | null);
     expect(result.importedCount).toBe(1);
     expect(addWellMock).toHaveBeenCalledTimes(1);
   });

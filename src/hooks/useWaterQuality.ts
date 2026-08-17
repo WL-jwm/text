@@ -3,7 +3,7 @@
  * 关联 wellNetwork 井网数据，提供水质评价/统计/筛选
  */
 import { useMemo } from 'react';
-import type { Well } from './wellNetwork';
+import type { Well } from '../services/wellNetwork';
 import {
   type WaterQualityAssessment,
   type WaterQualitySummary,
@@ -12,8 +12,7 @@ import {
   buildWaterQualitySummary,
   buildCityWaterQualityStats,
   classifySulin,
-  INDICATOR_META,
-} from './waterQuality';
+} from '../services/waterQuality';
 
 /** 河北平原典型水质指标值（按城市，基于背景值中位数） */
 const CITY_TYPICAL_WATER_QUALITY: Record<string, Partial<Record<string, number>>> = {

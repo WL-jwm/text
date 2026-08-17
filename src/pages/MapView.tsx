@@ -18,7 +18,7 @@ import { importantWaterSources } from '../data/waterSource';
 import { karstSprings } from '../data/karstWater';
 import { useToast } from '../components/Toast';
 import type { CountyDataItem } from '../types/county';
-import type { LMap, LLayerGroup, LNamespace } from '../types/leaflet';
+import type { LMap, LLayerGroup, LNamespace, LImageOverlay } from '../types/leaflet';
 import { useReportData } from '../hooks/useReportData';
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
 import { getContourDataset } from '../data/contourData';
@@ -51,8 +51,7 @@ export function MapView() {
   const cityBoundaryLayerRef = useRef<LLayerGroup | null>(null);
   const waterSourcePOILayerRef = useRef<LLayerGroup | null>(null);
   const karstSpringPOILayerRef = useRef<LLayerGroup | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const contourLayerRef = useRef<any>(null); // L.imageOverlay
+  const contourLayerRef = useRef<LImageOverlay | null>(null); // L.imageOverlay
 
   // ═══════ v4.3.0: 可叠加图层状态 ═══════
   const [activeLayers, setActiveLayers] = useState<Set<string>>(

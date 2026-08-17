@@ -3,6 +3,7 @@
  * 同步 PDF 样式：专业摘要+含水层中文名+交替行+严重度着色+条件格式
  */
 import { saveAs } from 'file-saver';
+import type * as ExcelJS from 'exceljs';
 import type { WellReportData } from './wellReport';
 import { SEVERITY_LABELS, formatGeneratedAt } from './wellReport';
 
@@ -39,7 +40,7 @@ const INDICATOR_LABELS: Record<string, string> = {
   extraction: '开采量',
 };
 
-function applyHeaderRow(ws: any, headers: string[]): void {
+function applyHeaderRow(ws: ExcelJS.Worksheet, headers: string[]): void {
   const row = ws.addRow(headers);
   row.font = { bold: true, color: { argb: STYLE.headerText }, size: 10 };
   row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: STYLE.headerBg } };
@@ -47,7 +48,7 @@ function applyHeaderRow(ws: any, headers: string[]): void {
   row.height = 24;
 }
 
-function applyAltRow(ws: any, row: any, index: number): void {
+function applyAltRow(ws: ExcelJS.Worksheet, row: ExcelJS.Row, index: number): void {
   if (index % 2 === 1) {
     row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: STYLE.rowAlt } };
   }
@@ -55,7 +56,7 @@ function applyAltRow(ws: any, row: any, index: number): void {
   row.height = 20;
 }
 
-function setColWidths(ws: any, widths: number[]): void {
+function setColWidths(ws: ExcelJS.Worksheet, widths: number[]): void {
   widths.forEach((w, i) => {
     ws.getColumn(i + 1).width = w;
   });
@@ -97,7 +98,7 @@ export async function buildWellReportExcel(data: WellReportData): Promise<Blob> 
     ['编制单位', data.meta.unit],
     ['评估日期', data.summary.assessmentDate],
   ];
-  infoData.forEach(([label, value], i) => {
+  infoData.forEach(([label, value], _i) => {
     const row = ws1.addRow([label, value]);
     row.getCell(1).font = { color: { argb: 'FF94A3B8' }, size: 10 };
     row.getCell(2).font = { bold: true, color: { argb: 'FF333333' }, size: 10 };
@@ -231,12 +232,14 @@ export async function buildWellReportExcel(data: WellReportData): Promise<Blob> 
             type: 'cellIs',
             operator: 'greaterThan',
             formulae: [0],
+            priority: 1,
             style: { fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD5F5E3' } }, font: { color: { argb: 'FF1E8449' } } },
           },
           {
             type: 'cellIs',
             operator: 'lessThan',
             formulae: [0],
+            priority: 2,
             style: { fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFADBD8' } }, font: { color: { argb: 'FFC0392B' } } },
           },
         ],

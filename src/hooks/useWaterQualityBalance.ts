@@ -2,12 +2,12 @@
  * H-06 均衡-水质联动分析 Hook
  */
 import { useMemo } from 'react';
-import type { CityBalanceResult } from './waterBalance';
-import type { CityWaterQualityStats } from './waterQuality';
+import type { CityBalanceResult } from '../services/waterBalance';
+import type { CityWaterQualityStats } from '../services/waterQuality';
 import {
   type IntegratedAnalysis,
   buildIntegratedAnalysis,
-} from './waterQualityBalance';
+} from '../services/waterQualityBalance';
 
 /**
  * 均衡-水质联动分析 Hook

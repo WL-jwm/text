@@ -10,7 +10,7 @@ import { ALERT_THRESHOLDS } from './realtimeDataService';
 import { AQUIFER_LABELS } from './wellNetwork';
 import type { AquiferType } from './wellNetwork';
 import type { WellWithData, WellRealtimeStatus } from './wellRealtime';
-import type { WellAlert } from './wellAlerts';
+import type { WellAlert, AlertSeverity } from './wellAlerts';
 
 // ============================================================
 // 类型定义
@@ -21,6 +21,8 @@ export interface WellReportMeta {
   unit: string;
   generatedAt: number;
   period: string;
+  /** 报告编号（PDF/Excel/Word 页眉与文件名使用） */
+  reportId: string;
 }
 
 export interface WellReportSummary {
@@ -31,10 +33,18 @@ export interface WellReportSummary {
   coverage: number;
   abnormalCount: number;
   criticalCount: number;
+  /** 告警总数（PDF/Excel/Word 摘要卡使用） */
+  alertCount: number;
+  /** 严重告警数 */
+  criticalAlerts: number;
+  /** 评估日期（YYYY-MM-DD） */
+  assessmentDate: string;
 }
 
 export interface WellReportAquiferRow {
   aquiferType: AquiferType;
+  /** Word 生成器用 r.type 访问含水层类型标识 */
+  type: AquiferType;
   label: string;
   count: number;
   avgDepth: number;
@@ -79,14 +89,64 @@ export interface WellReportWellRow {
   statusLabel: string;
 }
 
+// ------------------------------------------------------------
+// 扁平模型（供 PDF / Excel 生成器使用）
+// 与 xxxRows 模型并存：PDF/Excel 消费 alerts/cities/aquifers/realtime，
+// Word 消费 xxxRows。buildWellReportData 同时组装两套。
+// ------------------------------------------------------------
+
+export interface WellReportPdfAlertRow {
+  wellId: string;
+  /** 通道类型标签（如 水位埋深） */
+  type: string;
+  severity: AlertSeverity;
+  /** 告警消息说明 */
+  message: string;
+  /** 触发时间（YYYY-MM-DD） */
+  createdAt: string;
+}
+
+export interface WellReportPdfCityRow {
+  city: string;
+  wellCount: number;
+  /** 含水层类型标签集合 */
+  aquifers: string[];
+  /** 监测指标标签集合 */
+  indicators: string[];
+}
+
+export interface WellReportPdfAquiferRow {
+  type: AquiferType;
+  count: number;
+  avgDepth: number;
+  /** 分布城市名集合 */
+  cities: string[];
+}
+
+export interface WellReportPdfRealtimeRow {
+  stationId: string;
+  stationName: string;
+  waterLevel?: number;
+  waterQuality?: number;
+  subsidence?: number;
+  extraction?: number;
+  status: WellRealtimeStatus;
+}
+
 export interface WellReportData {
   meta: WellReportMeta;
   summary: WellReportSummary;
+  // ── Word（xxxRows 模型）──
   aquiferRows: WellReportAquiferRow[];
   cityRows: WellReportCityRow[];
   realtimeRows: WellReportRealtimeRow[];
   alertRows: WellReportAlertRow[];
   wellRows: WellReportWellRow[];
+  // ── PDF / Excel（扁平模型）──
+  alerts: WellReportPdfAlertRow[];
+  cities: WellReportPdfCityRow[];
+  aquifers: WellReportPdfAquiferRow[];
+  realtime: WellReportPdfRealtimeRow[];
 }
 
 export interface WellReportOptions {
@@ -136,11 +196,15 @@ export function buildWellReportData(
   options: WellReportOptions = {},
 ): WellReportData {
   const now = Date.now();
+  const d = new Date(now);
+  const pad = (n: number) => String(n).padStart(2, '0');
   const meta: WellReportMeta = {
     title: options.title ?? '地下水监测井网综合分析报告',
     unit: options.unit ?? '河北瑞三元环境科技有限公司',
     generatedAt: now,
     period: options.period ?? formatPeriod(now),
+    // 报告编号：GW-YYYYMMDD-HHMMSS，供页眉与文件名使用
+    reportId: `GW-${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`,
   };
 
   // ── 摘要 ──
@@ -159,6 +223,9 @@ export function buildWellReportData(
     coverage: wellsWithData.length > 0 ? Math.round((withData / wellsWithData.length) * 100) : 0,
     abnormalCount: abnormal,
     criticalCount: critical,
+    alertCount: alerts.length,
+    criticalAlerts: alerts.filter(a => a.severity === 'critical').length,
+    assessmentDate: formatGeneratedAt(now).slice(0, 10),
   };
 
   // ── 含水层分布 ──
@@ -171,6 +238,7 @@ export function buildWellReportData(
 
   const aquiferRows: WellReportAquiferRow[] = Array.from(aquiferMap.entries()).map(([type, g]) => ({
     aquiferType: type,
+    type,
     label: AQUIFER_LABELS[type],
     count: g.wells.length,
     avgDepth: Math.round((g.wells.reduce((s, w) => s + w.depth, 0) / g.wells.length) * 10) / 10,
@@ -255,6 +323,56 @@ export function buildWellReportData(
     statusLabel: STATUS_LABELS[w.realtime.status],
   }));
 
+  // ── 扁平模型（供 PDF / Excel 生成器）──
+  const alertsFlat: WellReportPdfAlertRow[] = alerts.map(a => {
+    const threshold = a.threshold;
+    let message: string;
+    if (a.severity === 'stale') {
+      message = '数据过期，无最新读数';
+    } else if (threshold.direction === 'above') {
+      message = `当前 ${a.value.toFixed(1)}${a.unit}（预警≥${threshold.warning}，超标≥${threshold.critical}）`;
+    } else {
+      message = `当前 ${a.value.toFixed(1)}${a.unit}（预警≤${threshold.warning}，超标≤${threshold.critical}）`;
+    }
+    return {
+      wellId: a.wellId,
+      type: CHANNEL_LABELS[a.channel],
+      severity: a.severity,
+      message,
+      createdAt: formatGeneratedAt(a.timestamp).slice(0, 10),
+    };
+  });
+
+  const citiesFlat: WellReportPdfCityRow[] = Array.from(cityMap.entries()).map(([city, list]) => ({
+    city,
+    wellCount: list.length,
+    aquifers: Array.from(new Set(list.map(w => AQUIFER_LABELS[w.aquiferType]))),
+    indicators: Array.from(new Set(list.flatMap(w => w.indicators.map(i => CHANNEL_LABELS[i])))),
+  }));
+
+  const aquifersFlat: WellReportPdfAquiferRow[] = Array.from(aquiferMap.entries()).map(([type, g]) => ({
+    type,
+    count: g.wells.length,
+    avgDepth: Math.round((g.wells.reduce((s, w) => s + w.depth, 0) / g.wells.length) * 10) / 10,
+    cities: Array.from(new Set(g.wells.map(w => w.city))),
+  }));
+
+  const realtimeFlat: WellReportPdfRealtimeRow[] = wellsWithData.map(w => {
+    const byChannel = new Map<DataChannel, number>();
+    for (const r of w.channelReadings) {
+      if (r.value !== null) byChannel.set(r.channel, r.value);
+    }
+    return {
+      stationId: w.id,
+      stationName: w.name,
+      waterLevel: byChannel.get('waterLevel'),
+      waterQuality: byChannel.get('waterQuality'),
+      subsidence: byChannel.get('subsidence'),
+      extraction: byChannel.get('extraction'),
+      status: w.realtime.status,
+    };
+  });
+
   return {
     meta,
     summary,
@@ -263,6 +381,10 @@ export function buildWellReportData(
     realtimeRows,
     alertRows,
     wellRows,
+    alerts: alertsFlat,
+    cities: citiesFlat,
+    aquifers: aquifersFlat,
+    realtime: realtimeFlat,
   };
 }
 

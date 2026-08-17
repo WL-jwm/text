@@ -15,7 +15,7 @@ import type { TimeSeriesInput } from '../timeSeriesCalculator';
 
 const SAMPLE_DATA: TimeSeriesInput = {
   name: '水位(某监测井)',
-  indicator: '水位',
+  dataType: '水位',
   unit: 'm',
   data: [
     { year: 2015, value: 35.2 },
@@ -33,7 +33,7 @@ const SAMPLE_DATA: TimeSeriesInput = {
 
 const UPWARD_DATA: TimeSeriesInput = {
   name: '上升序列',
-  indicator: '测试',
+  dataType: '测试',
   unit: 'mg/L',
   data: [
     { year: 2015, value: 10.0 },
@@ -97,7 +97,7 @@ describe('calcTrend', () => {
   it('无趋势数据返回 无显著趋势', () => {
     const flatData: TimeSeriesInput = {
       name: '平坦序列',
-      indicator: '测试',
+      dataType: '测试',
       unit: 'm',
       data: [
         { year: 2015, value: 10 },
@@ -133,7 +133,7 @@ describe('calcPeriodicity', () => {
   it('Cv < 0.1 为极稳定', () => {
     const stableData: TimeSeriesInput = {
       name: '稳定序列',
-      indicator: '测试',
+      dataType: '测试',
       unit: 'm',
       data: [
         { year: 2015, value: 10.0 },
@@ -176,7 +176,7 @@ describe('calcChangePoint', () => {
   it('数据不足4年返回无突变', () => {
     const shortData: TimeSeriesInput = {
       name: '不足',
-      indicator: '测试',
+      dataType: '测试',
       unit: 'm',
       data: [
         { year: 2020, value: 10 },

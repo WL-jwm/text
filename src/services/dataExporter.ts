@@ -4,11 +4,36 @@
  * 数据源：井网、实时读数、告警、均衡、水质、联动分析
  */
 import { saveAs } from 'file-saver';
+import type * as ExcelJS from 'exceljs';
+import { AQUIFER_LABELS } from './wellNetwork';
 import type { Well } from './wellNetwork';
 import type { WellAlert } from './wellAlerts';
+
+// 通道与严重度标签（本地映射，避免与报告模块耦合）
+const CHANNEL_LABELS: Record<string, string> = {
+  waterLevel: '水位埋深',
+  waterQuality: '水质达标率',
+  subsidence: '沉降速率',
+  extraction: '开采量',
+};
+const SEVERITY_LABELS: Record<string, string> = {
+  critical: '超标',
+  warning: '预警',
+  stale: '过期',
+};
+
+/** 构造告警消息文本 */
+function alertMessage(a: WellAlert): string {
+  if (a.severity === 'stale') return '数据过期，无最新读数';
+  const t = a.threshold;
+  if (t.direction === 'above') {
+    return `当前 ${a.value.toFixed(1)}${a.unit}（预警≥${t.warning}，超标≥${t.critical}）`;
+  }
+  return `当前 ${a.value.toFixed(1)}${a.unit}（预警≤${t.warning}，超标≤${t.critical}）`;
+}
 import type { WaterBalanceResult, CityBalanceResult } from './waterBalance';
 import type { WaterQualityAssessment, WaterQualitySummary, CityWaterQualityStats } from './waterQuality';
-import type { IntegratedAnalysis, CityIntegratedStats } from './waterQualityBalance';
+import type { IntegratedAnalysis } from './waterQualityBalance';
 
 // ============ 导出格式 ============
 
@@ -201,12 +226,14 @@ function applyConditionalFormatting(
             type: 'cellIs',
             operator: 'greaterThan',
             formulae: [0],
+            priority: 1,
             style: { fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD5F5E3' } }, font: { color: { argb: 'FF1E8449' } } },
           },
           {
             type: 'cellIs',
             operator: 'lessThan',
             formulae: [0],
+            priority: 2,
             style: { fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFADBD8' } }, font: { color: { argb: 'FFC0392B' } } },
           },
         ],
@@ -244,13 +271,13 @@ function buildWellsSheet(wells: Well[]): string[][] {
       w.id,
       w.name,
       w.city,
-      w.lng.toFixed(4),
-      w.lat.toFixed(4),
+      w.longitude.toFixed(4),
+      w.latitude.toFixed(4),
       String(w.depth ?? ''),
-      w.aquifer ?? '',
-      w.indicators?.join(', ') ?? '',
+      AQUIFER_LABELS[w.aquiferType] ?? w.aquiferType,
+      w.indicators?.map(i => CHANNEL_LABELS[i] ?? i).join(', ') ?? '',
       w.status ?? 'active',
-      w.note ?? '',
+      w.notes ?? '',
     ]);
   }
 
@@ -268,7 +295,7 @@ function buildReadingsSheet(data: ExportDataSources): string[][] {
       w.id,
       w.name,
       w.city,
-      w.lng.toFixed(2),   // 占位
+      w.longitude.toFixed(2), // 占位
       '—',
       '—',
       '—',
@@ -280,18 +307,17 @@ function buildReadingsSheet(data: ExportDataSources): string[][] {
 }
 
 function buildAlertsSheet(alerts: WellAlert[]): string[][] {
-  const header = ['编号', '井号', '类型', '严重度', '消息', '创建时间', '已读'];
+  const header = ['编号', '井名', '类型', '严重度', '消息', '时间'];
   const rows: string[][] = [header];
 
   for (const a of alerts) {
     rows.push([
-      a.id,
       a.wellId,
-      a.type,
-      a.severity,
-      a.message,
-      a.createdAt,
-      a.read ? '是' : '否',
+      a.wellName,
+      CHANNEL_LABELS[a.channel] ?? a.channel,
+      SEVERITY_LABELS[a.severity] ?? a.severity,
+      alertMessage(a),
+      new Date(a.timestamp).toLocaleDateString('zh-CN'),
     ]);
   }
 

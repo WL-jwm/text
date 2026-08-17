@@ -12,20 +12,18 @@ import type { WellAlert } from '../wellAlerts';
 
 // Mock Notification API
 beforeAll(() => {
-  (globalThis as any).Notification = {
+  (globalThis as unknown as { Notification: { permission: string; requestPermission: () => Promise<string> } }).Notification = {
     permission: 'denied',
     requestPermission: vi.fn().mockResolvedValue('denied'),
   };
 });
 
 const now = new Date();
-const today = now.toISOString().split('T')[0];
-const yesterday = new Date(now.getTime() - 86400000).toISOString().split('T')[0];
 
 const mockAlerts: WellAlert[] = [
-  { id: 'A1', wellId: 'W1', type: 'threshold', severity: 'critical', message: '水位严重偏高', createdAt: `${today}T10:00:00`, read: false },
-  { id: 'A2', wellId: 'W2', type: 'threshold', severity: 'warning', message: '水质预警', createdAt: `${today}T09:00:00`, read: false },
-  { id: 'A3', wellId: 'W1', type: 'stale', severity: 'stale', message: '数据过期', createdAt: `${yesterday}T10:00:00`, read: false },
+  { wellId: 'W1', wellName: '石家庄-01', city: '石家庄', channel: 'waterLevel', value: 45, unit: 'm', threshold: { warning: 30, critical: 40, direction: 'above' }, severity: 'critical', status: 'critical', timestamp: now.getTime() - 3600000, isStale: false, exceedPct: 12.5 },
+  { wellId: 'W2', wellName: '保定-01', city: '保定', channel: 'waterQuality', value: 40, unit: '%', threshold: { warning: 50, critical: 30, direction: 'below' }, severity: 'warning', status: 'warning', timestamp: now.getTime() - 7200000, isStale: false, exceedPct: 5 },
+  { wellId: 'W1', wellName: '石家庄-01', city: '石家庄', channel: 'waterLevel', value: 0, unit: 'm', threshold: { warning: 30, critical: 40, direction: 'above' }, severity: 'stale', status: 'stale', timestamp: now.getTime() - 86400000, isStale: true, exceedPct: 0 },
 ];
 
 const mockWellNames: Record<string, string> = {
@@ -38,8 +36,8 @@ describe('buildAlertTimeline', () => {
     const timeline = buildAlertTimeline(mockAlerts, mockWellNames);
     expect(timeline.entries).toHaveLength(3);
     // 最新在前
-    expect(timeline.entries[0].id).toBe('A1');
-    expect(timeline.entries[1].id).toBe('A2');
+    expect(timeline.entries[0].id).toBe('W1');
+    expect(timeline.entries[1].id).toBe('W2');
   });
 
   it('应统计24h内告警', () => {
@@ -48,11 +46,11 @@ describe('buildAlertTimeline', () => {
   });
 
   it('应标记已读状态', () => {
-    const readIds = new Set(['A1']);
+    const readIds = new Set(['W1']);
     const timeline = buildAlertTimeline(mockAlerts, mockWellNames, readIds);
     expect(timeline.entries[0].read).toBe(true);
     expect(timeline.entries[1].read).toBe(false);
-    expect(timeline.unreadCount).toBe(2);
+    expect(timeline.unreadCount).toBe(1);
   });
 
   it('应处理空告警列表', () => {

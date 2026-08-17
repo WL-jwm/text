@@ -267,7 +267,7 @@ export const DEFAULT_PERIODS: BalancePeriodConfig[] = [
 export function calculateBalance(
   rechargeItems: Omit<BalanceItem, 'percent'>[],
   dischargeItems: Omit<BalanceItem, 'percent'>[],
-  area?: number,
+  _area?: number,
 ): Pick<BalancePeriodConfig, 'rechargeItems' | 'dischargeItems' | 'totalRecharge' | 'totalDischarge' | 'balance'> {
   const totalRecharge = rechargeItems.reduce((sum, item) => sum + item.value, 0);
   const totalDischarge = dischargeItems.reduce((sum, item) => sum + item.value, 0);

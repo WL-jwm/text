@@ -33,6 +33,11 @@ export default tseslint.config(
 
       // React Hooks
       'react-hooks/rules-of-hooks': 'error',
+      // 允许 JSX 条件渲染的短路/三元表达式（如 {cond && <Comp/>}）
+      '@typescript-eslint/no-unused-expressions': ['error', {
+        allowShortCircuit: true,
+        allowTernary: true,
+      }],
       'react-hooks/exhaustive-deps': 'off',
 
       // React Refresh

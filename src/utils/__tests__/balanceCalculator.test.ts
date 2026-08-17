@@ -118,17 +118,10 @@ describe('calcBalance - 均衡状态', () => {
 
   it('均衡状态 (balanceRate -5%~5%)', () => {
     // 调整使得 balanceRate ≈ 0
-    const input: BalanceInput = {
-      ...SAMPLE_INPUT,
-      precipitationInfiltration: 3.1,
-      extraction: 3.0,
-      lateralRecharge: 0.5,
-    };
-    const r = calcBalance(input);
     // 补给=3.1+0.5+1+0.5+0.3+0.2+0.1=5.7, 排泄=3+1+0.3+0.5+0.1=4.9
     // balanceRate=(5.7-4.9)/5.7=14% > 5%, still surplus
     // Need more precise input
-    const r2 = calcBalance({
+    const _r2 = calcBalance({
       ...SAMPLE_INPUT,
       precipitationInfiltration: 4.0,
       extraction: 4.0,
@@ -146,7 +139,7 @@ describe('calcBalance - 均衡状态', () => {
     // 补给=4+0.3+0.1+0.1+0.1+0.1+0.1=4.8, 排泄=4+0.1+0.1+0.1+0.1=4.4
     // balanceRate=0.4/4.8=8.3% > 5%
     // Let me try harder
-    const r3 = calcBalance({
+    const _r3 = calcBalance({
       ...SAMPLE_INPUT,
       precipitationInfiltration: 3.5,
       extraction: 3.0,
@@ -333,11 +326,11 @@ describe('getOverdraftStatusLabel', () => {
 
 describe('calcExtractionTrendSummary', () => {
   const data = [
-    { year: 2016, totalExtraction: 5.0, shallowExtraction: 3.0, deepExtraction: 2.0 },
-    { year: 2017, totalExtraction: 5.2, shallowExtraction: 3.1, deepExtraction: 2.1 },
-    { year: 2018, totalExtraction: 5.5, shallowExtraction: 3.2, deepExtraction: 2.3 },
-    { year: 2019, totalExtraction: 5.3, shallowExtraction: 3.0, deepExtraction: 2.3 },
-    { year: 2020, totalExtraction: 5.8, shallowExtraction: 3.3, deepExtraction: 2.5 },
+    { year: 2016, totalExtraction: 5.0, shallowExtraction: 3.0, deepExtraction: 2.0, agriRatio: 0.5, industrialRatio: 0.3, domesticRatio: 0.15, ecologicalRatio: 0.05 },
+    { year: 2017, totalExtraction: 5.2, shallowExtraction: 3.1, deepExtraction: 2.1, agriRatio: 0.5, industrialRatio: 0.3, domesticRatio: 0.15, ecologicalRatio: 0.05 },
+    { year: 2018, totalExtraction: 5.5, shallowExtraction: 3.2, deepExtraction: 2.3, agriRatio: 0.5, industrialRatio: 0.3, domesticRatio: 0.15, ecologicalRatio: 0.05 },
+    { year: 2019, totalExtraction: 5.3, shallowExtraction: 3.0, deepExtraction: 2.3, agriRatio: 0.5, industrialRatio: 0.3, domesticRatio: 0.15, ecologicalRatio: 0.05 },
+    { year: 2020, totalExtraction: 5.8, shallowExtraction: 3.3, deepExtraction: 2.5, agriRatio: 0.5, industrialRatio: 0.3, domesticRatio: 0.15, ecologicalRatio: 0.05 },
   ];
 
   it('返回峰值年份和值', () => {

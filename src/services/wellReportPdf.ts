@@ -3,6 +3,8 @@
  * 专业封面 + 页眉页脚 + 优化表格 + 章节装饰
  */
 import { saveAs } from 'file-saver';
+import type { jsPDF } from 'jspdf';
+import type { CellHookData } from 'jspdf-autotable';
 import type { WellReportData } from './wellReport';
 import { SEVERITY_LABELS, formatGeneratedAt } from './wellReport';
 
@@ -23,7 +25,7 @@ const COLORS = {
 
 // ============ 页眉页脚 ============
 
-function addHeader(doc: any, reportId: string): void {
+function addHeader(doc: jsPDF, reportId: string): void {
   const pageWidth = doc.internal.pageSize.getWidth();
   // 顶部色条
   doc.setFillColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
@@ -34,7 +36,7 @@ function addHeader(doc: any, reportId: string): void {
   doc.text(`地下水监测报告 | ${reportId}`, 15, 8, { align: 'left' });
 }
 
-function addFooter(doc: any, pageNum: number): void {
+function addFooter(doc: jsPDF, pageNum: number): void {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   // 底部线条
@@ -47,14 +49,14 @@ function addFooter(doc: any, pageNum: number): void {
   doc.text('河北省地下水环境信息平台', 15, pageHeight - 7, { align: 'left' });
 }
 
-function addPageHeader(doc: any, reportId: string, pageNum: number): void {
+function addPageHeader(doc: jsPDF, reportId: string, pageNum: number): void {
   addHeader(doc, reportId);
   addFooter(doc, pageNum);
 }
 
 // ============ 章节标题 ============
 
-function addSectionTitle(doc: any, title: string, y: number, pageMargin: number = 15): number {
+function addSectionTitle(doc: jsPDF, title: string, y: number, pageMargin: number = 15): number {
   // 左侧色条
   doc.setFillColor(COLORS.accent[0], COLORS.accent[1], COLORS.accent[2]);
   doc.rect(pageMargin, y - 5, 3, 12, 'F');
@@ -67,7 +69,7 @@ function addSectionTitle(doc: any, title: string, y: number, pageMargin: number 
 
 // ============ 封面页 ============
 
-function addCoverPage(doc: any, data: WellReportData): number {
+function addCoverPage(doc: jsPDF, data: WellReportData): number {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
@@ -118,7 +120,6 @@ function addCoverPage(doc: any, data: WellReportData): number {
   }
 
   // 摘要统计 - 底部
-  const statsY = pageHeight - 80;
   doc.setFontSize(10);
   doc.setTextColor(255, 255, 255);
   doc.text(`监测井 ${data.summary.totalWells} 口  ·  覆盖 ${data.summary.cities} 市  ·  含水层 ${data.summary.aquiferTypes} 种  ·  告警 ${data.summary.alertCount} 条`, pageWidth / 2, pageHeight - 10, { align: 'center' });
@@ -128,7 +129,7 @@ function addCoverPage(doc: any, data: WellReportData): number {
 
 // ============ 告警摘要表格 ============
 
-function addAlertTable(doc: any, data: WellReportData, startY: number): number {
+function addAlertTable(doc: jsPDF, data: WellReportData, startY: number): number {
   let y = startY;
   y = addSectionTitle(doc, '告警摘要', y);
   y += 4;
@@ -145,7 +146,7 @@ function addAlertTable(doc: any, data: WellReportData, startY: number): number {
     return [a.wellId, a.type, severityLabel, a.message, a.createdAt.slice(0, 10)];
   });
 
-  (doc as any).autoTable({
+  doc.autoTable({
     startY: y,
     head: [['井号', '类型', '严重度', '消息', '时间']],
     body: alertRows,
@@ -166,7 +167,7 @@ function addAlertTable(doc: any, data: WellReportData, startY: number): number {
       3: { cellWidth: 'auto' },
       4: { cellWidth: 20, halign: 'center' },
     },
-    didParseCell: (data: any) => {
+    didParseCell: (data: CellHookData) => {
       // 严重度着色
       if (data.column.index === 2) {
         const severity = data.cell.raw;
@@ -182,12 +183,12 @@ function addAlertTable(doc: any, data: WellReportData, startY: number): number {
     },
   });
 
-  return (doc as any).lastAutoTable.finalY + 8;
+  return doc.lastAutoTable.finalY + 8;
 }
 
 // ============ 城市统计表格 ============
 
-function addCityTable(doc: any, data: WellReportData, startY: number): number {
+function addCityTable(doc: jsPDF, data: WellReportData, startY: number): number {
   let y = startY;
 
   // 检查是否需要换页
@@ -216,7 +217,7 @@ function addCityTable(doc: any, data: WellReportData, startY: number): number {
     }).join('、'),
   ]);
 
-  (doc as any).autoTable({
+  doc.autoTable({
     startY: y,
     head: [['城市', '井数', '含水层类型', '监测指标']],
     body: cityRows,
@@ -238,12 +239,12 @@ function addCityTable(doc: any, data: WellReportData, startY: number): number {
     },
   });
 
-  return (doc as any).lastAutoTable.finalY + 8;
+  return doc.lastAutoTable.finalY + 8;
 }
 
 // ============ 含水层分布 ============
 
-function addAquiferTable(doc: any, data: WellReportData, startY: number): number {
+function addAquiferTable(doc: jsPDF, data: WellReportData, startY: number): number {
   let y = startY;
 
   if (y > 220) {
@@ -266,7 +267,7 @@ function addAquiferTable(doc: any, data: WellReportData, startY: number): number
     return [typeLabels[aq.type] ?? aq.type, String(aq.count), aq.avgDepth > 0 ? `${aq.avgDepth.toFixed(0)}m` : '—', aq.cities.join('、')];
   });
 
-  (doc as any).autoTable({
+  doc.autoTable({
     startY: y,
     head: [['含水层类型', '井数', '平均深度', '分布城市']],
     body: aqRows,
@@ -282,12 +283,12 @@ function addAquiferTable(doc: any, data: WellReportData, startY: number): number
     },
   });
 
-  return (doc as any).lastAutoTable.finalY + 8;
+  return doc.lastAutoTable.finalY + 8;
 }
 
 // ============ 实时读数 ============
 
-function addRealtimeTable(doc: any, data: WellReportData, startY: number): number {
+function addRealtimeTable(doc: jsPDF, data: WellReportData, startY: number): number {
   let y = startY;
 
   if (y > 220) {
@@ -315,7 +316,7 @@ function addRealtimeTable(doc: any, data: WellReportData, startY: number): numbe
     r.status === 'critical' ? '严重' : r.status === 'warning' ? '预警' : r.status === 'stale' ? '过期' : '正常',
   ]);
 
-  (doc as any).autoTable({
+  doc.autoTable({
     startY: y,
     head: [['井号', '井名', '水位(m)', '水质(分)', '沉降(mm)', '开采量', '状态']],
     body: rtRows,
@@ -332,7 +333,7 @@ function addRealtimeTable(doc: any, data: WellReportData, startY: number): numbe
       5: { cellWidth: 16, halign: 'center' },
       6: { cellWidth: 14, halign: 'center' },
     },
-    didParseCell: (data: any) => {
+    didParseCell: (data: CellHookData) => {
       if (data.column.index === 6) {
         const status = data.cell.raw;
         if (status === '严重') {
@@ -350,12 +351,12 @@ function addRealtimeTable(doc: any, data: WellReportData, startY: number): numbe
     },
   });
 
-  return (doc as any).lastAutoTable.finalY + 8;
+  return doc.lastAutoTable.finalY + 8;
 }
 
 // ============ 页脚说明 ============
 
-function addFooterNotes(doc: any, data: WellReportData, startY: number): void {
+function addFooterNotes(doc: jsPDF, data: WellReportData, startY: number): void {
   let y = startY;
 
   if (y > 250) {
@@ -464,7 +465,9 @@ export async function buildWellReportPdf(data: WellReportData): Promise<Blob> {
   addFooterNotes(doc, data, y);
 
   // 为所有页面添加页眉页脚（封面后的页面）
-  const totalPages = doc.internal.getNumberOfPages();
+  // getNumberOfPages 为 jsPDF 内部 API，类型未公开，局部断言避免污染全局类型
+  const internalApi = doc.internal as unknown as { getNumberOfPages(): number };
+  const totalPages = internalApi.getNumberOfPages();
   for (let i = 2; i <= totalPages; i++) {
     doc.setPage(i);
     addHeader(doc, data.meta.reportId);

@@ -167,16 +167,6 @@ function aquiferLabel(type: string): string {
   return AQUIFER_LABELS[type] ?? type;
 }
 
-const INDICATOR_LABELS: Record<string, string> = {
-  waterLevel: '水位',
-  waterQuality: '水质',
-  subsidence: '沉降',
-  extraction: '开采量',
-};
-
-function indicatorLabel(ind: string): string {
-  return INDICATOR_LABELS[ind] ?? ind;
-}
 
 // ============================================================
 // 报告生成

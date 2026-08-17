@@ -3,7 +3,7 @@
  * 关联 wellNetwork 井网数据，提供筛选/计算/对比
  */
 import { useMemo } from 'react';
-import type { Well } from './wellNetwork';
+import type { Well } from '../services/wellNetwork';
 import {
   type WaterBalanceResult,
   type CityBalanceResult,
@@ -13,8 +13,7 @@ import {
   getDefaultBalanceResult,
   analyzeCityBalance,
   buildBalanceComparison,
-  buildWaterBalanceResult,
-} from './waterBalance';
+} from '../services/waterBalance';
 
 /**
  * 基础水均衡 Hook

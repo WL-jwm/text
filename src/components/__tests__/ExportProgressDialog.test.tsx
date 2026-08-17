@@ -3,7 +3,7 @@
  * Q-05 ExportProgressDialog 组件渲染测试
  */
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { ExportProgressDialog } from '../ExportProgressDialog';

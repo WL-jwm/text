@@ -9,13 +9,14 @@ import {
   calcOverallScore,
   buildSpatialOptimization,
 } from '../spatialOptimizer';
-import type { Well, NearestNeighborResult, SpatialAnalysisReport, CityGroupStats } from '../wellNetwork';
+import type { CoverageGap, CityCoverageDensity } from '../spatialOptimizer';
+import type { Well, NearestNeighborResult, SpatialAnalysisReport } from '../wellNetwork';
 
 const mockWells: Well[] = [
-  { id: 'W1', name: '井1', city: '石家庄', lng: 114.5, lat: 38.0, depth: 100, aquifer: 'shallowPorous', indicators: ['waterLevel'], status: 'active', group: '', note: '' },
-  { id: 'W2', name: '井2', city: '石家庄', lng: 114.51, lat: 38.01, depth: 120, aquifer: 'shallowPorous', indicators: ['waterLevel'], status: 'active', group: '', note: '' },
-  { id: 'W3', name: '井3', city: '保定', lng: 115.5, lat: 39.0, depth: 200, aquifer: 'deepPorous', indicators: ['waterLevel', 'waterQuality'], status: 'active', group: '', note: '' },
-  { id: 'W4', name: '井4', city: '沧州', lng: 116.8, lat: 38.3, depth: 300, aquifer: 'deepPorous', indicators: ['waterLevel'], status: 'active', group: '', note: '' },
+  { id: 'W1', name: '井1', city: '石家庄', latitude: 38.0, longitude: 114.5, depth: 100, aquiferType: 'shallowPorous', indicators: ['waterLevel'], status: 'active', builtYear: 2010 },
+  { id: 'W2', name: '井2', city: '石家庄', latitude: 38.01, longitude: 114.51, depth: 120, aquiferType: 'shallowPorous', indicators: ['waterLevel'], status: 'active', builtYear: 2010 },
+  { id: 'W3', name: '井3', city: '保定', latitude: 39.0, longitude: 115.5, depth: 200, aquiferType: 'deepPorous', indicators: ['waterLevel', 'waterQuality'], status: 'active', builtYear: 2010 },
+  { id: 'W4', name: '井4', city: '沧州', latitude: 38.3, longitude: 116.8, depth: 300, aquiferType: 'deepPorous', indicators: ['waterLevel'], status: 'active', builtYear: 2010 },
 ];
 
 const mockReport: SpatialAnalysisReport = {
@@ -103,9 +104,9 @@ describe('calcOverallScore', () => {
   });
 
   it('有严重盲区应扣分', () => {
-    const gaps = [{ type: 'sparse', severity: 5, cities: ['石家庄'], priority: 'high', title: '', description: '', suggestion: '', suggestedWells: 3 }];
-    const densities = [{ city: '石家庄', wellCount: 1, area: 6673, density: 0.15, avgNearestDistance: 0, status: 'critical', recommendedWells: 19, gap: 18 }];
-    const score = calcOverallScore(gaps as any, densities as any);
+    const gaps: CoverageGap[] = [{ type: 'sparse', severity: 5, cities: ['石家庄'], title: '', description: '', suggestion: '', suggestedWells: 3, priority: 'high' }];
+    const densities: CityCoverageDensity[] = [{ city: '石家庄', wellCount: 1, area: 6673, density: 0.15, avgNearestDistance: 0, status: 'critical', recommendedWells: 19, gap: 18 }];
+    const score = calcOverallScore(gaps, densities);
     expect(score).toBeLessThan(100);
     expect(score).toBeGreaterThan(0);
   });

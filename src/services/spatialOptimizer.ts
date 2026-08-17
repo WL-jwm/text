@@ -91,9 +91,6 @@ const CITY_AREAS: Record<string, number> = {
 /** 建议井密度（口/1000km²，按平原区标准） */
 const TARGET_DENSITY = 3; // 每1000km² 3口监测井
 
-/** 合理最近邻距离范围（km） */
-const IDEAL_NEAREST_DISTANCE = { min: 0.5, max: 15 };
-
 // ============ 核心分析引擎 ============
 
 /**

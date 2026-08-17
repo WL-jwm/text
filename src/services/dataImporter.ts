@@ -2,7 +2,8 @@
  * 数据共享与对接 - 数据导入服务
  * 支持 CSV/Excel 导入监测井台账，列映射与验证
  */
-import type { Well, AquiferType, WellStatus, DataChannel } from './wellNetwork';
+import type { Well, AquiferType, WellStatus } from './wellNetwork';
+import type { DataChannel } from './realtimeDataService';
 
 // ============ 数据模型 ============
 
@@ -206,7 +207,6 @@ export function validateAndConvert(
   }
 
   // 验证含水层类型
-  const validAquifers: AquiferType[] = ['shallowPorous', 'deepPorous', 'karst', 'fracture'];
   const aquiferStr = raw.aquifer ?? '';
   const aquiferLabelMap: Record<string, AquiferType> = {
     '浅层孔隙水': 'shallowPorous', 'shallowPorous': 'shallowPorous',
@@ -217,7 +217,6 @@ export function validateAndConvert(
   const aquifer = aquiferLabelMap[aquiferStr] ?? 'shallowPorous';
 
   // 验证状态
-  const validStatuses: WellStatus[] = ['active', 'maintenance', 'inactive'];
   const statusStr = raw.status ?? '';
   const statusLabelMap: Record<string, WellStatus> = {
     '运行': 'active', 'active': 'active',
@@ -230,8 +229,8 @@ export function validateAndConvert(
   const indicatorsStr = raw.indicators ?? '';
   const indicators: DataChannel[] = indicatorsStr
     .split(/[;；,，、\s]+/)
-    .map(s => s.trim().toLowerCase() as DataChannel)
-    .filter(s => ['waterlevel', 'waterquality', 'subsidence', 'extraction', 'waterLevel', 'waterQuality'].includes(s))
+    .map(s => s.trim().toLowerCase())
+    .filter(s => ['waterlevel', 'waterquality', 'subsidence', 'extraction'].includes(s))
     .map(s => {
       if (s === 'waterlevel') return 'waterLevel';
       if (s === 'waterquality') return 'waterQuality';
@@ -244,14 +243,15 @@ export function validateAndConvert(
     ? {
         name: raw.name ?? '',
         city: raw.city ?? '',
-        lng: parseFloat(raw.lng ?? '0'),
-        lat: parseFloat(raw.lat ?? '0'),
-        depth: depthStr ? parseFloat(depthStr) : undefined,
-        aquifer,
+        latitude: parseFloat(raw.lat ?? '0'),
+        longitude: parseFloat(raw.lng ?? '0'),
+        depth: depthStr ? parseFloat(depthStr) : 0,
+        aquiferType: aquifer,
         indicators: indicators.length > 0 ? indicators : ['waterLevel'],
         status,
-        group: '',
-        note: raw.note ?? '',
+        // CSV 列一般不含建井年份，缺省给 2010
+        builtYear: raw.builtYear ? parseInt(raw.builtYear) : 2010,
+        notes: raw.note ?? '',
       }
     : undefined;
 
@@ -264,7 +264,7 @@ export function validateAndConvert(
  */
 export function importWells(
   previewRows: ImportPreviewRow[],
-  addWellFn: (well: Omit<Well, 'id'>) => Well,
+  addWellFn: (well: Omit<Well, 'id'>) => Well | null,
   onProgress?: (progress: ImportProgress) => void,
 ): ImportResult {
   const validRows = previewRows.filter(r => r.valid && r.well);
@@ -278,7 +278,11 @@ export function importWells(
     try {
       if (row.well) {
         const added = addWellFn(row.well);
-        importedIds.push(added.id);
+        if (added) {
+          importedIds.push(added.id);
+        } else {
+          errors.push({ rowNum: row.rowNum, message: '导入失败: 井创建返回空' });
+        }
       }
     } catch (err) {
       errors.push({ rowNum: row.rowNum, message: `导入失败: ${err instanceof Error ? err.message : '未知错误'}` });

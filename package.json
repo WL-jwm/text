@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
+    "test:e2e": "playwright test",
     "ci": "npm run lint && tsc -b -noEmit && npm run test"
   },
   "dependencies": {

@@ -91,9 +91,16 @@ python app/main.py             # http://localhost:5200
 
 ```bash
 cd frontend
-npm run test        # 307 个测试用例 (17 文件)
+npm run test        # 1101 个测试用例 (63 文件)
 npm run ci           # lint + tsc + test 全流程
+npm run test:e2e     # Playwright 端到端测试（需先启动开发服务器）
 ```
+
+### 端到端测试（Playwright）
+
+- 配置：`playwright.config.ts`（Chromium，端口 5173，`webServer` 自动启动开发服务器，无需手动起服务）
+- 用例：`e2e/app.spec.ts`（核心链路冒烟）
+- 运行：`npm run test:e2e` 或 `npx playwright test`；若端口被占用，先结束占用进程再跑
 
 ## 质量指标
 

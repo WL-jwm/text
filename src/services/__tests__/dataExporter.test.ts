@@ -31,11 +31,11 @@ describe('arrayToCSV', () => {
 describe('buildSheetData', () => {
   const mockData: ExportDataSources = {
     wells: [
-      { id: 'W1', name: '井1', city: '石家庄', lng: 114.5, lat: 38.0, depth: 100, aquifer: '浅层', indicators: ['waterLevel', 'waterQuality'], status: 'active', group: 'A', note: '' },
-      { id: 'W2', name: '井2', city: '保定', lng: 115.5, lat: 39.0, depth: 200, aquifer: '深层', indicators: ['waterLevel'], status: 'active', group: 'A', note: '备用' },
+      { id: 'W1', name: '井1', city: '石家庄', latitude: 38.0, longitude: 114.5, depth: 100, aquiferType: 'shallowPorous', indicators: ['waterLevel', 'waterQuality'], status: 'active', builtYear: 2010 },
+      { id: 'W2', name: '井2', city: '保定', latitude: 39.0, longitude: 115.5, depth: 200, aquiferType: 'deepPorous', indicators: ['waterLevel'], status: 'active', builtYear: 2010 },
     ],
     alerts: [
-      { id: 'A1', wellId: 'W1', type: 'threshold', severity: 'warning', message: '水位偏高', createdAt: '2026-08-01', read: false },
+      { wellId: 'W1', wellName: '井1', city: '石家庄', channel: 'waterLevel', value: 45, unit: 'm', threshold: { warning: 30, critical: 40, direction: 'above' }, severity: 'warning', status: 'warning', timestamp: 1786665600000, isStale: false, exceedPct: 10 },
     ],
     balanceResult: {
       period: { periodId: '2011-2020', periodLabel: '2011-2020年', totalRecharge: 118.456, totalDischarge: 124.750, balance: -6.294, storageChange: -5.887, note: '南水北调', rechargeItems: [], dischargeItems: [] },
@@ -88,7 +88,7 @@ describe('buildSheetData', () => {
   it('告警标签页应有数据', () => {
     const rows = buildSheetData('alerts', mockData);
     expect(rows.length).toBe(2); // 表头+1告警
-    expect(rows[1][0]).toBe('A1');
+    expect(rows[1][0]).toBe('W1');
   });
 
   it('均衡标签页应有城市数据', () => {
@@ -143,7 +143,7 @@ describe('buildSheetData - 空数据', () => {
 describe('exportCSV', () => {
   it('应生成包含所有标签页的CSV', () => {
     const data: ExportDataSources = {
-      wells: [{ id: 'W1', name: '井1', city: '石家庄', lng: 114.5, lat: 38.0, depth: 100, aquifer: '浅层', indicators: ['waterLevel'], status: 'active', group: 'A', note: '' }],
+      wells: [{ id: 'W1', name: '井1', city: '石家庄', latitude: 38.0, longitude: 114.5, depth: 100, aquiferType: 'shallowPorous', indicators: ['waterLevel'], status: 'active', builtYear: 2010 }],
       alerts: [],
       balanceResult: null,
       cityBalances: [],
@@ -161,7 +161,7 @@ describe('exportCSV', () => {
 describe('exportJSON', () => {
   it('应生成JSON Blob', () => {
     const data: ExportDataSources = {
-      wells: [{ id: 'W1', name: '井1', city: '石家庄', lng: 114.5, lat: 38.0, depth: 100, aquifer: '浅层', indicators: ['waterLevel'], status: 'active', group: 'A', note: '' }],
+      wells: [{ id: 'W1', name: '井1', city: '石家庄', latitude: 38.0, longitude: 114.5, depth: 100, aquiferType: 'shallowPorous', indicators: ['waterLevel'], status: 'active', builtYear: 2010 }],
       alerts: [],
       balanceResult: null,
       cityBalances: [],

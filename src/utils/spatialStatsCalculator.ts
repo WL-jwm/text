@@ -201,7 +201,7 @@ export function calcMoranI(input: MoranIInput): MoranIResult {
   const s2 = 4 * (sumW ** 2) / n; // 简化
   const variance = (n * n * s1 - n * s2 + 3 * sumW * sumW) / (sumW * sumW * (n * n - 1)) - expectedI * expectedI;
   const zScore = variance > 0 ? (moranI - expectedI) / Math.sqrt(variance) : 0;
-  const pValue = 2 * (1 - normalCDF(Math.abs(zScore)));
+  const pValue = Math.min(1, Math.max(0, 2 * (1 - normalCDF(Math.abs(zScore))))); // clamp [0,1] 防浮点越界
   const significant = Math.abs(zScore) > 1.96;
 
   let pattern: '聚集' | '随机' | '离散';

@@ -188,9 +188,8 @@ export function evaluateSingleIndicator(
 
   if (indicator === 'pH') {
     // pH 特殊处理：范围型
+    // pH 为范围型指标：6.5-8.5 属良好（Ⅰ类），边缘范围 5.5-6.5 或 8.5-9.0 属Ⅳ类，其余Ⅴ类
     if (value >= 6.5 && value <= 8.5) wqClass = 1;
-    else if (value >= 6.5 && value <= 8.5) wqClass = 2; // 与Ⅰ类相同
-    else if (value >= 6.5 && value <= 8.5) wqClass = 3; // 与Ⅰ类相同
     else if ((value >= 5.5 && value < 6.5) || (value > 8.5 && value <= 9.0)) wqClass = 4;
     else wqClass = 5;
   } else if (indicator === 'DO') {

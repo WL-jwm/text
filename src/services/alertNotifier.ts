@@ -4,6 +4,24 @@
  */
 import type { WellAlert, AlertSeverity } from './wellAlerts';
 
+// 通道标签（本地映射，避免与报告模块耦合）
+const CHANNEL_LABELS: Record<string, string> = {
+  waterLevel: '水位埋深',
+  waterQuality: '水质达标率',
+  subsidence: '沉降速率',
+  extraction: '开采量',
+};
+
+/** 构造告警消息文本（适配核心 WellAlert 模型） */
+function alertMessage(a: WellAlert): string {
+  if (a.severity === 'stale') return '数据过期，无最新读数';
+  const t = a.threshold;
+  if (t.direction === 'above') {
+    return `当前 ${a.value.toFixed(1)}${a.unit}（预警≥${t.warning}，超标≥${t.critical}）`;
+  }
+  return `当前 ${a.value.toFixed(1)}${a.unit}（预警≤${t.warning}，超标≤${t.critical}）`;
+}
+
 // ============ 通知配置 ============
 
 export interface NotificationConfig {
@@ -95,8 +113,8 @@ export function sendAlertNotification(
   const severityLabel = alert.severity === 'critical' ? '🔴 严重' : alert.severity === 'warning' ? '🟡 预警' : '⚪ 过期';
   const title = `[${severityLabel}] ${wellName}`;
   sendBrowserNotification(title, {
-    body: alert.message,
-    tag: alert.id,
+    body: alertMessage(alert),
+    tag: alert.wellId,
     requireInteraction: alert.severity === 'critical',
   });
 }
@@ -112,7 +130,9 @@ let audioCtx: AudioContext | null = null;
 function getAudioContext(): AudioContext | null {
   if (!audioCtx) {
     try {
-      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // webkitAudioContext 是旧 Safari 的兼容实现，局部断言类型避免污染全局 Window
+      const webkitCtor = (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      audioCtx = new (window.AudioContext || webkitCtor)();
     } catch {
       return null;
     }
@@ -188,8 +208,8 @@ export function buildAlertTimeline(
   let stale24h = 0;
 
   for (const a of alerts) {
-    const timestamp = a.createdAt;
-    const t = new Date(timestamp).getTime();
+    const timestamp = new Date(a.timestamp).toISOString();
+    const t = a.timestamp;
 
     // 24h 统计
     if (t >= dayAgo) {
@@ -199,14 +219,14 @@ export function buildAlertTimeline(
     }
 
     entries.push({
-      id: a.id,
+      id: a.wellId,
       wellId: a.wellId,
       wellName: wellNames[a.wellId] ?? a.wellId,
       severity: a.severity,
-      type: a.type,
-      message: a.message,
+      type: CHANNEL_LABELS[a.channel] ?? a.channel,
+      message: alertMessage(a),
       timestamp,
-      read: readIds.has(a.id),
+      read: readIds.has(a.wellId),
     });
   }
 
@@ -271,7 +291,7 @@ export class AlertNotifier {
     let sentCount = 0;
 
     // 过滤需要通知的告警
-    const newAlerts = alerts.filter(a => !this.notifiedIds.has(a.id));
+    const newAlerts = alerts.filter(a => !this.notifiedIds.has(a.wellId));
     if (newAlerts.length === 0) return 0;
 
     // 节流检查
@@ -295,7 +315,7 @@ export class AlertNotifier {
         playAlertSound(alert.severity === 'critical' ? 'critical' : 'warning');
       }
 
-      this.notifiedIds.add(alert.id);
+      this.notifiedIds.add(alert.wellId);
       sentCount++;
     }
 

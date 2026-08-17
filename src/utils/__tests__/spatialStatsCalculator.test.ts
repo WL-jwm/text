@@ -11,23 +11,23 @@ import {
 import type { SpatialPoint } from '../spatialStatsCalculator';
 
 const GRID_POINTS: SpatialPoint[] = [
-  { x: 0, y: 0, value: 10 },
-  { x: 1, y: 0, value: 11 },
-  { x: 2, y: 0, value: 12 },
-  { x: 0, y: 1, value: 9 },
-  { x: 1, y: 1, value: 10 },
-  { x: 2, y: 1, value: 11 },
-  { x: 0, y: 2, value: 8 },
-  { x: 1, y: 2, value: 9 },
-  { x: 2, y: 2, value: 10 },
+  { name: 'p0', x: 0, y: 0, value: 10 },
+  { name: 'p1', x: 1, y: 0, value: 11 },
+  { name: 'p2', x: 2, y: 0, value: 12 },
+  { name: 'p3', x: 0, y: 1, value: 9 },
+  { name: 'p4', x: 1, y: 1, value: 10 },
+  { name: 'p5', x: 2, y: 1, value: 11 },
+  { name: 'p6', x: 0, y: 2, value: 8 },
+  { name: 'p7', x: 1, y: 2, value: 9 },
+  { name: 'p8', x: 2, y: 2, value: 10 },
 ];
 
 const RANDOM_POINTS: SpatialPoint[] = [
-  { x: 0, y: 0, value: 10 },
-  { x: 5, y: 5, value: 15 },
-  { x: 10, y: 10, value: 20 },
-  { x: 0, y: 10, value: 12 },
-  { x: 10, y: 0, value: 8 },
+  { name: 'p9', x: 0, y: 0, value: 10 },
+  { name: 'p10', x: 5, y: 5, value: 15 },
+  { name: 'p11', x: 10, y: 10, value: 20 },
+  { name: 'p12', x: 0, y: 10, value: 12 },
+  { name: 'p13', x: 10, y: 0, value: 8 },
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -36,24 +36,24 @@ const RANDOM_POINTS: SpatialPoint[] = [
 
 describe('calcMoranI', () => {
   it('Moran I 在 [-1, 1] 范围', () => {
-    const r = calcMoranI({ points: GRID_POINTS });
+    const r = calcMoranI({ points: GRID_POINTS, weightType: 'inverse', distanceBand: 3 });
     expect(r.moranI).toBeGreaterThanOrEqual(-1);
     expect(r.moranI).toBeLessThanOrEqual(1);
   });
 
   it('Z 值在合理范围', () => {
-    const r = calcMoranI({ points: GRID_POINTS });
+    const r = calcMoranI({ points: GRID_POINTS, weightType: 'inverse', distanceBand: 3 });
     expect(typeof r.zScore).toBe('number');
   });
 
   it('p 值在 [0, 1] 范围', () => {
-    const r = calcMoranI({ points: GRID_POINTS });
+    const r = calcMoranI({ points: GRID_POINTS, weightType: 'inverse', distanceBand: 3 });
     expect(r.pValue).toBeGreaterThanOrEqual(0);
     expect(r.pValue).toBeLessThanOrEqual(1);
   });
 
   it('单点数据返回默认值', () => {
-    const r = calcMoranI({ points: [GRID_POINTS[0]] });
+    const r = calcMoranI({ points: [GRID_POINTS[0]], weightType: 'inverse', distanceBand: 3 });
     expect(r.moranI).toBe(0);
   });
 });
@@ -64,12 +64,12 @@ describe('calcMoranI', () => {
 
 describe('calcLocalMoran', () => {
   it('每个点返回局部 Moran I 值', () => {
-    const r = calcLocalMoran({ points: GRID_POINTS });
+    const r = calcLocalMoran({ points: GRID_POINTS, weightType: 'inverse', distanceBand: 3 });
     expect(r).toHaveLength(GRID_POINTS.length);
   });
 
   it('局部 Moran I 值在合理范围', () => {
-    const r = calcLocalMoran({ points: GRID_POINTS });
+    const r = calcLocalMoran({ points: GRID_POINTS, weightType: 'inverse', distanceBand: 3 });
     for (const item of r) {
       expect(item.localI).toBeGreaterThanOrEqual(-2);
       expect(item.localI).toBeLessThanOrEqual(2);

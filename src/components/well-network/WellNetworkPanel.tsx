@@ -55,6 +55,7 @@ import { getDefaultExportOptions, exportData } from '../../services/dataExporter
 import type { ExportFormat, ExportSheet } from '../../services/dataExporter';
 import { DataSourceConfigManager, DEFAULT_CHANNELS, testConnection } from '../../services/dataSourceConfigManager';
 import type { DataSourceConfig } from '../../services/dataSourceConfigManager';
+import type { ImportPreviewRow } from '../../services/dataImporter';
 import { previewImport, importWells } from '../../services/dataImporter';
 import { buildSpatialOptimization } from '../../services/spatialOptimizer';
 import { downloadWellReportPdf } from '../../services/wellReportPdf';
@@ -526,7 +527,7 @@ export function WellNetworkPanel() {
   const [dsTestResult, setDsTestResult] = useState<string | null>(null);
   const [dsTesting, setDsTesting] = useState(false);
   const [csvText, setCsvText] = useState('');
-  const [importPreview, setImportPreview] = useState<{ headers: string[]; previewRows: any[]; error?: string } | null>(null);
+  const [importPreview, setImportPreview] = useState<{ headers: string[]; previewRows: ImportPreviewRow[]; error?: string } | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
 
   // 初始化配置列表
@@ -1358,11 +1359,11 @@ export function WellNetworkPanel() {
                       </div>
                       <div className="flex flex-wrap gap-1">
                         {Object.entries(qualitySummary.sulinDistribution)
-                          .sort(([, a], [, b]) => b - a)
+                          .sort(([, a], [, b]) => (b as number) - (a as number))
                           .slice(0, 6)
                           .map(([type, count]) => (
                             <span key={type} className="text-[8px] px-1.5 py-0.5 rounded bg-gw-surface/30 border border-gw-border/20 text-gw-muted">
-                              {type} {count}站
+                              {type} {String(count)}站
                             </span>
                           ))}
                       </div>
@@ -1609,7 +1610,7 @@ export function WellNetworkPanel() {
               {/* 主要建议 */}
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <AlertTriangle size={10} className="text-amber-400" />
+                  <TriangleAlert size={10} className="text-amber-400" />
                   <span className="text-[9px] font-medium text-gw-muted">建议</span>
                 </div>
                 {integratedAnalysis.recommendations.slice(0, 3).map((rec, i) => (
