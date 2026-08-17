@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, lazy, Suspense } from 'react';
 
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area,
@@ -40,15 +40,21 @@ import { OverviewNavigation } from './OverviewNavigation';
 import { CountyCoverageSection } from '../components/overview/CountyCoverageSection';
 import { GovernanceSummaryCards } from '../components/overview/GovernanceSummaryCards';
 import { CollapsiblePanel } from '../components/overview/CollapsiblePanel';
-import { HydrogeologyReferenceLibrary } from '../components/overview/HydrogeologyReferenceLibrary';
-import { ExploitationControlComparison } from '../components/overview/ExploitationControlComparison';
-import { ExploitationManagement } from '../components/overview/ExploitationManagement';
-import { AlluvialFansWaterSources } from '../components/overview/AlluvialFansWaterSources';
-import { StandardsReferencePanel } from '../components/overview/StandardsReferencePanel';
-import { HydroParamsReferencePanel } from '../components/overview/HydroParamsReferencePanel';
-import { ZoneParamsPanel } from '../components/overview/ZoneParamsPanel';
-import { HistoricalEvolution } from '../components/overview/HistoricalEvolution';
-import { PollutionQualityComparison } from '../components/overview/PollutionQualityComparison';
+
+// ── 折叠面板内区块组件懒加载（默认折叠，展开时才加载，降低首屏 bundle）──
+const HydrogeologyReferenceLibrary = lazy(() => import('../components/overview/HydrogeologyReferenceLibrary').then(m => ({ default: m.HydrogeologyReferenceLibrary })));
+const ExploitationControlComparison = lazy(() => import('../components/overview/ExploitationControlComparison').then(m => ({ default: m.ExploitationControlComparison })));
+const ExploitationManagement = lazy(() => import('../components/overview/ExploitationManagement').then(m => ({ default: m.ExploitationManagement })));
+const AlluvialFansWaterSources = lazy(() => import('../components/overview/AlluvialFansWaterSources').then(m => ({ default: m.AlluvialFansWaterSources })));
+const StandardsReferencePanel = lazy(() => import('../components/overview/StandardsReferencePanel').then(m => ({ default: m.StandardsReferencePanel })));
+const HydroParamsReferencePanel = lazy(() => import('../components/overview/HydroParamsReferencePanel').then(m => ({ default: m.HydroParamsReferencePanel })));
+const ZoneParamsPanel = lazy(() => import('../components/overview/ZoneParamsPanel').then(m => ({ default: m.ZoneParamsPanel })));
+const HistoricalEvolution = lazy(() => import('../components/overview/HistoricalEvolution').then(m => ({ default: m.HistoricalEvolution })));
+const PollutionQualityComparison = lazy(() => import('../components/overview/PollutionQualityComparison').then(m => ({ default: m.PollutionQualityComparison })));
+
+const PanelFallback = () => (
+  <div className="py-4 text-center text-gw-muted text-[10px]">加载中...</div>
+);
 
 export function Overview() {
 
@@ -798,36 +804,35 @@ export function Overview() {
 
       {/* ═══════════════════ 参数参考面板（默认折叠） ═══════════════════ */}
       <CollapsiblePanel title="历史水文地质参数参考库" badge="A表">
-        <HydrogeologyReferenceLibrary />
+        <Suspense fallback={<PanelFallback />}><HydrogeologyReferenceLibrary /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="超采治理成效对比" badge="exploitation">
-        <ExploitationControlComparison />
+        <Suspense fallback={<PanelFallback />}><ExploitationControlComparison /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="开采管理概览" badge="管理">
-        <ExploitationManagement />
+        <Suspense fallback={<PanelFallback />}><ExploitationManagement /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="冲洪积扇与水源地" badge="蓄水构造">
-        <AlluvialFansWaterSources />
+        <Suspense fallback={<PanelFallback />}><AlluvialFansWaterSources /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="评价标准参考" badge="GB">
-        <StandardsReferencePanel />
+        <Suspense fallback={<PanelFallback />}><StandardsReferencePanel /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="水文地质参数速查" badge="B表">
-        <HydroParamsReferencePanel />
+        <Suspense fallback={<PanelFallback />}><HydroParamsReferencePanel /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="地下水系统分区参数" badge="分区">
-        <ZoneParamsPanel />
+        <Suspense fallback={<PanelFallback />}><ZoneParamsPanel /></Suspense>
       </CollapsiblePanel>
 
       <CollapsiblePanel title="历史演变与污染对比" badge="历史">
-        <HistoricalEvolution />
-        <PollutionQualityComparison />
+        <Suspense fallback={<PanelFallback />}><HistoricalEvolution /><PollutionQualityComparison /></Suspense>
       </CollapsiblePanel>
 
       <OverviewNavigation />
