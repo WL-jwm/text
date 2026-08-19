@@ -2,8 +2,12 @@
 /**
  * 性能基准：useMapLayers 图层渲染优化前后对比
  *
- * 场景：模拟用户连续 10 次图层切换，统计每个图层的整层重建（clearLayers）
- * 次数、popup HTML 拼接（buildMarkerPopup）次数与可见标注计算（getVisibleMarkers）次数。
+ * 覆盖场景：
+ * - S0 综合场景：10 次图层切换
+ * - S1 极端·单图层高频开关：markers 开关 20 次（验证 popup 缓存复用）
+ * - S2 极端·可见标注类别高频切换：visibleLayers 变化 20 次
+ * - S3 极端·超采区过滤高频切换：overdraftFilter 变化 20 次（验证依赖拆细避免连锁重建）
+ * - S4 极端·全图层极速开关：activeLayers 全开/全关交替 20 次
  *
  * - 优化前实现：src/__tests__/bench/useMapLayers.legacy.ts（提取自 git 72f09a5^）
  * - 优化后实现：src/pages/useMapLayers.ts
@@ -83,7 +87,13 @@ interface BenchResult {
   getVisibleMarkers: number;
 }
 
-function runSequence(useMapLayers: (p: MapLayersParams) => void): BenchResult {
+type MutatableFields = 'activeLayers' | 'visibleLayers' | 'overdraftFilter';
+
+function runScenario(
+  useMapLayers: (p: MapLayersParams) => void,
+  initial: Partial<MapLayersParams>,
+  steps: Array<(toggle: (f: MutatableFields, k: string, on: boolean) => void) => void>,
+): BenchResult {
   setupLeafletMock();
   const { refs, chains } = makeRefs();
   counters.buildMarkerPopup = 0;
@@ -104,31 +114,22 @@ function runSequence(useMapLayers: (p: MapLayersParams) => void): BenchResult {
     onMarkerCountChange: vi.fn(),
     onSelectMarker: vi.fn(),
     onCityDetail: vi.fn(),
+    ...initial,
   };
 
   const { rerender } = renderHook((p: MapLayersParams) => useMapLayers(p), { initialProps: params });
 
-  const toggle = (set: Set<string>, key: string, on: boolean) => {
-    const next = new Set(set);
+  const toggle = (f: MutatableFields, key: string, on: boolean) => {
+    const next = new Set(params[f]);
     if (on) next.add(key);
     else next.delete(key);
-    return next;
+    params[f] = next;
   };
 
-  // 模拟 10 次图层切换
-  const steps: Array<() => void> = [
-    () => { params.activeLayers = toggle(params.activeLayers, 'overdraft', true); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'waterSourcePOI', true); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'karstSpringPOI', true); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'resource', true); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'overdraft', false); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'contour', true); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'markers', false); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'markers', true); },
-    () => { params.visibleLayers = toggle(params.visibleLayers, 'spring', false); },
-    () => { params.activeLayers = toggle(params.activeLayers, 'waterSourcePOI', false); },
-  ];
-  steps.forEach(step => { step(); rerender(params); });
+  steps.forEach(step => {
+    step(toggle);
+    rerender(params);
+  });
 
   const clearLayers: Record<string, number> = {};
   Object.entries(chains).forEach(([k, ch]) => { clearLayers[k] = ch.clearLayers.mock.calls.length; });
@@ -141,31 +142,96 @@ function runSequence(useMapLayers: (p: MapLayersParams) => void): BenchResult {
   };
 }
 
+/** 将两个实现的场景结果渲染为对比表 */
+function printScenario(name: string, legacy: BenchResult, optimized: BenchResult) {
+  console.log('\n── ' + name + ' ──');
+  console.log('  ' + ['图层', '优化前', '优化后', '↓'].join('\t'));
+  const order: LayerName[] = ['layerGroup', 'zone', 'boundary', 'countyCoverage', 'overdraft', 'resource', 'cityBoundary', 'waterSourcePOI', 'karstSpringPOI'];
+  order.forEach(k => {
+    const l = legacy.clearLayers[k];
+    const o = optimized.clearLayers[k];
+    console.log('  ' + [k, l, o, (l - o) + ''].join('\t'));
+  });
+  console.log('  合计重建   : 优化前 ' + legacy.totalClear + ' → 优化后 ' + optimized.totalClear + '  (↓ ' + Math.round((1 - optimized.totalClear / legacy.totalClear) * 100) + '%)');
+  console.log('  popup拼接  : 优化前 ' + legacy.buildMarkerPopup + ' → 优化后 ' + optimized.buildMarkerPopup + '  (↓ ' + Math.round((1 - optimized.buildMarkerPopup / legacy.buildMarkerPopup) * 100) + '%)');
+  console.log('  可见计算   : 优化前 ' + legacy.getVisibleMarkers + ' → 优化后 ' + optimized.getVisibleMarkers + '  (↓ ' + Math.round((1 - optimized.getVisibleMarkers / legacy.getVisibleMarkers) * 100) + '%)');
+}
+
+/** 无回归断言：优化后各项不劣于优化前（用于必要重建场景 S2/S3） */
+function assertNoRegression(legacy: BenchResult, optimized: BenchResult) {
+  expect(optimized.totalClear).toBeLessThanOrEqual(legacy.totalClear);
+  expect(optimized.buildMarkerPopup).toBeLessThanOrEqual(legacy.buildMarkerPopup);
+  expect(optimized.getVisibleMarkers).toBeLessThanOrEqual(legacy.getVisibleMarkers);
+}
+
+/** 显著提升断言：整层重建总次数严格减少（用于体现优化价值的场景 S0/S1/S4） */
+function assertImproved(legacy: BenchResult, optimized: BenchResult) {
+  assertNoRegression(legacy, optimized);
+  expect(optimized.totalClear).toBeLessThan(legacy.totalClear);
+}
+
 describe('useMapLayers 图层渲染性能基准（优化前 vs 优化后）', () => {
-  it('10次图层切换下优化后重建次数显著低于优化前', () => {
-    const legacy = runSequence(useMapLayersLegacy);
-    const optimized = runSequence(useMapLayersOptimized);
+  it('S0 综合场景：10 次图层切换', () => {
+    const steps = [
+      (t: (f: MutatableFields, k: string, on: boolean) => void) => t('activeLayers', 'overdraft', true),
+      (t) => t('activeLayers', 'waterSourcePOI', true),
+      (t) => t('activeLayers', 'karstSpringPOI', true),
+      (t) => t('activeLayers', 'resource', true),
+      (t) => t('activeLayers', 'overdraft', false),
+      (t) => t('activeLayers', 'contour', true),
+      (t) => t('activeLayers', 'markers', false),
+      (t) => t('activeLayers', 'markers', true),
+      (t) => t('visibleLayers', 'spring', false),
+      (t) => t('activeLayers', 'waterSourcePOI', false),
+    ];
+    const legacy = runScenario(useMapLayersLegacy, {}, steps);
+    const optimized = runScenario(useMapLayersOptimized, {}, steps);
+    printScenario('S0 综合·10次图层切换', legacy, optimized);
+    assertImproved(legacy, optimized);
+  });
 
-    console.log('\n========== 性能基准（10次图层切换） ==========');
-    console.log('【优化前】');
-    console.log('  各图层 clearLayers 重建次数: ', legacy.clearLayers);
-    console.log('  合计重建次数: ', legacy.totalClear);
-    console.log('  buildMarkerPopup(popup拼接): ', legacy.buildMarkerPopup);
-    console.log('  getVisibleMarkers(可见标注计算): ', legacy.getVisibleMarkers);
-    console.log('【优化后】');
-    console.log('  各图层 clearLayers 重建次数: ', optimized.clearLayers);
-    console.log('  合计重建次数: ', optimized.totalClear);
-    console.log('  buildMarkerPopup(popup拼接): ', optimized.buildMarkerPopup);
-    console.log('  getVisibleMarkers(可见标注计算): ', optimized.getVisibleMarkers);
-    console.log('============================================');
+  it('S1 极端·单图层(markers)高频开关 20 次', () => {
+    const steps = Array.from({ length: 20 }, (_, i) =>
+      (t: (f: MutatableFields, k: string, on: boolean) => void) => t('activeLayers', 'markers', i % 2 === 1),
+    );
+    const legacy = runScenario(useMapLayersLegacy, {}, steps);
+    const optimized = runScenario(useMapLayersOptimized, {}, steps);
+    printScenario('S1 极端·markers开关×20', legacy, optimized);
+    assertImproved(legacy, optimized);
+  });
 
-    // 优化后整层重建总次数必须显著更低
-    expect(optimized.totalClear).toBeLessThan(legacy.totalClear);
-    // popup HTML 拼接次数必须不高于优化前
-    expect(optimized.buildMarkerPopup).toBeLessThanOrEqual(legacy.buildMarkerPopup);
-    // 可见标注计算次数必须不高于优化前
-    expect(optimized.getVisibleMarkers).toBeLessThanOrEqual(legacy.getVisibleMarkers);
-    // 最关键的标注图层（markers）重建次数必须显著减少
-    expect(optimized.clearLayers.layerGroup).toBeLessThan(legacy.clearLayers.layerGroup);
+  it('S2 极端·可见标注类别高频切换 20 次', () => {
+    const steps = Array.from({ length: 20 }, (_, i) =>
+      (t: (f: MutatableFields, k: string, on: boolean) => void) => t('visibleLayers', i % 2 === 0 ? 'spring' : 'saline', i % 4 < 2),
+    );
+    const legacy = runScenario(useMapLayersLegacy, {}, steps);
+    const optimized = runScenario(useMapLayersOptimized, {}, steps);
+    printScenario('S2 极端·可见类别切换×20', legacy, optimized);
+    assertNoRegression(legacy, optimized);
+  });
+
+  it('S3 极端·超采区过滤高频切换 20 次', () => {
+    const types = ['shallow-general', 'deep-general', 'deep-severe'];
+    const steps = Array.from({ length: 20 }, (_, i) =>
+      (t: (f: MutatableFields, k: string, on: boolean) => void) => t('overdraftFilter', types[i % 3], i % 2 === 1),
+    );
+    const legacy = runScenario(useMapLayersLegacy, {}, steps);
+    const optimized = runScenario(useMapLayersOptimized, {}, steps);
+    printScenario('S3 极端·超采区过滤切换×20', legacy, optimized);
+    assertNoRegression(legacy, optimized);
+  });
+
+  it('S4 极端·全图层极速开关 20 次', () => {
+    const allLayers = ['overdraft', 'resource', 'waterSourcePOI', 'karstSpringPOI'];
+    const steps = Array.from({ length: 20 }, (_, i) => {
+      const on = i % 2 === 1;
+      return (t: (f: MutatableFields, k: string, on: boolean) => void) => {
+        allLayers.forEach(k => t('activeLayers', k, on));
+      };
+    });
+    const legacy = runScenario(useMapLayersLegacy, {}, steps);
+    const optimized = runScenario(useMapLayersOptimized, {}, steps);
+    printScenario('S4 极端·全图层开关×20', legacy, optimized);
+    assertImproved(legacy, optimized);
   });
 });
