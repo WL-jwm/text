@@ -1,9 +1,16 @@
 /**
  * 空间地图 - 基础图层渲染 hook
- * 将 MapView 中除等值线外的 8 类图层渲染 useEffect 封装于此：
- * 标注、区划面、省界、县级数据覆盖、超采区、资源量分级、重要水源地POI、岩溶大泉POI。
+ * 将 MapView 中除等值线外的 8 类图层渲染 useEffect 封装于此。
+ *
+ * 性能优化策略：
+ * 1. 依赖拆细 —— 各 effect 依赖由「整个 activeLayers Set」改为「关心的布尔派生值」，
+ *    切换无关图层时不再触发该图层整层重建（避免连锁重建）。
+ * 2. 数据 useMemo 缓存 —— getVisibleMarkers / overdraftPolygons.filter / 县级覆盖计算
+ *    等结果仅在其真实输入变化时重算。
+ * 3. popup HTML 与图标预计算 —— marker 的 divIcon/popup 在数据不变时复用缓存，
+ *    避免图层反复开关时重复拼接 HTML 与创建 DOM。
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { LMap, LNamespace } from '../types/leaflet';
 import type { CountyDataItem } from '../types/county';
 import {
@@ -43,9 +50,121 @@ export interface MapLayersParams {
   onCityDetail: (city: string) => void;
 }
 
+/** 标注渲染规格（预计算产物） */
+export interface MarkerSpec {
+  m: MapMarker;
+  color: string;
+  isSpring: boolean;
+  iconHtml: string;
+  popupHtml: string;
+}
+
+/** 县级覆盖渲染规格 */
+export interface CountyCoverageSpec {
+  lat: number;
+  lng: number;
+  iconHtml: string;
+  popupHtml: string;
+}
+
+/** 资源量气泡渲染规格 */
+export interface ResourceSpec {
+  center: [number, number];
+  size: number;
+  iconHtml: string;
+  city: string;
+}
+
+/**
+ * 构建标注渲染规格（纯函数，供测试）
+ * 将 marker 的图标与 popup HTML 预计算，避免每次重建时重复拼接。
+ */
+export function buildMarkerSpecs(markers: MapMarker[]): MarkerSpec[] {
+  return markers.map(m => {
+    const color = CATEGORY_COLORS[m.category] || '#3b82f6';
+    const isSpring = m.category === 'spring';
+    return {
+      m,
+      color,
+      isSpring,
+      iconHtml: isSpring ? createPulseIcon(color) : createCircleIcon(color),
+      popupHtml: buildMarkerPopup(m),
+    };
+  });
+}
+
+/**
+ * 构建县级数据覆盖渲染规格（纯函数，供测试）
+ * 静态数据：mount 时计算一次并缓存，图层开关/切图时不重复计算。
+ */
+export function buildCountyCoverageSpecs(): CountyCoverageSpec[] {
+  return cityBulletin2024.reduce<CountyCoverageSpec[]>((acc, city) => {
+    const cityName = city.city.replace('市', '');
+    const center = cityCenters.find(c => c.name === cityName);
+    if (!center) return acc;
+
+    const hasCounties = city.counties && city.counties.length > 0;
+    const hasData = hasCounties && (city.counties as CountyDataItem[]).some((c: CountyDataItem) => c.precip != null);
+    const countyCount = hasCounties ? city.counties.length : 0;
+    const dataCount = hasCounties ? (city.counties as CountyDataItem[]).filter((c: CountyDataItem) => c.precip != null).length : 0;
+
+    let color: string, label: string, size: number;
+    if (!hasCounties) {
+      color = '#6b7280'; label = '无数据'; size = 8;
+    } else if (hasData) {
+      color = '#10b981'; label = dataCount + '/' + countyCount + '县'; size = 14;
+    } else {
+      color = '#f59e0b'; label = countyCount + '县(待补)'; size = 10;
+    }
+
+    const iconHtml = '<div style="position:relative;width:' + size + 'px;height:' + size + 'px;">' +
+      '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + color + ';border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 8px ' + color + '80;"></div></div>';
+
+    const popupHtml = buildCityCoveragePopup({
+      city: city.city,
+      color,
+      label,
+      countyCount,
+      hasCounties: !!hasCounties,
+      hasData: !!hasData,
+      dataCount,
+      precipitation: city.precipitation,
+    });
+
+    acc.push({ lat: center.lat, lng: center.lng, iconHtml, popupHtml });
+    return acc;
+  }, []);
+}
+
 /** 基础图层渲染 hook */
 export function useMapLayers(p: MapLayersParams) {
   const { mapInstanceRef, layerRefs } = p;
+
+  // ── 派生图层可见性（避免整个 activeLayers Set 触发连锁重建）──
+  const markersVisible = p.activeLayers.has('markers');
+  const overdraftVisible = p.activeLayers.has('overdraft');
+  const resourceVisible = p.activeLayers.has('resource');
+  const wsVisible = p.activeLayers.has('waterSourcePOI');
+  const ksVisible = p.activeLayers.has('karstSpringPOI');
+
+  // ── 数据与渲染规格缓存 ──
+  const visibleMarkers = useMemo(() => getVisibleMarkers(p.visibleLayers), [p.visibleLayers]);
+  const markerSpecs = useMemo(() => buildMarkerSpecs(visibleMarkers), [visibleMarkers]);
+
+  const filteredOverdraft = useMemo(
+    () => overdraftPolygons.filter(po => p.overdraftFilter.has(po.type)),
+    [p.overdraftFilter]
+  );
+
+  const countySpecs = useMemo(() => buildCountyCoverageSpecs(), []);
+
+  const resourceSpecs = useMemo<ResourceSpec[]>(() => {
+    return p.cityGrades.map(g => {
+      const iconHtml = createGradeBubble(g.grade, g.city, g.groundResource);
+      const size = 18 + (5 - g.grade) * 4;
+      return { center: g.center, size, iconHtml, city: g.city };
+    });
+  }, [p.cityGrades]);
 
   // ── 标注图层（markers图层） ──
   useEffect(() => {
@@ -53,31 +172,25 @@ export function useMapLayers(p: MapLayersParams) {
     if (!mapInstanceRef.current || !layerRefs.layerGroup.current) return;
 
     layerRefs.layerGroup.current.clearLayers();
-    if (!p.activeLayers.has('markers')) { p.onMarkerCountChange(0); return; }
+    if (!markersVisible) { p.onMarkerCountChange(0); return; }
 
-    const markers = getVisibleMarkers(p.visibleLayers);
-    markers.forEach(m => {
-      const color = CATEGORY_COLORS[m.category] || '#3b82f6';
-      const isSpring = m.category === 'spring';
-      const iconHtml = isSpring ? createPulseIcon(color) : createCircleIcon(color);
-
+    markerSpecs.forEach(spec => {
       const icon = L.divIcon({
-        html: iconHtml,
+        html: spec.iconHtml,
         className: '',
-        iconSize: [isSpring ? 22 : 12, isSpring ? 22 : 12],
-        iconAnchor: [isSpring ? 11 : 6, isSpring ? 11 : 6],
+        iconSize: [spec.isSpring ? 22 : 12, spec.isSpring ? 22 : 12],
+        iconAnchor: [spec.isSpring ? 11 : 6, spec.isSpring ? 11 : 6],
       });
 
-      const marker = L.marker([m.lat, m.lng], { icon })
+      const marker = L.marker([spec.m.lat, spec.m.lng], { icon })
         .addTo(layerRefs.layerGroup.current)
-        .bindPopup(buildMarkerPopup(m), { maxWidth: 280, className: 'gw-popup' });
+        .bindPopup(spec.popupHtml, { maxWidth: 280, className: 'gw-popup' });
 
-      marker.on('click', () => p.onSelectMarker(m));
+      marker.on('click', () => p.onSelectMarker(spec.m));
     });
 
-    p.onMarkerCountChange(markers.length);
-     
-  }, [p.visibleLayers, p.activeLayers, mapInstanceRef, layerRefs.layerGroup]);
+    p.onMarkerCountChange(markerSpecs.length);
+  }, [markersVisible, markerSpecs, mapInstanceRef, layerRefs.layerGroup, p.onMarkerCountChange, p.onSelectMarker]);
 
   // ── 区划面 ──
   useEffect(() => {
@@ -85,7 +198,7 @@ export function useMapLayers(p: MapLayersParams) {
     if (!mapInstanceRef.current || !layerRefs.zone.current) return;
 
     layerRefs.zone.current.clearLayers();
-    if (!p.showZones || !p.activeLayers.has('markers')) return;
+    if (!p.showZones || !markersVisible) return;
 
     mapZones.forEach(zone => {
       const rect = L.rectangle(zone.bounds, {
@@ -99,13 +212,12 @@ export function useMapLayers(p: MapLayersParams) {
       rect.addTo(layerRefs.zone.current);
     });
 
-    if (p.activeLayers.has('markers') && p.showZones) {
+    if (markersVisible && p.showZones) {
       layerRefs.zone.current.addTo(mapInstanceRef.current);
     } else {
       layerRefs.zone.current.remove();
     }
-     
-  }, [p.showZones, p.activeLayers, mapInstanceRef, layerRefs.zone]);
+  }, [p.showZones, markersVisible, mapInstanceRef, layerRefs.zone]);
 
   // ── 省界 ──
   useEffect(() => {
@@ -123,7 +235,6 @@ export function useMapLayers(p: MapLayersParams) {
       dashArray: '',
     });
     polygon.addTo(layerRefs.boundary.current);
-     
   }, [p.showBoundary, mapInstanceRef, layerRefs.boundary]);
 
   // ── 县级数据覆盖标注 ──
@@ -132,59 +243,26 @@ export function useMapLayers(p: MapLayersParams) {
     if (!mapInstanceRef.current || !layerRefs.countyCoverage.current) return;
 
     layerRefs.countyCoverage.current.clearLayers();
-    if (!p.showCountyCoverage || !p.activeLayers.has('markers')) {
+    if (!p.showCountyCoverage || !markersVisible) {
       layerRefs.countyCoverage.current.remove();
       return;
     }
 
-    cityBulletin2024.forEach(city => {
-      const cityName = city.city.replace('市', '');
-      const center = cityCenters.find(c => c.name === cityName);
-      if (!center) return;
-
-      const hasCounties = city.counties && city.counties.length > 0;
-      const hasData = hasCounties && (city.counties as CountyDataItem[]).some((c: CountyDataItem) => c.precip != null);
-      const countyCount = hasCounties ? city.counties.length : 0;
-      const dataCount = hasCounties ? (city.counties as CountyDataItem[]).filter((c: CountyDataItem) => c.precip != null).length : 0;
-
-      let color: string, label: string, size: number;
-      if (!hasCounties) {
-        color = '#6b7280'; label = '无数据'; size = 8;
-      } else if (hasData) {
-        color = '#10b981'; label = dataCount + '/' + countyCount + '县'; size = 14;
-      } else {
-        color = '#f59e0b'; label = countyCount + '县(待补)'; size = 10;
-      }
-
-      const iconHtml = '<div style="position:relative;width:' + size + 'px;height:' + size + 'px;">' +
-        '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + color + ';border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 8px ' + color + '80;"></div></div>';
-
+    countySpecs.forEach(spec => {
       const icon = L.divIcon({
-        html: iconHtml,
+        html: spec.iconHtml,
         className: '',
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2],
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
       });
 
-      const popupHtml = buildCityCoveragePopup({
-        city: city.city,
-        color,
-        label,
-        countyCount,
-        hasCounties: !!hasCounties,
-        hasData: !!hasData,
-        dataCount,
-        precipitation: city.precipitation,
-      });
-
-      L.marker([center.lat, center.lng], { icon })
+      L.marker([spec.lat, spec.lng], { icon })
         .addTo(layerRefs.countyCoverage.current)
-        .bindPopup(popupHtml, { maxWidth: 280, className: 'gw-popup' });
+        .bindPopup(spec.popupHtml, { maxWidth: 280, className: 'gw-popup' });
     });
 
     layerRefs.countyCoverage.current.addTo(mapInstanceRef.current);
-     
-  }, [p.showCountyCoverage, p.activeLayers, mapInstanceRef, layerRefs.countyCoverage]);
+  }, [p.showCountyCoverage, markersVisible, countySpecs, mapInstanceRef, layerRefs.countyCoverage]);
 
   // ── 超采区图层 ──
   useEffect(() => {
@@ -192,28 +270,25 @@ export function useMapLayers(p: MapLayersParams) {
     if (!mapInstanceRef.current || !layerRefs.overdraft.current) return;
 
     layerRefs.overdraft.current.clearLayers();
-    if (!p.activeLayers.has('overdraft') || !p.showOverdraft) {
+    if (!overdraftVisible || !p.showOverdraft) {
       layerRefs.overdraft.current.remove();
       return;
     }
 
-    overdraftPolygons
-      .filter(po => p.overdraftFilter.has(po.type))
-      .forEach(po => {
-        const rect = L.rectangle(po.bounds, {
-          color: po.color,
-          weight: 1.5,
-          fillColor: po.fillColor,
-          fillOpacity: 0.6,
-          dashArray: po.type === 'deep-severe' ? '' : '6 3',
-        });
-        rect.bindTooltip(buildOverdraftTooltip(po), { sticky: true, className: 'gw-tooltip' });
-        rect.addTo(layerRefs.overdraft.current);
+    filteredOverdraft.forEach(po => {
+      const rect = L.rectangle(po.bounds, {
+        color: po.color,
+        weight: 1.5,
+        fillColor: po.fillColor,
+        fillOpacity: 0.6,
+        dashArray: po.type === 'deep-severe' ? '' : '6 3',
       });
+      rect.bindTooltip(buildOverdraftTooltip(po), { sticky: true, className: 'gw-tooltip' });
+      rect.addTo(layerRefs.overdraft.current);
+    });
 
     layerRefs.overdraft.current.addTo(mapInstanceRef.current);
-     
-  }, [p.activeLayers, p.showOverdraft, p.overdraftFilter, mapInstanceRef, layerRefs.overdraft]);
+  }, [overdraftVisible, p.showOverdraft, filteredOverdraft, mapInstanceRef, layerRefs.overdraft]);
 
   // ── 资源量分级图层 ──
   useEffect(() => {
@@ -223,7 +298,7 @@ export function useMapLayers(p: MapLayersParams) {
     layerRefs.resource.current.clearLayers();
     layerRefs.cityBoundary.current.clearLayers();
 
-    if (!p.activeLayers.has('resource')) {
+    if (!resourceVisible) {
       layerRefs.resource.current.remove();
       layerRefs.cityBoundary.current.remove();
       return;
@@ -247,25 +322,22 @@ export function useMapLayers(p: MapLayersParams) {
     }
 
     // 资源量气泡标注 — 点击弹出详情面板
-    p.cityGrades.forEach(g => {
-      const iconHtml = createGradeBubble(g.grade, g.city, g.groundResource);
-      const size = 18 + (5 - g.grade) * 4;
+    resourceSpecs.forEach(spec => {
       const icon = L.divIcon({
-        html: iconHtml,
+        html: spec.iconHtml,
         className: '',
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2],
+        iconSize: [spec.size, spec.size],
+        iconAnchor: [spec.size / 2, spec.size / 2],
       });
 
-      const marker = L.marker(g.center, { icon });
-      marker.on('click', () => { p.onCityDetail(g.city); });
+      const marker = L.marker(spec.center, { icon });
+      marker.on('click', () => { p.onCityDetail(spec.city); });
       marker.addTo(layerRefs.resource.current);
     });
 
     layerRefs.resource.current.addTo(mapInstanceRef.current);
     layerRefs.cityBoundary.current.addTo(mapInstanceRef.current);
-     
-  }, [p.activeLayers, p.showCityBoundary, p.cityGrades, mapInstanceRef, layerRefs.resource, layerRefs.cityBoundary]);
+  }, [resourceVisible, p.showCityBoundary, p.cityGrades, resourceSpecs, mapInstanceRef, layerRefs.resource, layerRefs.cityBoundary, p.onCityDetail]);
 
   // ── 重要水源地POI图层 ──
   useEffect(() => {
@@ -273,7 +345,7 @@ export function useMapLayers(p: MapLayersParams) {
     if (!mapInstanceRef.current || !layerRefs.waterSourcePOI.current) return;
 
     layerRefs.waterSourcePOI.current.clearLayers();
-    if (!p.activeLayers.has('waterSourcePOI')) {
+    if (!wsVisible) {
       layerRefs.waterSourcePOI.current.remove();
       return;
     }
@@ -296,8 +368,7 @@ export function useMapLayers(p: MapLayersParams) {
     });
 
     layerRefs.waterSourcePOI.current.addTo(mapInstanceRef.current);
-     
-  }, [p.activeLayers, mapInstanceRef, layerRefs.waterSourcePOI]);
+  }, [wsVisible, mapInstanceRef, layerRefs.waterSourcePOI]);
 
   // ── 岩溶大泉POI图层 ──
   useEffect(() => {
@@ -305,7 +376,7 @@ export function useMapLayers(p: MapLayersParams) {
     if (!mapInstanceRef.current || !layerRefs.karstSpringPOI.current) return;
 
     layerRefs.karstSpringPOI.current.clearLayers();
-    if (!p.activeLayers.has('karstSpringPOI')) {
+    if (!ksVisible) {
       layerRefs.karstSpringPOI.current.remove();
       return;
     }
@@ -328,6 +399,5 @@ export function useMapLayers(p: MapLayersParams) {
     });
 
     layerRefs.karstSpringPOI.current.addTo(mapInstanceRef.current);
-     
-  }, [p.activeLayers, mapInstanceRef, layerRefs.karstSpringPOI]);
+  }, [ksVisible, mapInstanceRef, layerRefs.karstSpringPOI]);
 }
