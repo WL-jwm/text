@@ -1,28 +1,13 @@
 /**
- * 实时数据源 — WebSocket 数据源（自 realtimeDataSource 拆分）
+ * WebSocket 实时数据源
+ * 连接管理 / 消息解析 / 心跳保活 / 断线重连 / 诊断
  */
+
 import { toNumber, toStr, toQuality, getPath } from './realtimeUtils';
 import { connectionLogger } from './realtimeLogger';
 import type { RealtimeDataSource, WsSourceConfig, WsConnectionState, DataSourceType } from './realtimeTypes';
 import type { DataChannel, RealtimeReading, ChannelConfig } from './realtimeDataService';
-
-/** 内部通道连接上下文 */
-interface WsChannelContext {
-  channel: DataChannel;
-  config: ChannelConfig;
-  wsConfig: WsSourceConfig;
-  onReading: (readings: RealtimeReading[]) => void;
-  onError: (error: Error) => void;
-  ws: WebSocket | null;
-  state: WsConnectionState;
-  reconnectCount: number;
-  heartbeatTimer: ReturnType<typeof setInterval> | null;
-  reconnectTimer: ReturnType<typeof setTimeout> | null;
-  lastMessageTime: number;
-  messagesReceived: number;
-  bytesReceived: number;
-  errors: number;
-}
+import type { WsChannelContext } from './wsChannelTypes';
 
 export class WebSocketDataSource implements RealtimeDataSource {
   readonly type: DataSourceType = 'ws';
