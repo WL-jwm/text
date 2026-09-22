@@ -76,10 +76,10 @@ import { SharingPanel } from './SharingPanel';
 import { CHANNEL_LABELS, AQUIFER_COLORS, AQUIFER_TYPES, STATUSES, RT_STATUSES } from './constants';
 import { WellMap } from './WellMap';
 import { StatCard } from './StatCard';
-import { RealtimeStatusBadge } from './RealtimeStatusBadge';
 import { WellTable } from './WellTable';
-import { TrendSparkline } from './TrendSparkline';
 import { AddWellForm } from './AddWellForm';
+import { SpatialOptimizationPanel } from './panels/SpatialOptimizationPanel';
+import { SelectedWellDetail } from './panels/SelectedWellDetail';
 
 export function WellNetworkPanel() {
   const { wells, addWell, deleteWell, reset } = useWellNetwork();
@@ -652,80 +652,7 @@ export function WellNetworkPanel() {
             </div>
           </div>
         )}
-        {/* 空间优化建议 */}
-        {showSpatial && spatialOptimization.hasData && (
-          <div className="mt-2 px-1.5 py-1 rounded-lg bg-gw-surface/20 border border-gw-border/10">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-1">
-                <Crosshair size={10} className="text-gw-muted/60" />
-                <span className="text-[9px] font-medium text-gw-muted">空间优化建议</span>
-              </div>
-              <span className="text-[8px] font-mono px-1 rounded" style={{
-                backgroundColor: spatialOptimization.overallScore >= 60 ? '#10b98125' : '#f9731625',
-                color: spatialOptimization.overallScore >= 60 ? '#10b981' : '#f97316',
-              }}>
-                评分 {spatialOptimization.overallScore}
-              </span>
-            </div>
-
-            {/* 覆盖密度 */}
-            <div className="space-y-0.5 mb-1">
-              <div className="text-[8px] text-gw-muted/60 mb-0.5">城市覆盖密度</div>
-              {spatialOptimization.cityDensities.slice(0, 6).map(d => (
-                <div key={d.city} className="flex items-center gap-1 text-[7px]">
-                  <span className="w-10 truncate text-gw-muted">{d.city}</span>
-                  <div className="flex-1 h-2 rounded bg-gw-surface/30 overflow-hidden">
-                    <div className="h-full rounded transition-all" style={{
-                      width: Math.min(100, (d.density / 3) * 100) + '%',
-                      backgroundColor: d.status === 'critical' ? '#ef4444' : d.status === 'sparse' ? '#f97316' : d.status === 'moderate' ? '#f59e0b' : '#10b981',
-                    }} />
-                  </div>
-                  <span className="w-16 text-right font-mono text-gw-muted/70">{d.density.toFixed(2)}口/千km²</span>
-                  <span className="w-6 text-right" style={{
-                    color: d.status === 'critical' ? '#ef4444' : d.status === 'sparse' ? '#f97316' : '#10b981',
-                  }}>{d.gap > 0 ? '+' + d.gap : '\u2014'}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* 盲区与建议 */}
-            {spatialOptimization.gaps.length > 0 && (
-              <div className="space-y-0.5">
-                <div className="text-[8px] text-gw-muted/60 mb-0.5">识别盲区</div>
-                {spatialOptimization.gaps.map((gap, idx) => (
-                  <div key={idx} className="px-1 py-0.5 rounded text-[7px] border" style={{
-                    borderColor: gap.priority === 'high' ? '#ef444430' : gap.priority === 'medium' ? '#f9731630' : '#6b728030',
-                    backgroundColor: gap.priority === 'high' ? '#ef444408' : gap.priority === 'medium' ? '#f9731608' : '#6b728008',
-                  }}>
-                    <div className="flex items-center gap-1">
-                      <span className="w-1 h-1 rounded-full" style={{
-                        backgroundColor: gap.priority === 'high' ? '#ef4444' : gap.priority === 'medium' ? '#f97316' : '#6b7280',
-                      }} />
-                      <span className="font-medium text-gw-text">{gap.title}</span>
-                      <span className="text-gw-muted/50">{gap.cities.slice(0, 3).join('、')}</span>
-                      {gap.suggestedWells > 0 && <span className="text-gw-cyan ml-auto">建议+{gap.suggestedWells}口</span>}
-                    </div>
-                    <div className="text-gw-muted/50 mt-0.5">{gap.suggestion}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* 冗余井 */}
-            {spatialOptimization.redundancies.filter(r => r.suggestRemove).length > 0 && (
-              <div className="mt-1">
-                <div className="text-[8px] text-gw-muted/60 mb-0.5">建议评估</div>
-                {spatialOptimization.redundancies.filter(r => r.suggestRemove).slice(0, 3).map(r => (
-                  <div key={r.wellId} className="flex items-center gap-1 px-1 py-0.5 rounded text-[7px] bg-amber-500/10 border border-amber-500/20 mb-0.5">
-                    <span className="text-gw-text">{r.wellName}</span>
-                    <span className="text-gw-muted/50">{r.city}</span>
-                    <span className="text-gw-muted/50 ml-auto">{r.reason}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <SpatialOptimizationPanel showSpatial={showSpatial} spatialOptimization={spatialOptimization} />
 
         <BalancePanel
           open={showBalance}
@@ -768,92 +695,14 @@ export function WellNetworkPanel() {
           onToggle={() => setShowSharing(!showSharing)}
           addWell={addWell}
         />
-        {/* 选中井详情 */}
-        {selectedWithData && (
-          <div className="border border-gw-cyan/30 rounded-lg bg-gw-surface/10 p-2 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <CircleDot size={12} className="text-gw-cyan" />
-                <span className="text-[11px] font-medium text-gw-text">{selectedWithData.name}</span>
-                <span className="text-[8px] text-gw-muted/50 font-mono">{selectedWithData.id}</span>
-                <RealtimeStatusBadge status={selectedWithData.realtime.status} />
-              </div>
-              <button onClick={clear} className="text-[8px] text-gw-muted/50 hover:text-gw-text">关闭</button>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 text-[8px] text-gw-muted">
-              <div>城市: <span className="text-gw-text">{selectedWithData.city}</span></div>
-              <div>含水层: <span className="text-gw-text">{AQUIFER_LABELS[selectedWithData.aquiferType]}</span></div>
-              <div>井深: <span className="text-gw-text font-mono">{selectedWithData.depth}m</span></div>
-              <div>坐标: <span className="text-gw-text font-mono">{selectedWithData.latitude},{selectedWithData.longitude}</span></div>
-            </div>
-
-            {/* 实时值详情 */}
-            {selectedWithData.realtime.reading ? (
-              <div className="flex items-center gap-3">
-                <div className="text-[16px] font-bold font-mono" style={{ color: WELL_REALTIME_STATUS_CONFIG[selectedWithData.realtime.status].color }}>
-                  {selectedWithData.realtime.value?.toFixed(2)}{selectedWithData.realtime.unit}
-                </div>
-                <div className="text-[8px] text-gw-muted/60">
-                  <div>通道: {CHANNEL_LABELS[selectedWithData.realtime.reading.channel]}</div>
-                  <div>质量: {selectedWithData.realtime.quality}</div>
-                </div>
-              </div>
-            ) : (
-              <div className="text-[9px] text-gw-muted/50">暂无实时数据</div>
-            )}
-
-            {/* 实时趋势（会话内） */}
-            {liveTrend.length >= 2 && (
-              <div className="flex items-center gap-2">
-                <TrendSparkline readings={liveTrend} color={WELL_REALTIME_STATUS_CONFIG[selectedWithData.realtime.status].color} />
-                <div className="text-[8px] text-gw-muted/50">
-                  <div>实时 {liveTrend.length} 点</div>
-                  <div>当前 {selectedWithData.realtime.value?.toFixed(2)}{selectedWithData.realtime.unit}</div>
-                </div>
-              </div>
-            )}
-
-            {/* 历史趋势（缓存持久化 24h） */}
-            {historyLoading ? (
-              <div className="text-[8px] text-gw-muted/50">正在加载历史趋势...</div>
-            ) : historyTrend && historyTrend.count >= 2 ? (
-              <div className="border-t border-gw-border/10 pt-1.5 mt-1">
-                <div className="flex items-center gap-1 mb-1">
-                  <Clock size={10} className="text-gw-muted/60" />
-                  <span className="text-[8px] font-medium text-gw-muted">历史趋势 (24h · {historyTrend.count}点)</span>
-                  {historyTrend.trendDirection === 1 && <span className="text-[8px] text-red-400">↑ 上升</span>}
-                  {historyTrend.trendDirection === -1 && <span className="text-[8px] text-cyan-400">↓ 下降</span>}
-                  {historyTrend.trendDirection === 0 && <span className="text-[8px] text-gw-muted/50">→ 平稳</span>}
-                  {historyTrend.hasCritical && <span className="text-[8px] px-1 rounded bg-red-500/20 text-red-400">含超标</span>}
-                </div>
-                <div className="flex items-center gap-2">
-                  <TrendSparkline readings={historyTrend.points} color={WELL_REALTIME_STATUS_CONFIG[selectedWithData.realtime.status].color} />
-                  <div className="text-[8px] text-gw-muted/50 leading-relaxed">
-                    <div>均值 {historyTrend.mean}{selectedWithData.realtime.unit}</div>
-                    <div>范围 {historyTrend.min}~{historyTrend.max}{selectedWithData.realtime.unit}</div>
-                    {historyTrend.delta !== null && <div>变化 {historyTrend.delta > 0 ? '+' : ''}{historyTrend.delta}{selectedWithData.realtime.unit}</div>}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="text-[8px] text-gw-muted/40">暂无历史数据</div>
-            )}
-
-            {distances.length > 0 && (
-              <div className="mt-1">
-                <div className="text-[8px] text-gw-muted/60 mb-0.5">最近邻井：</div>
-                <div className="flex flex-wrap gap-1">
-                  {distances.slice(0, 5).map(d => (
-                    <span key={d.wellId} className="text-[8px] px-1.5 py-0.5 rounded bg-gw-surface/30 border border-gw-border/20 text-gw-muted">
-                      {d.wellName} <span className="font-mono text-gw-cyan">{d.distanceKm}km</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        <SelectedWellDetail
+          selectedWithData={selectedWithData}
+          liveTrend={liveTrend}
+          historyTrend={historyTrend}
+          historyLoading={historyLoading}
+          distances={distances}
+          onClear={clear}
+        />
       </div>
     </TechCard>
   );
