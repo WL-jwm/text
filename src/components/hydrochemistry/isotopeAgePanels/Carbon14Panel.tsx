@@ -12,10 +12,10 @@
 import { type Carbon14Input, calcCarbon14Age } from '../../../utils/isotopeAgeCalculator';
 import { ChartExport } from '../../ChartExport';
 import { LazyChartCard } from '../../LazyChartCard';
-import { TechCard, StatCard } from '../../UI';
+import { StatCard, TechCard } from '../../UI';
 import { Calculator } from 'lucide-react';
 import { useState, useMemo } from 'react';
-import { Cell, XAxis, CartesianGrid, YAxis, Tooltip, BarChart, ResponsiveContainer, Bar } from 'recharts';
+import { Cell, XAxis, Tooltip, CartesianGrid, Bar, YAxis, ResponsiveContainer, BarChart } from 'recharts';
 import { AGE_COLORS, TOOLTIP_STYLE } from './isotopeAgeConstants';
 
 export function Carbon14Panel() {

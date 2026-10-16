@@ -9,13 +9,13 @@
  *  5. 预设监测点 — 8组河北平原同位素数据对比
  * 面板: PresetSitesPanel（拆分自 IsotopeAgeTab.tsx）
  */
-import { calcAllPresetSites, calcIsotopeSummary, PRESET_SITES } from '../../../utils/isotopeAgeCalculator';
+import { calcAllPresetSites, PRESET_SITES, calcIsotopeSummary } from '../../../utils/isotopeAgeCalculator';
 import { ChartExport } from '../../ChartExport';
 import { FilterableTechTable } from '../../FilterableTechTable';
 import { LazyChartCard } from '../../LazyChartCard';
 import { StatCard } from '../../UI';
 import { useMemo } from 'react';
-import { Legend, XAxis, CartesianGrid, YAxis, Tooltip, BarChart, ResponsiveContainer, Bar } from 'recharts';
+import { XAxis, Tooltip, CartesianGrid, Bar, Legend, YAxis, ResponsiveContainer, BarChart } from 'recharts';
 import { TOOLTIP_STYLE } from './isotopeAgeConstants';
 
 export function PresetSitesPanel() {

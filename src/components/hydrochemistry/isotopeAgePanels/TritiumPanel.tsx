@@ -10,7 +10,7 @@
  * 面板: TritiumPanel（拆分自 IsotopeAgeTab.tsx）
  */
 import { type TritiumInput, calcTritiumAge } from '../../../utils/isotopeAgeCalculator';
-import { TechCard, StatCard } from '../../UI';
+import { StatCard, TechCard } from '../../UI';
 import { Atom } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { AGE_COLORS } from './isotopeAgeConstants';

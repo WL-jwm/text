@@ -10,7 +10,7 @@
  * 面板: Helium4Panel（拆分自 IsotopeAgeTab.tsx）
  */
 import { type Helium4Input, calcHelium4Age } from '../../../utils/isotopeAgeCalculator';
-import { TechCard, StatCard } from '../../UI';
+import { StatCard, TechCard } from '../../UI';
 import { Activity } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { AGE_COLORS } from './isotopeAgeConstants';

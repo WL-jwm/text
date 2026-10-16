@@ -11,10 +11,10 @@
  */
 import { type RechargeTempInput, calcAllPresetSites, calcRechargeTemp } from '../../../utils/isotopeAgeCalculator';
 import { LazyChartCard } from '../../LazyChartCard';
-import { TechCard, StatCard } from '../../UI';
+import { StatCard, TechCard } from '../../UI';
 import { Thermometer } from 'lucide-react';
 import { useState, useMemo } from 'react';
-import { Cell, XAxis, CartesianGrid, YAxis, Tooltip, Scatter, ResponsiveContainer, ZAxis, ReferenceLine, ScatterChart } from 'recharts';
+import { Cell, XAxis, ZAxis, Tooltip, ReferenceLine, Scatter, CartesianGrid, ScatterChart, YAxis, ResponsiveContainer } from 'recharts';
 import { TOOLTIP_STYLE } from './isotopeAgeConstants';
 
 export function RechargeTempPanel() {

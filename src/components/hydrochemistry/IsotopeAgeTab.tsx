@@ -10,7 +10,7 @@
  * 主组件（面板已拆分至 isotopeAgePanels/ 子目录）
  */
 import { DataSourceNote } from '../UI';
-import { MapPin, Activity, Thermometer, Atom, Calculator } from 'lucide-react';
+import { Activity, Calculator, Atom, MapPin, Thermometer } from 'lucide-react';
 import { useState } from 'react';
 import { Carbon14Panel } from './isotopeAgePanels/Carbon14Panel';
 import { Helium4Panel } from './isotopeAgePanels/Helium4Panel';

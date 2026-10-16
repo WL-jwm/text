@@ -7,7 +7,7 @@
  */
 import { useExportCenterStore } from '../../../store/exportCenterStore';
 import { TechCard } from '../../UI';
-import { Trash2, CheckCircle2, AlertCircle, History } from 'lucide-react';
+import { CheckCircle2, History, AlertCircle, Trash2 } from 'lucide-react';
 
 export function HistoryPanel() {
   const { history, deleteRecord } = useExportCenterStore();
