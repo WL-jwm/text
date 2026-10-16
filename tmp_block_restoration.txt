@@ -1,0 +1,78 @@
+        <div className="space-y-4">
+          {/* 修复成果KPI */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+            <div className="p-4 rounded-lg bg-gw-surface/50 border border-gw-border/40 text-center">
+              <div className="text-xs text-gw-muted">修复案例</div>
+              <div className="text-lg font-bold text-emerald-400 mt-1">{mineEcologicalRestoration.length}</div>
+            </div>
+            <div className="p-4 rounded-lg bg-gw-surface/50 border border-gw-border/40 text-center">
+              <div className="text-xs text-gw-muted">总投资</div>
+              <div className="text-lg font-bold text-gw-highlight mt-1">约85亿元</div>
+            </div>
+            <div className="p-4 rounded-lg bg-gw-surface/50 border border-gw-border/40 text-center">
+              <div className="text-xs text-gw-muted">黑龙洞泉复涌</div>
+              <div className="text-lg font-bold text-cyan-400 mt-1">2021年</div>
+            </div>
+            <div className="p-4 rounded-lg bg-gw-surface/50 border border-gw-border/40 text-center">
+              <div className="text-xs text-gw-muted">百泉复涌</div>
+              <div className="text-lg font-bold text-cyan-400 mt-1">2021年</div>
+            </div>
+          </div>
+
+          {/* 修复案例详情 */}
+          <div className="space-y-3">
+            {mineEcologicalRestoration.map((r, i) => (
+              <TechCard key={i} title={r.case}>
+                <div className="space-y-3 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-3">
+                    <div className="p-2 rounded bg-gw-surface/50">
+                      <span className="text-gw-muted">位置</span>
+                      <p className="text-gw-text mt-0.5">{r.location}</p>
+                    </div>
+                    <div className="p-2 rounded bg-gw-surface/50">
+                      <span className="text-gw-muted">影响面积</span>
+                      <p className="text-gw-text mt-0.5">{r.area}</p>
+                    </div>
+                    <div className="p-2 rounded bg-gw-surface/50">
+                      <span className="text-gw-muted">总投资</span>
+                      <p className="text-gw-text mt-0.5">{r.investment}</p>
+                    </div>
+                  </div>
+                  <div className="p-2 rounded bg-gw-surface/50">
+                    <span className="text-gw-muted">治理措施</span>
+                    <p className="text-gw-text mt-0.5">{r.measures}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 text-[10px]">{r.period}</span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px]">{r.result}</span>
+                  </div>
+                </div>
+              </TechCard>
+            ))}
+          </div>
+
+          {/* 修复统计表 */}
+          <TechCard title="生态修复案例汇总">
+            <TechTable headers={['案例', '位置', '影响面积', '治理措施', '修复成果', '投资', '周期']}
+              rows={mineEcologicalRestoration.map(r => [r.case, r.location, r.area, r.measures, r.result, r.investment, r.period])}
+          />
+          </TechCard>
+
+          {/* 泉域复涌专题 */}
+          <TechCard title="泉域保护与复涌专题">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 space-y-2">
+                <h4 className="text-cyan-400 font-medium">黑龙洞泉域(邯郸峰峰)</h4>
+                <p className="text-gw-muted">泉域面积约350km²，为峰峰矿区重要水源。长期煤矿排水导致泉水断流。</p>
+                <p className="text-gw-muted">治理措施：关闭小矿、限制排水量、人工补给。</p>
+                <p className="text-emerald-400 font-medium">2021年黑龙洞泉复涌，流量约0.5m³/s</p>
+              </div>
+              <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 space-y-2">
+                <h4 className="text-cyan-400 font-medium">百泉泉域(邢台)</h4>
+                <p className="text-gw-muted">泉域面积约380km²，为邢台市历史水源地。因铁矿排水自1980年代干涸近40年。</p>
+                <p className="text-gw-muted">治理措施：关闭铁矿、减少排水、南水北调补水替代。</p>
+                <p className="text-emerald-400 font-medium">2021年百泉复涌，结束40年干涸历史</p>
+              </div>
+            </div>
+          </TechCard>
+        </div>
