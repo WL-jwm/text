@@ -1,52 +1,11 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { Upload, FileText, Trash2, Eye, CheckCircle, AlertCircle, Table, X, ChevronDown, Download } from 'lucide-react';
-import { TechCard } from './UI';
-import { useAppStore, ImportedDataset } from '../store/useAppStore';
+import { ImportedDataset, useAppStore } from '../store/useAppStore';
 import { useToast } from './Toast';
+import { TechCard } from './UI';
+import { Table, Download, Trash2, ChevronDown, Eye, AlertCircle, X, FileText, CheckCircle, Upload } from 'lucide-react';
+import React, { useState, useCallback, useRef } from 'react';
+import { parseCSV, parseJSON, type FileParser, type ImportResult } from './dataImportUtils';
 
 /* ── CSV解析（纯前端） ── */
-function parseCSV(text: string): { headers: string[]; rows: Record<string, unknown>[] } {
-  const lines = text.split(/\r?\n/).filter(l => l.trim());
-  if (lines.length < 2) return { headers: [], rows: [] };
-
-  // 自动检测分隔符
-  const firstLine = lines[0];
-  const delimiter = firstLine.includes('\t') ? '\t' : firstLine.includes(';') ? ';' : ',';
-
-  const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
-  const rows: Record<string, unknown>[] = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(delimiter).map(v => v.trim().replace(/^"|"$/g, ''));
-    if (values.length < headers.length * 0.5) continue; // 跳过不完整行
-    const row: Record<string, unknown> = {};
-    headers.forEach((h, idx) => {
-      row[h] = values[idx] ?? '';
-    });
-    rows.push(row);
-  }
-  return { headers, rows };
-}
-
-/* ── JSON解析 ── */
-function parseJSON(text: string): { headers: string[]; rows: Record<string, unknown>[] } {
-  const parsed = JSON.parse(text);
-  const arr = Array.isArray(parsed) ? parsed : [parsed];
-  if (arr.length === 0) return { headers: [], rows: [] };
-  const headers = Object.keys(arr[0]);
-  return { headers, rows: arr };
-}
-
-type FileParser = 'csv' | 'json' | 'auto';
-
-interface ImportResult {
-  headers: string[];
-  rows: Record<string, unknown>[];
-  preview: Record<string, unknown>[];
-  errors: string[];
-  warnings: string[];
-}
-
 export function DataImportPanel() {
   const {success, error} = useToast();
   const { addDataset, datasets, deleteDataset } = useAppStore();
