@@ -1,33 +1,23 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Layers, Maximize2, X } from 'lucide-react';
-import { TechCard, DataSourceNote } from '../components/UI';
-import { exportExcel } from '../utils/exportUtils';
 import { CrossLinkPanel } from '../components/CrossLink';
-import {
-  mapZones, springMarkers, geothermalMarkers, salineMarkers,
-  waterSourceMarkers, mineMarkers, allMarkers, cityCenters, getVisibleMarkers,
-  type MapMarker } from '../data/mapData';
-import {
-  overdraftPolygons, getCityResourceGrades,
-  gradeLabels,
-  type CityResourceGrade } from '../data/mapDataEnhanced';
-import { importantWaterSources } from '../data/waterSource';
-import { karstSprings } from '../data/karstWater';
-import { useToast } from '../components/Toast';
-import { useReportData } from '../hooks/useReportData';
 import { ExportProgressDialog } from '../components/ExportProgressDialog';
-import { CATEGORY_COLORS } from './mapConstants';
-import { MapSidebar } from './MapSidebar';
-import { useMapSetup } from './useMapSetup';
-import { useMapLayers } from './useMapLayers';
-import { useContourLayer } from './useContourLayer';
-// Extracted sub-components
-import { MapLayerControls } from '../components/map/MapLayerControls';
-import { MapLegend } from '../components/map/MapLegend';
-import { MapToolbar } from '../components/map/MapToolbar';
-import { MapStatsCards } from '../components/map/MapStatsCards';
+import { useToast } from '../components/Toast';
+import { DataSourceNote } from '../components/UI';
 import { ContourControlPanel } from '../components/map/ContourControlPanel';
-import { MapCityDetailPanel } from '../components/map/MapCityDetailPanel';
+import { MapLayerControls } from '../components/map/MapLayerControls';
+import { MapStatsCards } from '../components/map/MapStatsCards';
+import { karstSprings } from '../data/karstWater';
+import { type MapMarker, getVisibleMarkers, springMarkers, waterSourceMarkers, salineMarkers, allMarkers, mapZones, mineMarkers, cityCenters, geothermalMarkers } from '../data/mapData';
+import { type CityResourceGrade, gradeLabels, getCityResourceGrades, overdraftPolygons } from '../data/mapDataEnhanced';
+import { importantWaterSources } from '../data/waterSource';
+import { useReportData } from '../hooks/useReportData';
+import { exportExcel } from '../utils/exportUtils';
+import { MapSidebar } from './MapSidebar';
+import { useContourLayer } from './useContourLayer';
+import { useMapLayers } from './useMapLayers';
+import { useMapSetup } from './useMapSetup';
+import { Maximize2, Layers } from 'lucide-react';
+import React, { useCallback, useMemo, useEffect, useRef, useState } from 'react';
+import { MapCanvasPanel } from './mapViewParts/MapCanvasPanel';
 
 export function MapView() {
   const { success } = useToast();
@@ -329,63 +319,7 @@ export function MapView() {
       {/* 主体：地图 + 侧边栏 */}
       <div className={'grid gap-4 ' + (sidebarOpen ? 'grid-cols-1 lg:grid-cols-[1fr_300px]' : 'grid-cols-1')}>
         {/* 地图区域 */}
-        <TechCard title={'空间地图'} className="!p-0 overflow-hidden relative">
-          <div ref={mapRef} className="w-full" style={{ height: '600px' }} />
-          {!mapLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gw-surface/80 z-10">
-              <div className="text-gw-muted text-sm animate-pulse">加载地图...</div>
-            </div>
-          )}
-
-          {/* 地图顶部工具栏 */}
-          {mapLoaded && (
-            <MapToolbar
-              activeLayers={activeLayers}
-              activeLayerCount={activeLayerCount}
-              onExportMarkers={handleExportMarkers}
-              onExportVisible={handleExportVisible}
-              onExportOverdraft={handleExportOverdraft}
-              onExportResource={handleExportResource}
-              onExportWaterSourcePOI={handleExportWaterSourcePOI}
-              onExportKarstSpringPOI={handleExportKarstSpringPOI}
-            />
-          )}
-
-          {/* 自适应图例 */}
-          {mapLoaded && activeLayerCount > 0 && (
-            <MapLegend
-              activeLayers={activeLayers}
-              categoryStats={categoryStats}
-            />
-          )}
-
-          {/* 选中标注信息条 */}
-          {selectedMarker && activeLayers.has('markers') && (
-            <div className="absolute bottom-3 left-3 right-3 z-[1000] px-3 py-2 rounded-lg bg-gw-surface/90 border border-gw-border/40 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: CATEGORY_COLORS[selectedMarker.category] }} />
-                  <div>
-                    <span className="text-xs font-medium text-gw-text">{selectedMarker.name}</span>
-                    <span className="text-[10px] text-gw-muted ml-2">{selectedMarker.type} | {selectedMarker.description}</span>
-                  </div>
-                </div>
-                <button onClick={() => setSelectedMarker(null)} className="text-gw-muted hover:text-gw-text">
-                  <X size={12} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* 城市详情面板 */}
-          {cityDetailPanel && (
-            <MapCityDetailPanel
-              cityName={cityDetailPanel}
-              cityGrades={cityGrades}
-              onClose={() => setCityDetailPanel(null)}
-            />
-          )}
-        </TechCard>
+      <MapCanvasPanel mapRef={mapRef} mapLoaded={mapLoaded} activeLayers={activeLayers} activeLayerCount={activeLayerCount} categoryStats={categoryStats} selectedMarker={selectedMarker} onCloseMarker={() => setSelectedMarker(null)} cityDetailPanel={cityDetailPanel} cityGrades={cityGrades} onCloseCityDetail={() => setCityDetailPanel(null)} onExportMarkers={handleExportMarkers} onExportVisible={handleExportVisible} onExportOverdraft={handleExportOverdraft} onExportResource={handleExportResource} onExportWaterSourcePOI={handleExportWaterSourcePOI} onExportKarstSpringPOI={handleExportKarstSpringPOI} />
 
         {sidebarOpen && (
           <MapSidebar
