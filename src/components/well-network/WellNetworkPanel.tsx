@@ -11,34 +11,9 @@
  */
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import {
-  Network,
-  MapPin,
-  Plus,
-  Search,
-  Crosshair,
-  Layers,
-  Building2,
-  Filter,
-  RefreshCw,
-  ChevronDown,
-  Ruler,
-  Activity,
-  CircleDot,
-  Radio,
-  TriangleAlert,
-  Clock,
-  Bell,
-  FileDown,
-  Download,
-} from 'lucide-react';
+import { Network, Bell, Clock } from 'lucide-react';
 import { TechCard } from '../UI';
-import {
-  useWellNetwork,
-  useWellFilter,
-  useSpatialAnalysis,
-  useWellSelection,
-} from '../../hooks/useWellNetwork';
+import { useWellNetwork, useWellFilter, useSpatialAnalysis, useWellSelection } from '../../hooks/useWellNetwork';
 import { useWellRealtime, useWellRealtimeStats, useWellRealtimeTrend } from '../../hooks/useWellRealtime';
 import { useWellAlerts, useWellTrend } from '../../hooks/useWellAlerts';
 import { useWaterBalance, useCityBalance, useBalanceComparison } from '../../hooks/useWaterBalance';
@@ -49,37 +24,22 @@ import { buildSpatialOptimization } from '../../services/spatialOptimizer';
 import { downloadWellReportPdf } from '../../services/wellReportPdf';
 import { downloadWellReportExcel } from '../../services/wellReportExcel';
 import { useIntegratedAnalysis } from '../../hooks/useWaterQualityBalance';
-import {
-  AQUIFER_LABELS,
-  WELL_STATUS_LABELS,
-} from '../../services/wellNetwork';
-import { WELL_REALTIME_STATUS_CONFIG } from '../../services/wellRealtime';
-import { ALERT_SEVERITY_CONFIG, formatAlertThreshold } from '../../services/wellAlerts';
-import type { AlertSeverity } from '../../services/wellAlerts';
 import { AlertNotifier, buildAlertTimeline } from '../../services/alertNotifier';
 import type { AlertTimeline, NotificationConfig } from '../../services/alertNotifier';
 import { downloadWellReport } from '../../services/wellReportDocx';
 import { buildWellReportData } from '../../services/wellReport';
-import type { AquiferType, WellStatus } from '../../services/wellNetwork';
 import type { WellRealtimeStatus } from '../../services/wellRealtime';
-
-
-// ── 子组件与共享常量（自 WellNetworkPanel 拆分）──
+import type { AlertSeverity } from '../../services/wellAlerts';
 import { BalancePanel } from './BalancePanel';
 import { QualityPanel } from './QualityPanel';
 import { IntegratedPanel } from './IntegratedPanel';
 import { SharingPanel } from './SharingPanel';
-
-
-
-
-import { CHANNEL_LABELS, AQUIFER_COLORS, AQUIFER_TYPES, STATUSES, RT_STATUSES } from './constants';
 import { WellMap } from './WellMap';
-import { StatCard } from './StatCard';
 import { WellTable } from './WellTable';
 import { AddWellForm } from './AddWellForm';
 import { SpatialOptimizationPanel } from './panels/SpatialOptimizationPanel';
 import { SelectedWellDetail } from './panels/SelectedWellDetail';
+import { StatsCardsPanel, RealtimeStatusBar, AlertsPanel, FilterBar, ActionButtons, StatusHints, SpatialAnalysisPanel } from './panels';
 
 export function WellNetworkPanel() {
   const { wells, addWell, deleteWell, reset } = useWellNetwork();
@@ -304,7 +264,6 @@ export function WellNetworkPanel() {
 
   const bufferWells = buffer?.wellsWithin ?? [];
 
-  const abnormalCount = rtStats.warning + rtStats.critical + rtStats.stale;
   const lastUpdateText = lastUpdate
     ? new Date(lastUpdate).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     : '—';
@@ -316,344 +275,78 @@ export function WellNetworkPanel() {
       badge={`${wells.length}井·${report?.cities.length ?? 0}市·${isConnected ? '实时' : '离线'}`}
     >
       <div className="space-y-3">
-        {/* 统计卡片 */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-1.5">
-          <StatCard label="监测井总数" value={wells.length} icon={MapPin} color="#06b6d4" />
-          <StatCard label="覆盖城市" value={report?.cities.length ?? 0} icon={Building2} color="#10b981" />
-          <StatCard label="活跃井" value={report?.activeWells ?? 0} icon={Activity} color="#2563eb" />
-          <StatCard label="含水层类型" value={report?.aquiferGroups.length ?? 0} icon={Layers} color="#f59e0b" />
-          <StatCard label="实时覆盖率" value={`${rtStats.coverage}%`} icon={Radio} color="#06b6d4" />
-        </div>
-
-        {/* 实时状态统计条 */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <div className="flex items-center gap-1">
-            <Radio size={11} className={isConnected ? 'text-emerald-400' : 'text-gray-400'} />
-            <span className={`text-[9px] ${isConnected ? 'text-emerald-400' : 'text-gw-muted/60'}`}>
-              {isConnected ? `实时 · 更新 ${lastUpdateText}` : '实时数据未连接'}
-            </span>
-          </div>
-          <div className="flex items-center gap-1 ml-1">
-            {RT_STATUSES.map(s => {
-              const count = s === 'normal' ? rtStats.normal : s === 'warning' ? rtStats.warning : s === 'critical' ? rtStats.critical : rtStats.stale;
-              const config = WELL_REALTIME_STATUS_CONFIG[s];
-              const active = rtFilter === s;
-              return (
-                <button
-                  key={s}
-                  onClick={() => setRtFilter(active ? 'all' : s)}
-                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[8px] font-medium transition-colors ${
-                    active ? 'ring-1 ring-inset' : ''
-                  }`}
-                  style={{
-                    backgroundColor: `${config.color}15`,
-                    color: config.color,
-                    ...(active ? { boxShadow: `inset 0 0 0 1px ${config.color}` } : {}),
-                  }}
-                >
-                  {s === 'critical' || s === 'warning' ? <TriangleAlert size={8} /> : s === 'stale' ? <Clock size={8} /> : <CircleDot size={8} />}
-                  {config.label}{count}
-                </button>
-              );
-            })}
-            {rtFilter !== 'all' && (
-              <button onClick={() => setRtFilter('all')} className="text-[8px] text-gw-muted/50 hover:text-gw-text">
-                全部
-              </button>
-            )}
-            {abnormalCount > 0 && (
-              <span className="text-[8px] text-gw-muted/50 ml-1">共 {abnormalCount} 口异常井</span>
-            )}
-          </div>
-        </div>
-
-        {/* 告警列表 */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <button
-              onClick={() => setShowAlerts(!showAlerts)}
-              className="flex items-center gap-1 text-[10px] text-gw-muted hover:text-gw-text transition-colors"
-            >
-              <TriangleAlert size={11} className={alertSummary.total > 0 ? 'text-amber-400' : 'text-gw-muted/60'} />
-              <span>实时告警 ({alertSummary.total})</span>
-              <ChevronDown size={9} className={`transition-transform ${showAlerts ? 'rotate-0' : '-rotate-90'}`} />
-            </button>
-            {showAlerts && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setShowNotifyConfig(!showNotifyConfig)}
-                  className={`text-[7px] px-1 py-0.5 rounded transition-colors ${notifyConfig.browserNotify || notifyConfig.soundAlert ? 'bg-gw-cyan/20 text-gw-cyan' : 'bg-gw-surface/30 text-gw-muted/50'}`}
-                  title="通知设置"
-                >
-                  <Bell size={9} />
-                </button>
-                <select
-                  value={alertSeverityFilter}
-                  onChange={e => setAlertSeverityFilter(e.target.value as AlertSeverity | 'all')}
-                  className="text-[8px] bg-gw-surface/40 border border-gw-border/30 rounded px-1 py-0.5 text-gw-muted focus:outline-none"
-                >
-                  <option value="all">全部级别</option>
-                  <option value="critical">超标 ({alertSummary.critical})</option>
-                  <option value="warning">预警 ({alertSummary.warning})</option>
-                  <option value="stale">过期 ({alertSummary.stale})</option>
-                </select>
-              </div>
-            )}
-          </div>
-          {showAlerts && (
-            <div className="max-h-40 overflow-y-auto space-y-1 pr-1">
-              {alertSummary.total === 0 ? (
-                <div className="text-center text-[10px] text-gw-muted/50 py-2">暂无告警，数据质量正常</div>
-              ) : (
-                filteredAlerts.map(a => {
-                  const cfg = ALERT_SEVERITY_CONFIG[a.severity];
-                  return (
-                    <button
-                      key={`${a.wellId}-${a.channel}-${a.timestamp}`}
-                      onClick={() => handleSelect(a.wellId)}
-                      className={`w-full text-left px-2 py-1.5 rounded border ${cfg.bg} ${cfg.border} hover:brightness-110 transition-all`}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[8px] px-1 rounded font-medium" style={{ backgroundColor: cfg.color, color: '#fff' }}>{cfg.label}</span>
-                        <span className="text-[10px] font-medium text-gw-text">{a.wellName}</span>
-                        <span className="text-[8px] text-gw-muted/50">{a.city}</span>
-                        <span className="text-[8px] text-gw-muted/40 font-mono ml-auto">{CHANNEL_LABELS[a.channel]}</span>
-                      </div>
-                      <div className="text-[8px] text-gw-muted/70 mt-0.5 pl-1">
-                        {a.severity === 'stale' ? '数据过期，无最新读数' : formatAlertThreshold(a)}
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* 井点分布图 */}
+        <StatsCardsPanel wellsCount={wells.length} report={report} rtStats={rtStats} />
+        <RealtimeStatusBar
+          rtStats={rtStats}
+          rtFilter={rtFilter}
+          onFilterChange={setRtFilter}
+          isConnected={isConnected}
+          lastUpdateText={lastUpdateText}
+        />
+        <AlertsPanel
+          showAlerts={showAlerts}
+          onToggleAlerts={() => setShowAlerts(!showAlerts)}
+          alertSummary={alertSummary}
+          showNotifyConfig={showNotifyConfig}
+          onToggleNotifyConfig={() => setShowNotifyConfig(!showNotifyConfig)}
+          notifyEnabled={notifyConfig.browserNotify || notifyConfig.soundAlert}
+          severityFilter={alertSeverityFilter}
+          onSeverityFilterChange={setAlertSeverityFilter}
+          alerts={filteredAlerts}
+          onSelectWell={handleSelect}
+        />
         <WellMap wells={wellsWithData} selectedId={selectedId} onSelect={handleSelect} />
-
-        {/* 筛选栏 */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Filter size={11} className="text-gw-muted/60" />
-          <select value={filters.city ?? ''} onChange={e => setFilter({ city: e.target.value || undefined })} className="text-[9px] bg-gw-surface/40 border border-gw-border/30 rounded px-1.5 py-0.5 text-gw-muted focus:outline-none">
-            <option value="">全部城市</option>
-            {cities.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <select value={filters.aquiferType ?? ''} onChange={e => setFilter({ aquiferType: (e.target.value || undefined) as AquiferType | undefined })} className="text-[9px] bg-gw-surface/40 border border-gw-border/30 rounded px-1.5 py-0.5 text-gw-muted focus:outline-none">
-            <option value="">全部含水层</option>
-            {AQUIFER_TYPES.map(t => <option key={t} value={t}>{AQUIFER_LABELS[t]}</option>)}
-          </select>
-          <select value={filters.status ?? ''} onChange={e => setFilter({ status: (e.target.value || undefined) as WellStatus | undefined })} className="text-[9px] bg-gw-surface/40 border border-gw-border/30 rounded px-1.5 py-0.5 text-gw-muted focus:outline-none">
-            <option value="">全部状态</option>
-            {STATUSES.map(s => <option key={s} value={s}>{WELL_STATUS_LABELS[s]}</option>)}
-          </select>
-          <div className="flex items-center gap-0.5 flex-1 min-w-32">
-            <Search size={10} className="text-gw-muted/40" />
-            <input value={filters.keyword ?? ''} onChange={e => setFilter({ keyword: e.target.value || undefined })} placeholder="搜索井名/编号/区县" className="flex-1 text-[9px] bg-gw-surface/40 border border-gw-border/30 rounded px-1.5 py-0.5 text-gw-muted focus:outline-none" />
-          </div>
-          {(filters.city || filters.aquiferType || filters.status || filters.keyword) && (
-            <button onClick={clearFilters} className="text-[8px] text-gw-muted/50 hover:text-gw-text">清空</button>
-          )}
-        </div>
-
-        {/* 操作按钮 */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <button onClick={() => setShowAdd(!showAdd)} className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors">
-            <Plus size={11} />新增井
-          </button>
-          <button onClick={reset} className="flex items-center gap-1 px-2 py-1 text-[9px] text-gw-muted hover:text-gw-text transition-colors">
-            <RefreshCw size={11} />重置
-          </button>
-          <button onClick={() => setShowSpatial(!showSpatial)} className="flex items-center gap-1 px-2 py-1 text-[9px] text-gw-muted hover:text-gw-text transition-colors">
-            <Layers size={11} />空间分析
-            <ChevronDown size={9} className={`transition-transform ${showSpatial ? 'rotate-0' : '-rotate-90'}`} />
-          </button>
-          <button onClick={() => setShowTable(!showTable)} className="flex items-center gap-1 px-2 py-1 text-[9px] text-gw-muted hover:text-gw-text transition-colors">
-            <Crosshair size={11} />井列表({displayWells.length})
-            <ChevronDown size={9} className={`transition-transform ${showTable ? 'rotate-0' : '-rotate-90'}`} />
-          </button>
-          <div className="relative">
-            <button
-              onClick={() => {
-                handleGenerateReport(reportFormat);
-              }}
-              disabled={reportStatus === 'generating'}
-              className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors disabled:opacity-50"
-              title="生成并下载报告"
-            >
-              <FileDown size={11} />
-              {reportStatus === 'generating' ? '生成中...' : '生成报告'}
-            </button>
-            <button
-              onClick={() => setShowReportFormatMenu(!showReportFormatMenu)}
-              className="px-1 py-1 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors"
-              title="选择格式"
-            >
-              <ChevronDown size={9} />
-            </button>
-
-            {showReportFormatMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowReportFormatMenu(false)} />
-                <div className="absolute right-0 top-full mt-1 z-50 bg-gw-surface border border-gw-border/30 rounded-lg shadow-lg overflow-hidden min-w-[100px]">
-                  {(['docx', 'pdf', 'xlsx'] as const).map(fmt => (
-                    <button
-                      key={fmt}
-                      onClick={() => {
-                        setReportFormat(fmt);
-                        setShowReportFormatMenu(false);
-                        handleGenerateReport(fmt);
-                      }}
-                      className={`flex items-center gap-2 w-full px-3 py-2 text-[10px] transition-colors ${
-                        reportFormat === fmt ? 'text-gw-cyan bg-gw-cyan/10' : 'text-gw-muted hover:text-gw-text hover:bg-gw-surface/30'
-                      }`}
-                    >
-                      <span className="text-[8px] font-mono px-1 rounded bg-gw-surface/30">{fmt.toUpperCase()}</span>
-                      <span>{fmt === 'docx' ? 'Word 文档' : fmt === 'pdf' ? 'PDF 文档' : 'Excel 表格'}</span>
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* 数据导出按钮 */}
-          <div className="relative">
-            <button
-              onClick={() => setShowExportMenu(!showExportMenu)}
-              disabled={exportStatus === 'exporting'}
-              className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-gw-surface/40 text-gw-muted rounded hover:text-gw-text hover:bg-gw-surface/60 transition-colors disabled:opacity-50"
-              title="导出数据 (Excel/CSV/JSON)"
-            >
-              <Download size={11} />
-              {exportStatus === 'exporting' ? '导出中...' : '导出数据'}
-            </button>
-
-            {showExportMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowExportMenu(false)} />
-                <div className="absolute right-0 top-full mt-1 z-50 bg-gw-surface border border-gw-border/30 rounded-lg shadow-lg overflow-hidden min-w-[120px]">
-                  {(['xlsx', 'csv', 'json'] as ExportFormat[]).map(fmt => (
-                    <button
-                      key={fmt}
-                      onClick={() => handleExport(fmt)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-[10px] text-gw-muted hover:text-gw-text hover:bg-gw-surface/30 transition-colors"
-                    >
-                      <span className="text-[8px] font-mono px-1 rounded bg-gw-surface/30">{fmt.toUpperCase()}</span>
-                      <span>{fmt === 'xlsx' ? 'Excel 多标签页' : fmt === 'csv' ? 'CSV 文本' : 'JSON 结构化'}</span>
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* 报告/导出状态提示 */}
-        {reportStatus !== 'idle' && (
-          <div className={`text-[9px] px-2 py-1 rounded ${reportStatus === 'done' ? 'bg-emerald-500/10 text-emerald-400' : reportStatus === 'error' ? 'bg-red-500/10 text-red-400' : 'bg-gw-cyan/10 text-gw-cyan'}`}>
-            {reportMsg}
-          </div>
-        )}
-        {exportStatus === 'done' && (
-          <div className="text-[9px] px-2 py-1 rounded bg-emerald-500/10 text-emerald-400">
-            数据导出成功
-          </div>
-        )}
-
-        {/* 新增表单 */}
+        <FilterBar
+          filters={filters}
+          cities={cities}
+          onFilterChange={setFilter}
+          onClear={clearFilters}
+        />
+        <ActionButtons
+          showAdd={showAdd}
+          onToggleAdd={setShowAdd}
+          onReset={reset}
+          showSpatial={showSpatial}
+          onToggleSpatial={setShowSpatial}
+          showTable={showTable}
+          onToggleTable={setShowTable}
+          displayWellsCount={displayWells.length}
+          onGenerateReport={handleGenerateReport}
+          reportFormat={reportFormat}
+          reportStatus={reportStatus}
+          showReportFormatMenu={showReportFormatMenu}
+          onToggleFormatMenu={setShowReportFormatMenu}
+          onSelectFormat={setReportFormat}
+          showExportMenu={showExportMenu}
+          onToggleExportMenu={setShowExportMenu}
+          exportStatus={exportStatus}
+          onExport={handleExport}
+        />
+        <StatusHints reportStatus={reportStatus} reportMsg={reportMsg} exportStatus={exportStatus} />
         {showAdd && <AddWellForm onAdd={addWell} onClose={() => setShowAdd(false)} />}
-
-        {/* 井列表 */}
         {showTable && (
-          <WellTable wells={displayWells} selectedId={selectedId} onSelect={handleSelect} onDelete={id => { deleteWell(id); if (selectedId === id) clear(); }} />
+          <WellTable
+            wells={displayWells}
+            selectedId={selectedId}
+            onSelect={handleSelect}
+            onDelete={id => { deleteWell(id); if (selectedId === id) clear(); }}
+          />
         )}
-
-        {/* 空间分析 */}
         {showSpatial && (
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5">
-              {report?.aquiferGroups.map(group => (
-                <div key={group.aquiferType} className="px-2 py-1.5 rounded-lg bg-gw-surface/20 border border-gw-border/10">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1 text-[9px] text-gw-muted">
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: AQUIFER_COLORS[group.aquiferType] }} />
-                      {AQUIFER_LABELS[group.aquiferType]}
-                    </span>
-                    <span className="text-[11px] font-bold font-mono" style={{ color: AQUIFER_COLORS[group.aquiferType] }}>{group.count}</span>
-                  </div>
-                  <div className="text-[8px] text-gw-muted/50 mt-0.5">平均井深 {group.avgDepth}m · 活跃{group.activeCount}</div>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1 mb-1">
-                <Building2 size={10} className="text-gw-muted/60" />
-                <span className="text-[9px] font-medium text-gw-muted">城市分布</span>
-              </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-1">
-                {report?.cityGroups.slice(0, 8).map(group => (
-                  <div key={group.city} className="px-2 py-1 rounded bg-gw-surface/20 border border-gw-border/10">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9px] text-gw-muted">{group.city}</span>
-                      <span className="text-[10px] font-bold font-mono text-gw-cyan">{group.count}</span>
-                    </div>
-                    <div className="flex gap-1 mt-1">
-                      {Object.entries(group.aquiferDistribution).map(([type, count]) => (
-                        <span key={type} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: AQUIFER_COLORS[type as AquiferType], opacity: 0.4 + ((count ?? 1) / 6) * 0.6 }} title={`${AQUIFER_LABELS[type as AquiferType]}: ${count}`} />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1 mb-1">
-                <CircleDot size={10} className="text-gw-muted/60" />
-                <span className="text-[9px] font-medium text-gw-muted">最近邻分析 · 平均间距 {report?.avgNearestDistance ?? 0}km · 最小 {report?.minPairDistance ?? 0}km · 最大 {report?.maxPairDistance ?? 0}km</span>
-              </div>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-1 max-h-32 overflow-y-auto">
-                {neighbors.slice(0, 18).map(n => (
-                  <div key={n.wellId} className="flex items-center justify-between px-1.5 py-0.5 rounded bg-gw-surface/20 border border-gw-border/10">
-                    <div className="flex items-center gap-1 min-w-0">
-                      <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: AQUIFER_COLORS[n.aquiferType] }} />
-                      <span className="text-[8px] text-gw-muted truncate">{n.wellName}</span>
-                    </div>
-                    <span className="text-[8px] font-mono text-gw-cyan flex-shrink-0">→{n.nearestDistanceKm}km</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1 mb-1">
-                <Ruler size={10} className="text-gw-muted/60" />
-                <span className="text-[9px] font-medium text-gw-muted">缓冲区分析</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <select value={bufferCenter} onChange={e => setBufferCenter(e.target.value)} className="text-[9px] bg-gw-surface/40 border border-gw-border/30 rounded px-1.5 py-0.5 text-gw-muted focus:outline-none">
-                  {wells.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-                </select>
-                <input type="number" value={bufferRadius} onChange={e => setBufferRadius(Number(e.target.value))} className="w-16 text-[9px] bg-gw-surface/40 border border-gw-border/30 rounded px-1.5 py-0.5 text-gw-muted focus:outline-none" />
-                <span className="text-[8px] text-gw-muted/60">km</span>
-                <button onClick={handleBuffer} className="px-2 py-0.5 text-[9px] font-medium bg-gw-cyan/20 text-gw-cyan rounded hover:bg-gw-cyan/30 transition-colors">分析</button>
-                {buffer && <span className="text-[8px] text-gw-muted/70 ml-auto">{buffer.centerName} {buffer.radiusKm}km 内 {bufferWells.length} 口井</span>}
-              </div>
-              {bufferWells.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {bufferWells.map(w => (
-                    <span key={w.id} className="text-[8px] px-1.5 py-0.5 rounded bg-gw-surface/30 border border-gw-border/20 text-gw-muted">{w.name}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <SpatialAnalysisPanel
+            report={report}
+            neighbors={neighbors}
+            bufferCenter={bufferCenter}
+            onBufferCenterChange={setBufferCenter}
+            bufferRadius={bufferRadius}
+            onBufferRadiusChange={setBufferRadius}
+            onAnalyze={handleBuffer}
+            buffer={buffer}
+            bufferWells={bufferWells}
+            wells={wells}
+          />
         )}
         <SpatialOptimizationPanel showSpatial={showSpatial} spatialOptimization={spatialOptimization} />
-
         <BalancePanel
           open={showBalance}
           onToggle={() => setShowBalance(!showBalance)}
@@ -667,7 +360,6 @@ export function WellNetworkPanel() {
             if (w) handleSelect(w.id);
           }}
         />
-
         <QualityPanel
           open={showQuality}
           onToggle={() => setShowQuality(!showQuality)}
@@ -679,7 +371,6 @@ export function WellNetworkPanel() {
             if (w) handleSelect(w.id);
           }}
         />
-
         <IntegratedPanel
           open={showIntegrated}
           onToggle={() => setShowIntegrated(!showIntegrated)}
@@ -689,7 +380,6 @@ export function WellNetworkPanel() {
             if (w) handleSelect(w.id);
           }}
         />
-
         <SharingPanel
           open={showSharing}
           onToggle={() => setShowSharing(!showSharing)}
