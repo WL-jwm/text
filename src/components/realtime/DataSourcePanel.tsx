@@ -9,37 +9,13 @@
  *   - 连接日志查看
  *   - 通道错误展示
  */
-
-import { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  realtimeService,
-  type DataChannel,
-} from '../../services/realtimeDataService';
-import type { DataSourceType, LogEntry } from '../../services/realtimeDataSource';
 import type { ChannelSourceConfig } from '../../config/realtimeConfig';
 import { useI18n } from '../../hooks/useI18n';
-
-const CHANNELS: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
-
-const CHANNEL_LABELS: Record<DataChannel, string> = {
-  waterLevel: '水位埋深',
-  waterQuality: '水质达标率',
-  subsidence: '沉降速率',
-  extraction: '开采量',
-};
-
-const SOURCE_TYPE_LABELS: Record<DataSourceType, string> = {
-  mock: 'Mock 模拟',
-  http: 'HTTP 轮询',
-  ws: 'WebSocket 推送',
-};
-
-const LOG_LEVEL_COLORS: Record<string, string> = {
-  info: 'text-blue-400',
-  warn: 'text-yellow-400',
-  error: 'text-red-400',
-  debug: 'text-gray-500',
-};
+import { type DataChannel, realtimeService } from '../../services/realtimeDataService';
+import type { DataSourceType, LogEntry } from '../../services/realtimeDataSource';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { ConnectionLogPanel } from './dataSourcePanels/ConnectionLogPanel';
+import { CHANNELS, CHANNEL_LABELS, SOURCE_TYPE_LABELS } from './dataSourcePanels/dataSourceConstants';
 
 export function DataSourcePanel(): React.ReactElement {
   const { t } = useI18n();
@@ -370,61 +346,7 @@ export function DataSourcePanel(): React.ReactElement {
       </div>
 
       {/* 连接日志 */}
-      <div className="rounded-lg border border-slate-700 bg-slate-800/50 overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-700 bg-slate-800/80 flex items-center gap-3">
-          <h3 className="text-sm font-semibold text-slate-200">
-            {t('settings.connectionLogs') || '连接日志'}
-          </h3>
-          <select
-            value={logFilter}
-            onChange={e => setLogFilter(e.target.value as DataChannel | 'all')}
-            className="text-xs bg-slate-700 text-slate-200 rounded px-2 py-0.5 border border-slate-600"
-          >
-            <option value="all">全部通道</option>
-            <option value="waterLevel">水位</option>
-            <option value="waterQuality">水质</option>
-            <option value="subsidence">沉降</option>
-            <option value="extraction">开采</option>
-          </select>
-          <label className="text-xs text-slate-400 flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={autoScroll}
-              onChange={e => setAutoScroll(e.target.checked)}
-              className="accent-blue-400"
-            />
-            自动滚动
-          </label>
-          <button
-            onClick={handleClearLogs}
-            className="text-xs px-2 py-0.5 rounded border border-slate-600 text-slate-300 hover:bg-slate-700"
-          >
-            清除
-          </button>
-          <span className="text-xs text-slate-500 ml-auto">{filteredLogs.length} 条</span>
-        </div>
-        <div className="max-h-64 overflow-y-auto p-3 font-mono text-xs space-y-0.5">
-          {filteredLogs.length === 0 ? (
-            <div className="text-slate-600 text-center py-4">暂无日志</div>
-          ) : (
-            filteredLogs.map((log, i) => (
-              <div key={i} className="flex gap-2 items-start">
-                <span className="text-slate-600 shrink-0">
-                  {new Date(log.timestamp).toLocaleTimeString('zh-CN', { hour12: false })}
-                </span>
-                <span className={`shrink-0 ${LOG_LEVEL_COLORS[log.level] ?? 'text-slate-400'}`}>
-                  [{log.level.toUpperCase()}]
-                </span>
-                <span className="text-slate-500 shrink-0">{log.sourceType}:</span>
-                <span className="text-slate-500 shrink-0">{CHANNEL_LABELS[log.channel]}</span>
-                <span className="text-slate-300">{log.message}</span>
-                {log.detail && <span className="text-slate-600">— {log.detail}</span>}
-              </div>
-            ))
-          )}
-          <div ref={logEndRef} />
-        </div>
-      </div>
+      <ConnectionLogPanel filteredLogs={filteredLogs} logFilter={logFilter} onFilterChange={f => setLogFilter(f)} autoScroll={autoScroll} onAutoScrollChange={setAutoScroll} onClear={handleClearLogs} logEndRef={logEndRef} />
     </div>
   );
 }
