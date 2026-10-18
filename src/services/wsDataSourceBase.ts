@@ -3,10 +3,11 @@
  *  连接管理 / 消息解析 / 心跳保活 / 断线重连 / 状态维护（自 wsDataSource.ts 继承拆分）
  */
 
-import { toNumber, toStr, toQuality, getPath } from './realtimeUtils';
 import { connectionLogger } from './realtimeLogger';
 import type { WsSourceConfig, WsConnectionState, DataSourceType } from './realtimeTypes';
 import type { DataChannel, RealtimeReading, ChannelConfig } from './realtimeDataService';
+import { parseWsReadings } from './wsMessageParser';
+import { openWsChannel } from './wsLifecycle';
 import type { WsChannelContext } from './wsChannelTypes';
 
 export abstract class WebSocketDataSourceBase {
@@ -176,311 +177,22 @@ export abstract class WebSocketDataSourceBase {
   }
 
   private connectWs(ctx: WsChannelContext): void {
-
-    const { channel, wsConfig } = ctx;
-
-    const maxReconnects = wsConfig.maxReconnects ?? 5;
-
-
-
-    if (ctx.reconnectCount > maxReconnects) {
-
-      const err = new Error(`WebSocket 超过最大重连次数 ${maxReconnects}`);
-
-      connectionLogger.error(channel, this.type, err.message);
-
-      ctx.onError(err);
-
-      this.updateState(ctx, 'error');
-
-      return;
-
-    }
-
-
-
-    this.updateState(ctx, 'connecting');
-
-    connectionLogger.info(channel, this.type, `连接中... (attempt ${ctx.reconnectCount + 1})`, wsConfig.url);
-
-
-
-    try {
-
-      const ws = wsConfig.protocols
-
-        ? new WebSocket(wsConfig.url, wsConfig.protocols)
-
-        : new WebSocket(wsConfig.url);
-
-
-
-      ctx.ws = ws;
-
-
-
-      ws.onopen = () => {
-
-        connectionLogger.info(channel, this.type, '连接已建立');
-
-        this.updateState(ctx, 'open');
-
-        ctx.reconnectCount = 0; // 重置重连计数
-
-
-
-        // 发送认证消息
-
-        if (wsConfig.authMessage) {
-
-          ws.send(wsConfig.authMessage);
-
-          connectionLogger.debug(channel, this.type, '已发送认证消息');
-
-        }
-
-
-
-        // 启动心跳
-
-        this.startHeartbeat(ctx);
-
-      };
-
-
-
-      ws.onmessage = (event: MessageEvent) => {
-
-        ctx.messagesReceived++;
-
-        ctx.lastMessageTime = Date.now();
-
-
-
-        let dataStr: string;
-
-        if (typeof event.data === 'string') {
-
-          dataStr = event.data;
-
-        } else if (event.data instanceof ArrayBuffer) {
-
-          dataStr = new TextDecoder().decode(event.data);
-
-        } else if (event.data instanceof Blob) {
-
-          // Blob 需要异步读取，用 FileReader 替代
-
-          const reader = new FileReader();
-
-          reader.onload = () => {
-
-            const text = reader.result as string;
-
-            ctx.bytesReceived += text.length;
-
-            this.parseWsMessage(ctx, text);
-
-          };
-
-          reader.readAsText(event.data);
-
-          return;
-
-        } else {
-
-          return;
-
-        }
-
-
-
-        ctx.bytesReceived += dataStr.length;
-
-        this.parseWsMessage(ctx, dataStr);
-
-      };
-
-
-
-      ws.onerror = () => {
-
-        ctx.errors++;
-
-        connectionLogger.error(channel, this.type, 'WebSocket 错误');
-
-        // 不直接调用 onError，等 onclose 触发重连
-
-      };
-
-
-
-      ws.onclose = (event: CloseEvent) => {
-
-        connectionLogger.warn(channel, this.type, `连接关闭 (code=${event.code}, reason=${event.reason || '无'})`);
-
-        this.stopHeartbeat(ctx);
-
-        ctx.ws = null;
-
-
-
-        if (ctx.state === 'error' || ctx.state === 'closed') {
-
-          // 主动关闭或错误终止，不重连
-
-          return;
-
-        }
-
-
-
-        this.updateState(ctx, 'closed');
-
-        this.scheduleReconnect(ctx);
-
-      };
-
-    } catch (err) {
-
-      const error = err instanceof Error ? err : new Error(String(err));
-
-      connectionLogger.error(channel, this.type, '创建 WebSocket 失败', error.message);
-
-      ctx.onError(error);
-
-      this.updateState(ctx, 'error');
-
-    }
-
+    openWsChannel(ctx, {
+      updateState: (c, s) => this.updateState(c, s),
+      startHeartbeat: c => this.startHeartbeat(c),
+      stopHeartbeat: c => this.stopHeartbeat(c),
+      handleMessage: (c, d) => this.parseWsMessage(c, d),
+      scheduleReconnect: c => this.scheduleReconnect(c),
+    });
   }
 
   private parseWsMessage(ctx: WsChannelContext, data: string): void {
-
-    const { channel, config, wsConfig } = ctx;
-
-
-
-    try {
-
-      const json = JSON.parse(data);
-
-      const mapping = wsConfig.responseMapping;
-
-
-
-      let dataArr: unknown[];
-
-
-
-      if (mapping.dataPath) {
-
-        const wrapped = getPath(json, mapping.dataPath);
-
-        if (!Array.isArray(wrapped)) {
-
-          // 可能是单条消息
-
-          if (wrapped !== null && wrapped !== undefined) {
-
-            dataArr = [wrapped];
-
-          } else {
-
-            return;
-
-          }
-
-        } else {
-
-          dataArr = wrapped;
-
-        }
-
-      } else if (mapping.isArray) {
-
-        if (Array.isArray(json)) {
-
-          dataArr = json;
-
-        } else {
-
-          dataArr = [json];
-
-        }
-
-      } else {
-
-        dataArr = [json];
-
-      }
-
-
-
-      const readings: RealtimeReading[] = dataArr.map(item => {
-
-        const stationId = toStr(getPath(item, mapping.stationIdPath));
-
-        return {
-
-          stationId,
-
-          stationName: mapping.stationNamePath
-
-            ? toStr(getPath(item, mapping.stationNamePath), stationId)
-
-            : stationId,
-
-          city: mapping.cityPath
-
-            ? toStr(getPath(item, mapping.cityPath))
-
-            : config.channel,
-
-          channel,
-
-          value: Math.round(toNumber(getPath(item, mapping.valuePath)) * 100) / 100,
-
-          unit: mapping.unitPath
-
-            ? toStr(getPath(item, mapping.unitPath), config.unit)
-
-            : config.unit,
-
-          timestamp: mapping.timestampPath
-
-            ? toNumber(getPath(item, mapping.timestampPath))
-
-            : Date.now(),
-
-          quality: mapping.qualityPath
-
-            ? toQuality(getPath(item, mapping.qualityPath))
-
-            : 'good',
-
-        } satisfies RealtimeReading;
-
-      });
-
-
-
-      if (readings.length > 0) {
-
-        ctx.onReading(readings);
-
-        connectionLogger.debug(channel, this.type, `收到 ${readings.length} 条读数`);
-
-      }
-
-    } catch (err) {
-
-      const error = err instanceof Error ? err : new Error(String(err));
-
-      connectionLogger.warn(channel, this.type, '消息解析失败', error.message);
-
+    const { channel } = ctx;
+    const readings = parseWsReadings(ctx, data);
+    if (readings && readings.length > 0) {
+      ctx.onReading(readings);
+      connectionLogger.debug(channel, this.type, `收到 ${readings.length} 条读数`);
     }
-
   }
 
   private startHeartbeat(ctx: WsChannelContext): void {
