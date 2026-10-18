@@ -5,9 +5,9 @@
 
 import { openDB, type IDBPDatabase } from 'idb';
 import type { RealtimeReading, DataChannel } from './realtimeDataService';
-import type { CachedReading, ChannelStats, TimeRangeQuery, RealtimeCacheDBSchema } from './realtimeCacheTypes';
+import type { CachedReading, TimeRangeQuery, RealtimeCacheDBSchema } from './realtimeCacheTypes';
 import { DB_NAME, DB_VERSION, MAX_RETENTION_DAYS, CLEANUP_INTERVAL_MS } from './realtimeCacheTypes';
-import { mean, std, percentile, median } from './realtimeCacheUtils';
+import { createRealtimeCacheSchema, groupReadingsByChannelDate, buildChannelStats, cleanupExpiredReadings, cleanupExpiredStats } from './realtimeCacheOps';
 
 export abstract class RealtimeCacheBase {
   protected db: IDBPDatabase<RealtimeCacheDBSchema> | null = null;
@@ -34,57 +34,18 @@ export abstract class RealtimeCacheBase {
   }
 
   private async _initDB(): Promise<void> {
-
     try {
-
       this.db = await openDB<RealtimeCacheDBSchema>(DB_NAME, DB_VERSION, {
-
         upgrade(database) {
-
-          if (!database.objectStoreNames.contains('readings')) {
-
-            const readingStore = database.createObjectStore('readings', { keyPath: 'id' });
-
-            readingStore.createIndex('by-channel', 'channel');
-
-            readingStore.createIndex('by-timestamp', 'timestamp');
-
-            readingStore.createIndex('by-channel-timestamp', ['channel', 'timestamp']);
-
-          }
-
-          if (!database.objectStoreNames.contains('stats')) {
-
-            const statsStore = database.createObjectStore('stats', { keyPath: 'id' });
-
-            statsStore.createIndex('by-channel', 'channel');
-
-          }
-
-          if (!database.objectStoreNames.contains('meta')) {
-
-            database.createObjectStore('meta', { keyPath: 'key' });
-
-          }
-
+          createRealtimeCacheSchema(database);
         },
-
       });
-
-
-
       // 检查是否需要清理
-
       await this._maybeCleanup();
-
     } catch (err) {
-
       console.error('[RealtimeCache] IDB init failed:', err);
-
     }
-
   }
-
   async putReadings(readings: RealtimeReading[]): Promise<number> {
 
     if (!this.db) await this.init();
@@ -368,65 +329,13 @@ export abstract class RealtimeCacheBase {
   }
 
   private async _cleanupExpired(): Promise<number> {
-
     if (!this.db) return 0;
-
-
-
     const cutoff = Date.now() - MAX_RETENTION_DAYS * 24 * 60 * 60 * 1000;
-
-    const tx = this.db.transaction('readings', 'readwrite');
-
-    const index = tx.store.index('by-timestamp');
-
-    let deleted = 0;
-
-
-
-    let cursor = await index.openCursor(IDBKeyRange.upperBound(cutoff));
-
-    while (cursor) {
-
-      await cursor.delete();
-
-      deleted++;
-
-      cursor = await cursor.continue();
-
-    }
-
-
-
-    await tx.done;
-
-
-
+    const deleted = await cleanupExpiredReadings(this.db, cutoff);
     // 同时清理过期统计
-
-    const statsTx = this.db.transaction('stats', 'readwrite');
-
     const cutoffDate = new Date(cutoff).toISOString().slice(0, 10);
-
-    let statsCursor = await statsTx.store.openCursor();
-
-    while (statsCursor) {
-
-      if (statsCursor.value.date < cutoffDate) {
-
-        await statsCursor.delete();
-
-      }
-
-      statsCursor = await statsCursor.continue();
-
-    }
-
-    await statsTx.done;
-
-
-
+    await cleanupExpiredStats(this.db, cutoffDate);
     return deleted;
-
   }
 
   async cleanup(): Promise<{ readingsDeleted: number; expiredBefore: number }> {
@@ -450,98 +359,16 @@ export abstract class RealtimeCacheBase {
   }
 
   private async updateStats(readings: RealtimeReading[]): Promise<void> {
-
     if (!this.db || readings.length === 0) return;
-
-
-
     // 按通道+日期分组
-
-    const groups = new Map<string, RealtimeReading[]>();
-
-    for (const r of readings) {
-
-      const date = new Date(r.timestamp).toISOString().slice(0, 10);
-
-      const key = `${r.channel}-${date}`;
-
-      if (!groups.has(key)) groups.set(key, []);
-
-      groups.get(key)!.push(r);
-
-    }
-
-
-
+    const groups = groupReadingsByChannelDate(readings);
     const tx = this.db.transaction('stats', 'readwrite');
-
-
-
     for (const [key, group] of groups) {
-
-      const values = group.map(r => r.value);
-
-      const channel = group[0].channel;
-
-      const date = key.split('-').slice(-3).join('-');
-
-
-
       // 尝试读取已有统计并合并
-
       const existing = await tx.store.get(key);
-
-      const allValues = existing ? [...values, existing.mean] : values; // 简化：用已有均值代表历史
-
-
-
-      const stats: ChannelStats = {
-
-        id: key,
-
-        channel,
-
-        date,
-
-        count: (existing?.count ?? 0) + group.length,
-
-        mean: mean(allValues),
-
-        min: Math.min(...values, existing?.min ?? Infinity),
-
-        max: Math.max(...values, existing?.max ?? -Infinity),
-
-        std: std(allValues),
-
-        median: median(allValues),
-
-        p25: percentile(allValues, 0.25),
-
-        p75: percentile(allValues, 0.75),
-
-        updatedAt: Date.now(),
-
-      };
-
-
-
-      if (existing) {
-
-        stats.min = Math.min(stats.min, existing.min);
-
-        stats.max = Math.max(stats.max, existing.max);
-
-      }
-
-
-
+      const stats = buildChannelStats(key, group, existing);
       await tx.store.put(stats);
-
     }
-
-
-
     await tx.done;
-
   }
 }
