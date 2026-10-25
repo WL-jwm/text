@@ -3,6 +3,7 @@ export { dbMeta } from './dbMeta';
 import { changelogEntries as earlyEntries } from './changelogEarly';
 import { changelogEntries as v3aEntries } from './changelogV3A';
 import { changelogEntries as v3bEntries } from './changelogV3B';
+import { changelogEntries as v3cEntries } from './changelogV3C';
 
 /** 变更日志条目（changes 或 scope+items 两种结构） */
 export interface ChangelogItem {
@@ -18,7 +19,7 @@ export interface ChangelogEntry {
   items?: (string | ChangelogItem)[];
 }
 
-export const changelog: ChangelogEntry[] = [...earlyEntries, ...v3aEntries, ...v3bEntries];
+export const changelog: ChangelogEntry[] = [...earlyEntries, ...v3aEntries, ...v3bEntries, ...v3cEntries];
 
 export const dataSources = [
   { id: 'S01', name: '1999年《河北省地下水》', type: '基础文献', coverage: '全部22章' },
