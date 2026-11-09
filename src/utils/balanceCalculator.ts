@@ -9,92 +9,14 @@
  *   补给模数 Mr = Q总补给 / F (万m³/km²·a)
  */
 
-// ── 接口定义 ──
+import type { BalanceInput, BalanceItemResult, BalanceResult, BalanceSummary } from './balanceTypes';
+import { BALANCE_THRESHOLDS, EXPLOIT_COEFF_THRESHOLDS } from './balanceTypes';
 
-/** 均衡计算输入（单个城市/区域） */
-export interface BalanceInput {
-  city: string;
-  area: number;             // 计算面积 km²
-  // 补给项
-  precipitationInfiltration: number;   // 降水入渗补给 亿m³/a
-  lateralRecharge: number;           // 侧向径流补给 亿m³/a
-  riverLeakage: number;              // 河道渗漏补给 亿m³/a
-  canalLeakage: number;              // 渠系渗漏补给 亿m³/a
-  irrigationRecharge: number;        // 田间灌溉入渗 亿m³/a
-  crossFlowRecharge: number;         // 越流补给 亿m³/a
-  otherRecharge: number;             // 其他补给 亿m³/a
-  // 排泄项
-  extraction: number;                // 人工开采 亿m³/a
-  evaporation: number;               // 潜水蒸发 亿m³/a
-  crossFlowDischarge: number;        // 越流排泄 亿m³/a
-  lateralDischarge: number;         // 侧向径流排泄 亿m³/a
-  springDischarge: number;           // 泉排泄 亿m³/a
-  // 参考值（可选）
-  allowableExtraction?: number;     // 允许开采量 亿m³/a
-}
+export type { BalanceInput, BalanceItemResult, BalanceResult, BalanceSummary } from './balanceTypes';
+export type { ExtractionTrendPoint } from './balanceTrend';
+export { EXTRACTION_TREND, calcExtractionTrendSummary } from './balanceTrend';
 
-/** 均衡计算单项结果 */
-export interface BalanceItemResult {
-  name: string;           // 项名称
-  value: number;          // 数值
-  unit: string;           // 单位
-  percent: number;        // 占总量百分比
-}
-
-/** 均衡计算输出（单个城市） */
-export interface BalanceResult {
-  city: string;
-  area: number;
-  // 补给合计
-  totalRecharge: number;
-  rechargeItems: BalanceItemResult[];
-  // 排泄合计
-  totalDischarge: number;
-  dischargeItems: BalanceItemResult[];
-  // 均衡
-  balance: number;              // 均衡差 = 补给 - 排泄
-  balanceRate: number;          // 均衡差占补给百分比
-  balanceStatus: 'surplus' | 'balanced' | 'deficit' | 'severe';
-  // 开采指标
-  exploitationCoefficient: number;   // 开采系数 α
-  exploitationModulus: number;        // 开采模数 万m³/km²·a
-  rechargeModulus: number;           // 补给模数 万m³/km²·a
-  // 安全评价
-  overdraftStatus: 'safe' | 'warning' | 'over' | 'critical';
-  overdraftAmount: number;            // 超采量（负值为超采）
-}
-
-/** 汇总统计 */
-export interface BalanceSummary {
-  totalArea: number;
-  totalRecharge: number;
-  totalDischarge: number;
-  totalBalance: number;
-  avgExploitationCoeff: number;
-  totalOverdraftCities: number;
-  totalBalancedCities: number;
-  totalSurplusCities: number;
-  rechargeBreakdown: BalanceItemResult[];
-  dischargeBreakdown: BalanceItemResult[];
-}
-
-// ── 常量 ──
-
-/** 均衡差占补给比阈值 */
-const BALANCE_THRESHOLDS = {
-  surplus: 0.05,    // >5% 为盈余
-  balanced: -0.05,   // -5%~5% 为均衡
-  deficit: -0.20,   // -5%~-20% 为亏损
-  // < -20% 为严重亏损
-} as const;
-
-/** 开采系数安全阈值 */
-const EXPLOIT_COEFF_THRESHOLDS = {
-  safe: 0.6,
-  warning: 0.8,
-  over: 1.0,
-  // >1.0 为严重超采
-} as const;
+// ── 核心计算 ──
 
 // ── 核心计算 ──
 
@@ -289,90 +211,4 @@ export function getOverdraftStatusLabel(status: BalanceResult['overdraftStatus']
     critical: '严重超采',
   };
   return map[status];
-}
-
-
-// ── 开采量历史趋势数据 ──
-
-/** 河北省地下水开采量年度数据（亿m³） */
-export interface ExtractionTrendPoint {
-  year: number;
-  /** 总开采量（浅层+深层） */
-  totalExtraction: number;
-  /** 浅层水开采量 */
-  shallowExtraction: number;
-  /** 深层水开采量 */
-  deepExtraction: number;
-  /** 农业灌溉占比 */
-  agriRatio: number;
-  /** 工业占比 */
-  industrialRatio: number;
-  /** 生活占比 */
-  domesticRatio: number;
-  /** 生态占比 */
-  ecologicalRatio: number;
-}
-
-/**
- * 河北省地下水开采量历史趋势（2000-2024）
- * 数据来源：河北省水资源公报、中国水资源公报
- * 单位：亿m³
- */
-export const EXTRACTION_TREND: ExtractionTrendPoint[] = [
-  { year: 2000, totalExtraction: 165.6, shallowExtraction: 114.2, deepExtraction: 51.4, agriRatio: 0.76, industrialRatio: 0.12, domesticRatio: 0.11, ecologicalRatio: 0.01 },
-  { year: 2001, totalExtraction: 167.8, shallowExtraction: 115.0, deepExtraction: 52.8, agriRatio: 0.77, industrialRatio: 0.11, domesticRatio: 0.11, ecologicalRatio: 0.01 },
-  { year: 2002, totalExtraction: 169.5, shallowExtraction: 115.8, deepExtraction: 53.7, agriRatio: 0.77, industrialRatio: 0.11, domesticRatio: 0.11, ecologicalRatio: 0.01 },
-  { year: 2003, totalExtraction: 170.2, shallowExtraction: 116.5, deepExtraction: 53.7, agriRatio: 0.77, industrialRatio: 0.11, domesticRatio: 0.11, ecologicalRatio: 0.01 },
-  { year: 2004, totalExtraction: 168.9, shallowExtraction: 115.6, deepExtraction: 53.3, agriRatio: 0.76, industrialRatio: 0.12, domesticRatio: 0.11, ecologicalRatio: 0.01 },
-  { year: 2005, totalExtraction: 166.5, shallowExtraction: 113.8, deepExtraction: 52.7, agriRatio: 0.76, industrialRatio: 0.12, domesticRatio: 0.11, ecologicalRatio: 0.01 },
-  { year: 2006, totalExtraction: 164.2, shallowExtraction: 112.1, deepExtraction: 52.1, agriRatio: 0.75, industrialRatio: 0.12, domesticRatio: 0.12, ecologicalRatio: 0.01 },
-  { year: 2007, totalExtraction: 162.8, shallowExtraction: 111.5, deepExtraction: 51.3, agriRatio: 0.75, industrialRatio: 0.12, domesticRatio: 0.12, ecologicalRatio: 0.01 },
-  { year: 2008, totalExtraction: 160.5, shallowExtraction: 110.2, deepExtraction: 50.3, agriRatio: 0.74, industrialRatio: 0.12, domesticRatio: 0.12, ecologicalRatio: 0.02 },
-  { year: 2009, totalExtraction: 158.3, shallowExtraction: 109.0, deepExtraction: 49.3, agriRatio: 0.74, industrialRatio: 0.12, domesticRatio: 0.12, ecologicalRatio: 0.02 },
-  { year: 2010, totalExtraction: 155.8, shallowExtraction: 107.5, deepExtraction: 48.3, agriRatio: 0.73, industrialRatio: 0.12, domesticRatio: 0.13, ecologicalRatio: 0.02 },
-  { year: 2011, totalExtraction: 152.6, shallowExtraction: 105.3, deepExtraction: 47.3, agriRatio: 0.72, industrialRatio: 0.12, domesticRatio: 0.13, ecologicalRatio: 0.03 },
-  { year: 2012, totalExtraction: 149.5, shallowExtraction: 103.5, deepExtraction: 46.0, agriRatio: 0.72, industrialRatio: 0.12, domesticRatio: 0.13, ecologicalRatio: 0.03 },
-  { year: 2013, totalExtraction: 146.2, shallowExtraction: 101.8, deepExtraction: 44.4, agriRatio: 0.71, industrialRatio: 0.12, domesticRatio: 0.14, ecologicalRatio: 0.03 },
-  { year: 2014, totalExtraction: 143.5, shallowExtraction: 100.2, deepExtraction: 43.3, agriRatio: 0.71, industrialRatio: 0.12, domesticRatio: 0.14, ecologicalRatio: 0.03 },
-  { year: 2015, totalExtraction: 139.8, shallowExtraction: 98.0, deepExtraction: 41.8, agriRatio: 0.70, industrialRatio: 0.11, domesticRatio: 0.15, ecologicalRatio: 0.04 },
-  { year: 2016, totalExtraction: 136.5, shallowExtraction: 96.0, deepExtraction: 40.5, agriRatio: 0.69, industrialRatio: 0.11, domesticRatio: 0.15, ecologicalRatio: 0.05 },
-  { year: 2017, totalExtraction: 132.8, shallowExtraction: 93.8, deepExtraction: 39.0, agriRatio: 0.68, industrialRatio: 0.11, domesticRatio: 0.15, ecologicalRatio: 0.06 },
-  { year: 2018, totalExtraction: 128.5, shallowExtraction: 91.2, deepExtraction: 37.3, agriRatio: 0.67, industrialRatio: 0.11, domesticRatio: 0.16, ecologicalRatio: 0.06 },
-  { year: 2019, totalExtraction: 124.6, shallowExtraction: 88.8, deepExtraction: 35.8, agriRatio: 0.66, industrialRatio: 0.10, domesticRatio: 0.16, ecologicalRatio: 0.08 },
-  { year: 2020, totalExtraction: 121.3, shallowExtraction: 86.5, deepExtraction: 34.8, agriRatio: 0.65, industrialRatio: 0.10, domesticRatio: 0.17, ecologicalRatio: 0.08 },
-  { year: 2021, totalExtraction: 117.2, shallowExtraction: 84.0, deepExtraction: 33.2, agriRatio: 0.64, industrialRatio: 0.10, domesticRatio: 0.17, ecologicalRatio: 0.09 },
-  { year: 2022, totalExtraction: 113.5, shallowExtraction: 81.8, deepExtraction: 31.7, agriRatio: 0.63, industrialRatio: 0.10, domesticRatio: 0.17, ecologicalRatio: 0.10 },
-  { year: 2023, totalExtraction: 110.2, shallowExtraction: 79.5, deepExtraction: 30.7, agriRatio: 0.62, industrialRatio: 0.09, domesticRatio: 0.18, ecologicalRatio: 0.11 },
-  { year: 2024, totalExtraction: 107.8, shallowExtraction: 77.5, deepExtraction: 30.3, agriRatio: 0.61, industrialRatio: 0.09, domesticRatio: 0.18, ecologicalRatio: 0.12 },
-];
-
-/** 计算开采量趋势统计 */
-export function calcExtractionTrendSummary(data: ExtractionTrendPoint[]): {
-  peakYear: number;
-  peakValue: number;
-  latestYear: number;
-  latestValue: number;
-  totalReduction: number;
-  reductionRate: number;
-  avgAnnualReduction: number;
-  shallowReduction: number;
-  deepReduction: number;
-} {
-  if (data.length === 0) {
-    return { peakYear: 0, peakValue: 0, latestYear: 0, latestValue: 0, totalReduction: 0, reductionRate: 0, avgAnnualReduction: 0, shallowReduction: 0, deepReduction: 0 };
-  }
-  const peak = data.reduce((a, b) => b.totalExtraction > a.totalExtraction ? b : a);
-  const latest = data[data.length - 1];
-  const totalReduction = peak.totalExtraction - latest.totalExtraction;
-  return {
-    peakYear: peak.year,
-    peakValue: peak.totalExtraction,
-    latestYear: latest.year,
-    latestValue: latest.totalExtraction,
-    totalReduction,
-    reductionRate: peak.totalExtraction > 0 ? totalReduction / peak.totalExtraction : 0,
-    avgAnnualReduction: data.length > 1 ? totalReduction / (data.length - 1) : 0,
-    shallowReduction: peak.shallowExtraction - latest.shallowExtraction,
-    deepReduction: peak.deepExtraction - latest.deepExtraction,
-  };
 }
