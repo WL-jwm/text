@@ -1,0 +1,127 @@
+/**
+ * 拆分自 searchIndexWater.ts — water 组搜索索引
+ */
+
+import type { SearchResult } from '../searchIndexWater';
+
+export const searchIndexWaterWater: SearchResult[] = [
+  {
+    id: `gw-balance`,
+    title: `河北平原水均衡总表(1991-2000)`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `水均衡 补给量112.37亿 排泄量129.32亿 超采16.95亿 降水入渗 侧向径流 河道渗漏`,
+  },
+  {
+    id: `gw-city-balance`,
+    title: `各市潜水-微承压水均衡(1991-2000)`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `城市水均衡 秦皇岛 唐山 廊坊 保定 石家庄 沧州 衡水 邢台 邯郸 补给量 排泄量 补排差`,
+  },
+  {
+    id: `gw-salinity`,
+    title: `河北平原咸淡水分布与矿化度分级`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `矿化度 淡水 微咸水 半咸水 咸淡水界面 全淡水区 有咸水区 面积统计`,
+  },
+  {
+    id: `gw-params`,
+    title: `水文地质参数(渗透系数/给水度/释水系数)`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `渗透系数K 给水度μ 释水系数S 降水入渗系数 潜水蒸发 山前平原 中部平原 滨海平原`,
+  },
+  {
+    id: `gw-potential`,
+    title: `各市地下水开采潜力(2000年)`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `开采潜力 剩余可采量 超采量 潜力指数 石家庄 保定 衡水 廊坊 严重超采`,
+  },
+  {
+    id: `gw-potential-zones`,
+    title: `河北平原开采潜力分区`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `有潜力区 基本平衡区 超采区 面积统计 挖潜措施 微咸水 农业节水 工业节水`,
+  },
+  {
+    id: `gw-pollution`,
+    title: `各市地下水污染评价(1998-1999)`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `污染评价 未污染 轻污染 中污染 重污染 严重污染 石家庄 唐山 廊坊 保定 邯郸`,
+  },
+  {
+    id: `gw-pollutants`,
+    title: `主要污染物检出率与超标率`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `氨氮 亚硝酸盐 硝酸盐 铁 锰 检出率 超标率 三氮 铁锰污染`,
+  },
+  {
+    id: `gw-wastewater`,
+    title: `废污水排放量(1999年)`,
+    category: `地下水资源`,
+    path: `/resources`,
+    keywords: `废水排放 工业废水 生活污水 海河南系 滦河 海河北系 18.9亿t`,
+  },
+  {
+    id: `term-gbt14848`,
+    title: `GB/T 14848-2017 地下水质量标准`,
+    category: `标准`,
+    path: `/water-quality`,
+    keywords: `地下水质量标准 GB/T 14848 I类 II类 III类 IV类 V类 水质分类`,
+    snippet: `地下水质量分类标准 五类水质 · 评价因子 · 质量分类指标`,
+  },
+  {
+    id: `wq-gb14848`,
+    title: `GB/T 14848-2017质量标准详情`,
+    category: `水质标准`,
+    path: `/water-quality`,
+    keywords: `GB/T 14848 地下水质量标准 I类 II类 III类 IV类 V类 评价因子 标准限值`,
+    snippet: `20项评价因子标准限值 感官/一般化学/毒理学三大类`,
+  },
+  {
+    id: `wq-shallow-2024`,
+    title: `浅层水质评价(2024)`,
+    category: `水质评价`,
+    path: `/water-quality`,
+    keywords: `浅层地下水 I类 II类 III类 IV类 V类 11市 水质评价 2024`,
+    snippet: `11市浅层水质评价 I+II+III占比 山前平原硝酸盐超标 滨海平原氟化物超标`,
+  },
+  {
+    id: `wq-pollutants`,
+    title: `典型污染物分布`,
+    category: `水质评价`,
+    path: `/water-quality`,
+    keywords: `氟化物 总硬度 硝酸盐 铁锰 氨氮 TDS 超标率 危害`,
+    snippet: `6种典型污染物分布特征 氟化物超标25~40% 高氟水1200万人`,
+  },
+  {
+    id: `wq-trend`,
+    title: `水质变化趋势(2015-2024)`,
+    category: `水质评价`,
+    path: `/water-quality`,
+    keywords: `水质趋势 III类以上 逐年改善 2015 2024 好转率`,
+    snippet: `III类以上从25.8%(2015)升至63.5%(2024) 10年持续改善`,
+  },
+  {
+    id: `wq-regional-matrix`,
+    title: `污染因子区域分布`,
+    category: `水质评价`,
+    path: `/water-quality`,
+    keywords: `区域分布 山前平原 中部平原 滨海平原 冀东 坝上 污染分区`,
+    snippet: `6大区域污染因子分布矩阵 山前硝酸盐高 滨海氟化物TDS高 冀东铁锰高`,
+  },
+  {
+    id: `term-hj610`,
+    title: `HJ 610-2016 环境影响评价技术导则`,
+    category: `标准`,
+    path: `/hydro-zone-params`,
+    keywords: `HJ 610 环境影响评价 地下水 导则 评价等级 含水层`,
+    snippet: `地下水环境影响评价技术导则 · 评价等级划分 · 防渗分区标准`,
+  },
+];
