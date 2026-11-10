@@ -8,6 +8,7 @@ import type { RealtimeReading, DataChannel } from './realtimeDataService';
 import type { CachedReading, TimeRangeQuery, RealtimeCacheDBSchema } from './realtimeCacheTypes';
 import { DB_NAME, DB_VERSION, MAX_RETENTION_DAYS, CLEANUP_INTERVAL_MS } from './realtimeCacheTypes';
 import { createRealtimeCacheSchema, groupReadingsByChannelDate, buildChannelStats, cleanupExpiredReadings, cleanupExpiredStats } from './realtimeCacheOps';
+import { readRecentReadings, readReadingsByRange, readCacheCounts, readLastCachedTime, removeChannelReadings } from './realtimeCacheQuery';
 
 export abstract class RealtimeCacheBase {
   protected db: IDBPDatabase<RealtimeCacheDBSchema> | null = null;
@@ -103,97 +104,21 @@ export abstract class RealtimeCacheBase {
   }
 
   async getRecentReadings(channel: DataChannel, limit: number = 100): Promise<CachedReading[]> {
-
     if (!this.db) await this.init();
-
     if (!this.db) return [];
-
-
-
-    const index = this.db.transaction('readings').store.index('by-channel-timestamp');
-
-    const results: CachedReading[] = [];
-
-
-
-    let cursor = await index.openCursor(IDBKeyRange.bound([channel, 0], [channel, Date.now() + 1]), 'prev');
-
-    while (cursor && results.length < limit) {
-
-      results.push(cursor.value);
-
-      cursor = await cursor.continue();
-
-    }
-
-
-
-    return results.reverse(); // 按时间正序返回
-
+    return readRecentReadings(this.db, channel, limit);
   }
 
   async getByTimeRange(query: TimeRangeQuery): Promise<CachedReading[]> {
-
     if (!this.db) await this.init();
-
     if (!this.db) return [];
-
-
-
-    const { channel, startTime, endTime, limit } = query;
-
-    const index = this.db.transaction('readings').store.index('by-channel-timestamp');
-
-    const range = IDBKeyRange.bound([channel, startTime], [channel, endTime]);
-
-    const results: CachedReading[] = [];
-
-
-
-    let cursor = await index.openCursor(range);
-
-    while (cursor) {
-
-      results.push(cursor.value);
-
-      if (limit && results.length >= limit) break;
-
-      cursor = await cursor.continue();
-
-    }
-
-
-
-    return results;
-
+    return readReadingsByRange(this.db, query);
   }
 
   async getCacheCounts(): Promise<Record<DataChannel, number>> {
-
     if (!this.db) await this.init();
-
     if (!this.db) return { waterLevel: 0, waterQuality: 0, subsidence: 0, extraction: 0 };
-
-
-
-    const channels: DataChannel[] = ['waterLevel', 'waterQuality', 'subsidence', 'extraction'];
-
-    const counts = {} as Record<DataChannel, number>;
-
-
-
-    for (const ch of channels) {
-
-      const index = this.db.transaction('readings').store.index('by-channel');
-
-      counts[ch] = await index.count(IDBKeyRange.only(ch));
-
-    }
-
-
-
-    return counts;
-
+    return readCacheCounts(this.db);
   }
 
   async getCacheSize(): Promise<number> {
@@ -219,70 +144,17 @@ export abstract class RealtimeCacheBase {
   }
 
   async getLastCachedTime(channel: DataChannel): Promise<number | undefined> {
-
     if (!this.db) await this.init();
-
     if (!this.db) return undefined;
-
-
-
-    const index = this.db.transaction('readings').store.index('by-channel-timestamp');
-
-    const range = IDBKeyRange.bound([channel, 0], [channel, Date.now() + 1]);
-
-    let lastTime: number | undefined;
-
-
-
-    const cursor = await index.openCursor(range, 'prev');
-
-    if (cursor) {
-
-      lastTime = cursor.value.timestamp;
-
-    }
-
-
-
-    return lastTime;
-
+    return readLastCachedTime(this.db, channel);
   }
 
   async clearChannel(channel: DataChannel): Promise<number> {
-
     if (!this.db) await this.init();
-
     if (!this.db) return 0;
-
-
-
-    const tx = this.db.transaction('readings', 'readwrite');
-
-    const index = tx.store.index('by-channel');
-
-    let deleted = 0;
-
-
-
-    let cursor = await index.openCursor(IDBKeyRange.only(channel));
-
-    while (cursor) {
-
-      await cursor.delete();
-
-      deleted++;
-
-      cursor = await cursor.continue();
-
-    }
-
-
-
-    await tx.done;
-
-    return deleted;
-
+    return removeChannelReadings(this.db, channel);
   }
+
 
   async clearAll(): Promise<void> {
 
