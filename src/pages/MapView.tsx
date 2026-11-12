@@ -5,12 +5,10 @@ import { DataSourceNote } from '../components/UI';
 import { ContourControlPanel } from '../components/map/ContourControlPanel';
 import { MapLayerControls } from '../components/map/MapLayerControls';
 import { MapStatsCards } from '../components/map/MapStatsCards';
-import { karstSprings } from '../data/karstWater';
-import { type MapMarker, getVisibleMarkers, springMarkers, waterSourceMarkers, salineMarkers, allMarkers, mapZones, mineMarkers, cityCenters, geothermalMarkers } from '../data/mapData';
-import { type CityResourceGrade, gradeLabels, getCityResourceGrades, overdraftPolygons } from '../data/mapDataEnhanced';
-import { importantWaterSources } from '../data/waterSource';
+import { type MapMarker, mapZones, cityCenters, allMarkers } from '../data/mapData';
+import { type CityResourceGrade, overdraftPolygons, getCityResourceGrades } from '../data/mapDataEnhanced';
+import { buildCategoryStats, filterMarkersByKeyword, buildMapExportHandlers } from './mapViewParts/mapExportHandlers';
 import { useReportData } from '../hooks/useReportData';
-import { exportExcel } from '../utils/exportUtils';
 import { MapSidebar } from './MapSidebar';
 import { useContourLayer } from './useContourLayer';
 import { useMapLayers } from './useMapLayers';
@@ -155,14 +153,7 @@ export function MapView() {
   };
 
   /** 过滤搜索 */
-  const filteredMarkers = searchText.length > 0
-    ? allMarkers().filter(m =>
-        m.name.includes(searchText) ||
-        m.type.includes(searchText) ||
-        m.description.includes(searchText) ||
-        m.category.includes(searchText)
-      )
-    : allMarkers();
+  const filteredMarkers = useMemo(() => filterMarkersByKeyword(searchText), [searchText]);
 
   /** 定位到标注点 */
   const flyToMarker = (m: MapMarker) => {
@@ -182,80 +173,17 @@ export function MapView() {
   };
 
   /** 分类统计 */
-  const categoryStats = [
-    { label: '泉域', count: springMarkers.length, color: '#10b981', key: 'spring' },
-    { label: '地热田', count: geothermalMarkers().length, color: '#ef4444', key: 'geothermal' },
-    { label: '咸水区', count: salineMarkers.length, color: '#f59e0b', key: 'saline' },
-    { label: '水源地', count: waterSourceMarkers.length, color: '#06b6d4', key: 'waterSource' },
-    { label: '矿区', count: mineMarkers.length, color: '#8b5cf6', key: 'mine' },
-  ];
+  const categoryStats = useMemo(() => buildCategoryStats(), []);
 
-  /** 导出标注数据 */
-  const handleExportMarkers = () => {
-    exportExcel(
-      ['名称', '类型', '分类', '纬度', '经度', '描述'],
-      allMarkers().map(m => [m.name, m.type, m.category, m.lat.toFixed(4), m.lng.toFixed(4), m.description]),
-      '河北地下水地图标注',
-      '标注数据'
-    );
-    success('标注数据已导出');
-  };
-
-  /** 导出当前可见标注 */
-  const handleExportVisible = () => {
-    const visible = getVisibleMarkers(visibleLayers);
-    exportExcel(
-      ['名称', '类型', '分类', '纬度', '经度', '描述'],
-      visible.map(m => [m.name, m.type, m.category, m.lat.toFixed(4), m.lng.toFixed(4), m.description]),
-      '河北地下水地图标注_已选' + visible.length + '个',
-      '可见标注'
-    );
-    success('标注数据已导出');
-  };
-
-  /** 导出超采区数据 */
-  const handleExportOverdraft = () => {
-    exportExcel(
-      ['城市', '超采类型', '标签', '说明', '南界纬度', '西界经度', '北界纬度', '东界经度'],
-      overdraftPolygons.map(p => [p.city, p.type, p.label, p.info, p.bounds[0][0], p.bounds[0][1], p.bounds[1][0], p.bounds[1][1]]),
-      '河北省超采区划数据',
-      '超采区'
-    );
-    success('超采区数据已导出');
-  };
-
-  /** 导出资源量分级数据 */
-  const handleExportResource = () => {
-    exportExcel(
-      ['城市', '地下水资源量(亿m³)', '地下水供水量(亿m³)', '供水占比(%)', '总供水量(亿m³)', '资源等级'],
-      cityGrades.map(g => [g.city, g.groundResource, g.gwSupply, g.gwRatio, g.totalSupply, gradeLabels[g.grade]]),
-      '河北省城市地下水资源量分级',
-      '资源分级'
-    );
-    success('资源量分级数据已导出');
-  };
-
-  /** 导出水源地POI数据 */
-  const handleExportWaterSourcePOI = () => {
-    exportExcel(
-      ['名称', '类型', '供水量', '单位', '状态', '含水层', '保护区'],
-      importantWaterSources.map(ws => [ws.name, ws.type, ws.supply, ws.unit, ws.status, ws.aquifer, ws.protection]),
-      '河北省重要水源地',
-      '水源地'
-    );
-    success('水源地数据已导出');
-  };
-
-  /** 导出岩溶泉POI数据 */
-  const handleExportKarstSpringPOI = () => {
-    exportExcel(
-      ['名称', '位置', '流量(m³/s)', '类型', '面积(km²)', '补给面积(km²)', '岩性', 'TDS(g/L)'],
-      karstSprings.map(ks => [ks.name, ks.location, ks.discharge, ks.type, ks.area, ks.rechargeArea, ks.lithology, ks.tds]),
-      '河北省岩溶大泉',
-      '岩溶泉'
-    );
-    success('岩溶泉数据已导出');
-  };
+  // 导出处理函数（下沉至 mapViewParts/mapExportHandlers）
+  const {
+    handleExportMarkers,
+    handleExportVisible,
+    handleExportOverdraft,
+    handleExportResource,
+    handleExportWaterSourcePOI,
+    handleExportKarstSpringPOI,
+  } = useMemo(() => buildMapExportHandlers({ notify: success, visibleLayers, cityGrades }), [visibleLayers, cityGrades]);
 
   /** 当前活跃图层的统计信息 */
   const activeLayerCount = activeLayers.size;
